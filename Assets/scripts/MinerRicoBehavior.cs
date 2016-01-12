@@ -3,29 +3,43 @@ using System.Collections;
 
 public class MinerRicoBehavior : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-        InvokeRepeating("reduceHealth", 1, 1);
+    enum Action
+    {
+        Move, Pick, Shovel, Idle
+    }
+
+    void Start () {
+        Data = MinerSaveGame.Instance.Current;
+        InvokeRepeating("reduceFood", 1, 1);
 	}
 
-    public int health = 100;
     public Transform elevator;
 
-    public void reduceHealth()
+    public void reduceFood()
     {
-        --health;
-        GameObject.Find("FoodBarInner").transform.localScale = new Vector3(health / 100.0f, 1, 1);
+        --Data.FoodLevel;
+        if (Data.FoodLevel < 0)
+        {
+            Data.FoodLevel = 0;
+            --Data.Health;
+            if (Data.Health < 0) Data.Health = 0;
+        }
+        GameObject.Find("FoodBarInner").transform.localScale = new Vector3(Data.FoodLevel / 100.0f, 1, 1);
+        GameObject.Find("HealthBarInner").transform.localScale = new Vector3(Data.Health / 100.0f, 1, 1);
     }
 
     bool isMoving = false;
     bool moveElevator = false;
     Vector3 target = Vector3.zero;
+
+    public MinerData Data;
 	
 	// Update is called once per frame
 	void Update () {
         float step = 30 * Time.deltaTime; // Movement Speed
         bool left = false, right = false, up = false, down = false;
         Vector3 targetElevator = elevator.transform.position;
+        Vector3 current = target;
         if (Input.GetAxis("Horizontal") < -0.1)
         {
             left = true;
@@ -125,16 +139,34 @@ public class MinerRicoBehavior : MonoBehaviour {
         if (!isMoving)
             GetComponent<Animator>().Play("idle");
         if (target == Vector3.zero) return;
-        
-        transform.position = Vector3.MoveTowards(transform.position, target, step);
 
-        if (moveElevator)
+        int targetGridX = (int)target.x / 15;
+        int targetGridY = (int)target.y == 10 ? -1 : Mathf.Abs((int)target.y / 20 + 1);
+        Debug.Log(string.Format("targetX/Y {0} {1} TargetGridX/Y {2} {3}", target.x, target.y, targetGridX, targetGridY));
+        Action newAction = Action.Move;
+
+        if (targetGridX < MinerData.XCOUNT && targetGridY < MinerData.YCOUNT && targetGridY >= 0 && targetGridX >= 0 && Data.Rocks[targetGridX, targetGridY] != null)
         {
-            targetElevator = target;
-            elevator.transform.position = Vector3.MoveTowards(elevator.transform.position, targetElevator, step);
-            var elevatorLabel = GameObject.Find("ElevatorLabel");
-            int pos = elevator.transform.position.y >= 0 ? 0 : Mathf.Abs((int)(elevator.transform.position.y + 10) / 20) + 1;
-            elevatorLabel.GetComponent<UnityEngine.UI.Text>().text = pos.ToString();
+            if (Data.Rocks[targetGridX, targetGridY].Type.IndexOf("empty") < 0) newAction = Action.Idle;
+        }
+
+        if (newAction == Action.Idle)
+        {
+            target = current;
+            GetComponent<Animator>().Play("idle");
+        }
+        else if (newAction == Action.Move)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, target, step);
+
+            if (moveElevator)
+            {
+                targetElevator = target;
+                elevator.transform.position = Vector3.MoveTowards(elevator.transform.position, targetElevator, step);
+                var elevatorLabel = GameObject.Find("ElevatorLabel");
+                int pos = elevator.transform.position.y >= 0 ? 0 : Mathf.Abs((int)(elevator.transform.position.y + 10) / 20) + 1;
+                elevatorLabel.GetComponent<UnityEngine.UI.Text>().text = pos.ToString();
+            }
         }
     }
 

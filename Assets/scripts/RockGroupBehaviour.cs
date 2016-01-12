@@ -10,7 +10,7 @@ public class RockGroupBehaviour : MonoBehaviour {
     {
         var topRockTemplate = this.gameObject.transform.GetChild(0);
 
-        for (var xx = 0; xx < 26; ++xx)
+        for (var xx = 0; xx < MinerData.XCOUNT; ++xx)
         {
             var topRockCopy = Instantiate(topRockTemplate);
             topRockCopy.transform.position = new Vector3(xx * 15, 0);
@@ -33,18 +33,18 @@ public class RockGroupBehaviour : MonoBehaviour {
         var graniteFactorOriginal = 98.0;
         var graniteFactorOriginal1 = 77.0;
         var endStoneFactor = 101.0;
-        var arrTypes = new string[26];
+        var arrTypes = new string[MinerData.XCOUNT];
         Random rnd = new Random();
-        for (var xx = 0; xx < 26; ++xx)
+        for (var xx = 0; xx < MinerData.XCOUNT; ++xx)
         {
             arrTypes[xx] = "light";
         }
 
-        for (var yy = 0; yy < 115; yy++)
+        for (var yy = 0; yy < MinerData.YCOUNT; yy++)
         {
             hardFactor = 10;
             graniteFactor = graniteFactorOriginal - (yy / 10.0);
-            for (var xx = 0; xx < 26; xx++)
+            for (var xx = 0; xx < MinerData.XCOUNT; xx++)
             {
                 string type = "light";
                 var rock = Instantiate(template);
@@ -110,6 +110,11 @@ public class RockGroupBehaviour : MonoBehaviour {
                     {
                         spriteName += " " + strRandomImage;
                     }
+                    MinerData.Rock r = new MinerData.Rock();
+                    r.Type = type;
+                    r.X = xx;
+                    r.Y = yy;
+                    MinerSaveGame.Instance.Current.setRock(xx, yy, r);
                     rock.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(spriteName);
                     Debug.Log("SpriteName " + spriteName);
                 }
@@ -121,22 +126,7 @@ public class RockGroupBehaviour : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        /*var template = this.gameObject.transform.GetChild(0);
-        for (var xx = 0; xx < 24; ++xx)
-        {
-            for (var yy = 0; yy < 100; ++yy)
-            {
-                var rock = Instantiate(template);
-                rock.SetParent(this.gameObject.transform);
-                rock.transform.position = new Vector3(xx * 15, yy * -20);
-                if (xx == 22)
-                {
-                    rock.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("rocks/rock light empty");//spriteCollection[spriteCollection.Count - 1];
-                }
-            }
-        }*/
         setRocks();
-
 	}
 	
 	// Update is called once per frame
