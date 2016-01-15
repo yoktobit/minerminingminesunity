@@ -11,9 +11,20 @@ public class MinerRicoBehavior : MonoBehaviour {
     void Start () {
         Data = MinerSaveGame.Instance.Current;
         InvokeRepeating("reduceFood", 1, 1);
+        InvokeRepeating("save", 60, 60);
 	}
 
+    void OnDestroy()
+    {
+        MinerSaveGame.Save();
+    }
+
     public Transform elevator;
+
+    public void save()
+    {
+        MinerSaveGame.Save();
+    }
 
     public void reduceFood()
     {
@@ -53,6 +64,9 @@ public class MinerRicoBehavior : MonoBehaviour {
         bool shouldWalk = false;
         bool hasWorked = workingRock != null;
         MinerData.Rock oldWorkingRock = workingRock;
+        Data.DayTime += Time.deltaTime;
+        Data.DayTime %= 100.0f;
+        GameObject.Find("TimeBarInner").GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.DayTime / 100.0f), 0.9f);
         if (Input.GetAxis("Horizontal") < -0.1)
         {
             left = true;

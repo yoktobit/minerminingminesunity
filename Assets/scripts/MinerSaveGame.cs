@@ -1,6 +1,11 @@
 ﻿using UnityEngine;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections;
+using System.IO;
+using System;
 
+[Serializable]
 public class MinerSaveGame {
 
     private static MinerSaveGame _instance;
@@ -10,7 +15,7 @@ public class MinerSaveGame {
         {
             if (_instance == null)
             {
-                _instance = new MinerSaveGame();
+                _instance = MinerSaveGame.Load();
             }
             return _instance;
         }
@@ -39,16 +44,34 @@ public class MinerSaveGame {
         }
     }
 
-    public void Load()
+    public static string saveGameFileName = Application.persistentDataPath + "/minerdata.dat";
+
+    public static MinerSaveGame Load()
     {
-        minerData[0] = new MinerData();
-        minerData[1] = new MinerData();
-        minerData[2] = new MinerData();
+        if (File.Exists(saveGameFileName))
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            FileStream fs = File.Open(saveGameFileName, FileMode.Open);
+            MinerSaveGame saveGame = (MinerSaveGame)formatter.Deserialize(fs);
+            fs.Close();
+            return saveGame;
+        }
+        else
+        {
+            MinerSaveGame newGame = new MinerSaveGame();
+            newGame.minerData[0] = new MinerData();
+            newGame.minerData[1] = new MinerData();
+            newGame.minerData[2] = new MinerData();
+            return newGame;
+        }
     }
 
-    public void Save()
+    public static void Save()
     {
-
+        System.IO.FileStream fs = System.IO.File.Open(saveGameFileName, System.IO.FileMode.Create);
+        BinaryFormatter formatter = new BinaryFormatter();
+        formatter.Serialize(fs, Instance);
+        fs.Close();
     }
 
     public MinerSaveGame()

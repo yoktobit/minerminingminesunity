@@ -38,6 +38,7 @@ public class MinerData {
         Rocks[x, y] = rock;
     }
 
+    [Serializable]
     public class Rock
     {
         public string Type { get; set; }

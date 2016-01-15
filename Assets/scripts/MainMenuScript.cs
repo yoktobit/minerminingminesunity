@@ -15,7 +15,7 @@ public class MainMenuScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         selected = playButton;
-        MinerSaveGame.Instance.Load();
+        MinerSaveGame saveGame = MinerSaveGame.Instance;
 	}
 
     float lastVert;
