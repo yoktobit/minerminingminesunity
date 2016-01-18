@@ -21,6 +21,8 @@ public class MinerData {
 
     public bool Loaded { get; set; }
 
+    public bool HasData { get; set; }
+
     public MinerData()
     {
         Health = 100;

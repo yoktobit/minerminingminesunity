@@ -116,7 +116,7 @@ public class RockGroupBehaviour : MonoBehaviour {
                     r.Y = yy;
                     MinerSaveGame.Instance.Current.setRock(xx, yy, r);
                     rock.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(spriteName);
-                    Debug.Log("SpriteName " + spriteName);
+                    //Debug.Log("SpriteName " + spriteName);
                 }
                 //Input.register(xx, yy, newRock);
             }
