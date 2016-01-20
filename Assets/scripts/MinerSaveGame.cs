@@ -32,7 +32,7 @@ public class MinerSaveGame {
             {
                 if (minerData[0] == null)
                 {
-                    minerData[0] = new MinerData();
+                    minerData[0] = new MinerData(0);
                 }
                 _current = minerData[0];
             }
@@ -50,6 +50,7 @@ public class MinerSaveGame {
     {
         if (File.Exists(saveGameFileName))
         {
+            Debug.Log("Loading SaveGame...");
             BinaryFormatter formatter = new BinaryFormatter();
             FileStream fs = File.Open(saveGameFileName, FileMode.Open);
             MinerSaveGame saveGame = (MinerSaveGame)formatter.Deserialize(fs);
@@ -58,16 +59,18 @@ public class MinerSaveGame {
         }
         else
         {
+            Debug.Log("Creating new SaveGame...");
             MinerSaveGame newGame = new MinerSaveGame();
-            newGame.minerData[0] = new MinerData();
-            newGame.minerData[1] = new MinerData();
-            newGame.minerData[2] = new MinerData();
+            newGame.minerData[0] = new MinerData(0);
+            newGame.minerData[1] = new MinerData(1);
+            newGame.minerData[2] = new MinerData(2);
             return newGame;
         }
     }
 
     public static void Save()
     {
+        Debug.Log("Saving Game...");
         System.IO.FileStream fs = System.IO.File.Open(saveGameFileName, System.IO.FileMode.Create);
         BinaryFormatter formatter = new BinaryFormatter();
         formatter.Serialize(fs, Instance);

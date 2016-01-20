@@ -23,7 +23,9 @@ public class MinerData {
 
     public bool HasData { get; set; }
 
-    public MinerData()
+    public int Slot { get; set; }
+
+    public MinerData(int slot)
     {
         Health = 100;
         FoodLevel = 100;
@@ -33,6 +35,7 @@ public class MinerData {
         DayTime = 0;
         Rocks = new Rock[XCOUNT, YCOUNT];
         Loaded = true;
+        Slot = slot;
     }
 
     public void setRock(int x, int y, Rock rock)

@@ -52,12 +52,12 @@ public class MainMenuScript : MonoBehaviour {
         }
     }
 
-    public GameObject playButton;
-    public GameObject quitButton;
-    public GameObject slot1;
-    public GameObject slot2;
-    public GameObject slot3;
-    public GameObject saveGameSelector;
+    GameObject playButton;
+    GameObject quitButton;
+    GameObject slot1;
+    GameObject slot2;
+    GameObject slot3;
+    GameObject saveGameSelector;
 
     // Use this for initialization
     void Start () {
@@ -110,27 +110,32 @@ public class MainMenuScript : MonoBehaviour {
 
     public void HandlePlayButton()
     {
+        Debug.Log("Select Slots");
         State = "SlotSelect";
         Selected = slot1;
     }
 
     public void HandleQuitButton()
     {
+        Debug.Log("Quitting...");
         Application.Quit();
     }
 
     public void HandleSlot1()
     {
+        Debug.Log("Loading Slot 1");
         MinerSaveGame.Instance.Current = MinerSaveGame.Instance.minerData[0];
         LoadSlot();
     }
     public void HandleSlot2()
     {
+        Debug.Log("Loading Slot 2");
         MinerSaveGame.Instance.Current = MinerSaveGame.Instance.minerData[1];
         LoadSlot();
     }
     public void HandleSlot3()
     {
+        Debug.Log("Loading Slot 3");
         MinerSaveGame.Instance.Current = MinerSaveGame.Instance.minerData[2];
         LoadSlot();
     }

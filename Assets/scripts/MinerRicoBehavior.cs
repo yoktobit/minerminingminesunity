@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
+using UnityEngine.UI;
 
 public class MinerRicoBehavior : MonoBehaviour {
 
@@ -8,8 +10,46 @@ public class MinerRicoBehavior : MonoBehaviour {
         Move, Pick, Shovel, Idle, NeedsWork
     }
 
+    bool isAnimated = false;
+    bool moveElevator = false;
+    bool inElevator = false;
+    Vector3 target = Vector3.zero;
+
+    public MinerData Data;
+
+    Action oldAction = Action.Idle;
+
+    float workStartedTime;
+    float estimatedWorkTime;
+    MinerData.Rock workingRock;
+    public GameObject foodBarInner;
+    public GameObject healthBarInner;
+    public GameObject gameOver;
+    public GameObject timeBarInner;
+    public GameObject sun;
+    public Transform elevator;
+    public GameObject[] arrSky;
+
     void Start () {
         Data = MinerSaveGame.Instance.Current;
+
+        healthBarInner = GameObject.Find("HealthBarInner");
+        foodBarInner = GameObject.Find("FoodBarInner");
+        gameOver = GameObject.Find("GameOver");
+        timeBarInner = GameObject.Find("TimeBarInner");
+        sun = GameObject.Find("Sun");
+
+        arrSky = new GameObject[4];
+        for (int ii = 0; ii < 4; ii++)
+        {
+            arrSky[ii] = GameObject.Find("world sky" + ii);
+        }
+
+        gameOver.SetActive(false);
+
+        UpdateBars();
+        UpdateSun(true);
+
         InvokeRepeating("reduceFood", 1, 1);
         InvokeRepeating("save", 60, 60);
 	}
@@ -19,11 +59,15 @@ public class MinerRicoBehavior : MonoBehaviour {
         MinerSaveGame.Save();
     }
 
-    public Transform elevator;
-
     public void save()
     {
         MinerSaveGame.Save();
+    }
+
+    public void UpdateBars()
+    {
+        foodBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.FoodLevel / 100.0f), 0.9f);
+        healthBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.Health / 100.0f), 0.9f);
     }
 
     public void reduceFood()
@@ -35,26 +79,35 @@ public class MinerRicoBehavior : MonoBehaviour {
             --Data.Health;
             if (Data.Health < 0) Data.Health = 0;
         }
-        GameObject.Find("FoodBarInner").GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.FoodLevel / 100.0f), 0.9f);
-        GameObject.Find("HealthBarInner").GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.Health / 100.0f), 0.9f);
-        //GameObject.Find("FoodBarInner").transform.localScale = new Vector3(Data.FoodLevel / 100.0f, 1, 1);
-        //GameObject.Find("HealthBarInner").transform.localScale = new Vector3(Data.Health / 100.0f, 1, 1);
+        UpdateBars();
     }
 
-    bool isAnimated = false;
-    bool moveElevator = false;
-    Vector3 target = Vector3.zero;
-
-    public MinerData Data;
-
-    Action oldAction = Action.Idle;
-
-    float workStartedTime;
-    float estimatedWorkTime;
-    MinerData.Rock workingRock;
+    void UpdateSun(bool first = false)
+    {
+        Color preColor = timeBarInner.GetComponent<Image>().color;
+        timeBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.DayTime / 100.0f), 0.9f);
+        timeBarInner.GetComponent<Image>().color = Data.DayTime > 50.0f ? Color.black : Color.white;
+        if (preColor != timeBarInner.GetComponent<Image>().color || first)
+        {
+            sun.GetComponent<SpriteRenderer>().sprite = Data.DayTime > 50.0f ? Resources.Load<Sprite>("world/world moon") : Resources.Load<Sprite>("world/world sun");
+            for (int ii = 0; ii < 4; ii++)
+            {
+                arrSky[ii].GetComponent<SpriteRenderer>().sprite = Data.DayTime > 50.0f ? Resources.Load<Sprite>("world/world sky night") : Resources.Load<Sprite>("world/world sky day");
+            }
+        }
+        sun.transform.position = new Vector2(Mathf.Lerp(-15f, 390f, Data.DayTime / 100.0f), sun.transform.position.y);
+    }
 	
+    void UpdateDayTime()
+    {
+        Data.DayTime += Time.deltaTime;
+        Data.DayTime %= 100.0f;
+        UpdateSun(false);        
+    }
+
 	// Update is called once per frame
 	void Update () {
+        if (gameOver.activeSelf) return;
         float step = 30 * Time.deltaTime; // Movement Speed
         bool left = false, right = false, up = false, down = false;
         Vector3 targetElevator = elevator.transform.position;
@@ -64,9 +117,10 @@ public class MinerRicoBehavior : MonoBehaviour {
         bool shouldWalk = false;
         bool hasWorked = workingRock != null;
         MinerData.Rock oldWorkingRock = workingRock;
-        Data.DayTime += Time.deltaTime;
-        Data.DayTime %= 100.0f;
-        GameObject.Find("TimeBarInner").GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.DayTime / 100.0f), 0.9f);
+
+        UpdateDayTime();
+        CheckIfAlive();
+
         if (Input.GetAxis("Horizontal") < -0.1)
         {
             left = true;
@@ -284,7 +338,14 @@ public class MinerRicoBehavior : MonoBehaviour {
         oldAction = newAction;
     }
 
-    bool inElevator = false;
+    private void CheckIfAlive()
+    {
+        if (Data.Health <= 0)
+        {
+            gameOver.SetActive(true);
+        }
+    }
+
     void EnterElevator()
     {
         inElevator = true;
