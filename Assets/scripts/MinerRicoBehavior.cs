@@ -18,6 +18,7 @@ public class MinerRicoBehavior : MonoBehaviour {
     public MinerData Data;
 
     Action oldAction = Action.Idle;
+    string oldOrientation;
 
     float workStartedTime;
     float estimatedWorkTime;
@@ -85,7 +86,7 @@ public class MinerRicoBehavior : MonoBehaviour {
     void UpdateSun(bool first = false)
     {
         Color preColor = timeBarInner.GetComponent<Image>().color;
-        timeBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.DayTime / 100.0f), 0.9f);
+        timeBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, (Data.DayTime / 100.0f)), 0.9f);
         timeBarInner.GetComponent<Image>().color = Data.DayTime > 50.0f ? Color.black : Color.white;
         if (preColor != timeBarInner.GetComponent<Image>().color || first)
         {
@@ -95,7 +96,7 @@ public class MinerRicoBehavior : MonoBehaviour {
                 arrSky[ii].GetComponent<SpriteRenderer>().sprite = Data.DayTime > 50.0f ? Resources.Load<Sprite>("world/world sky night") : Resources.Load<Sprite>("world/world sky day");
             }
         }
-        sun.transform.position = new Vector2(Mathf.Lerp(-15f, 390f, Data.DayTime / 100.0f), sun.transform.position.y);
+        sun.transform.position = new Vector2(Mathf.Lerp(-15f, 390f, (((Data.DayTime * 2f) % 100) / 100.0f)), sun.transform.position.y);
     }
 	
     void UpdateDayTime()
@@ -193,7 +194,7 @@ public class MinerRicoBehavior : MonoBehaviour {
                 GetComponent<SpriteRenderer>().flipX = true;
                 shouldWalk = true;
             }
-            if (down && transform.position.y > -2000)
+            if (down && transform.position.y > -2000 && (transform.position.y != 10 || inElevator))
             {
                 target = transform.position + new Vector3(0, -20);
                 if (transform.position.y == 10)
@@ -206,7 +207,7 @@ public class MinerRicoBehavior : MonoBehaviour {
                 }
                 shouldWalk = true;
             }
-            if (up && transform.position.y < 10)
+            if (up && transform.position.y < 10 && (transform.position.y != 10 || inElevator))
             {
                 target = transform.position + new Vector3(0, 20);
                 if (transform.position.y == -20)
@@ -252,26 +253,26 @@ public class MinerRicoBehavior : MonoBehaviour {
             }
         }
         string orientation = "";
+        // Richtung ermitteln
+        if (target.x < transform.position.x)
+        {
+            orientation = "side";
+        }
+        else if (target.x > transform.position.x)
+        {
+            orientation = "side";
+        }
+        else if (target.y < transform.position.y)
+        {
+            orientation = "down";
+        }
+        else if (target.y > transform.position.y)
+        {
+            orientation = "up";
+        }
+
         if (newAction == Action.NeedsWork)
         {
-            // Richtung ermitteln
-            if (target.x < transform.position.x)
-            {
-                orientation = "side";
-            }
-            else if (target.x > transform.position.x)
-            {
-                orientation = "side";
-            }
-            else if (target.y < transform.position.y)
-            {
-                orientation = "down";
-            }
-            else if (target.y > transform.position.y)
-            {
-                orientation = "up";
-            }
-
             // Arbeitstyp ermitteln
             if (newWorkingRock.Type == "hard")
             {
@@ -308,7 +309,11 @@ public class MinerRicoBehavior : MonoBehaviour {
                 int pos = elevator.transform.position.y >= 0 ? 0 : Mathf.Abs((int)(elevator.transform.position.y + 10) / 20) + 1;
                 elevatorLabel.GetComponent<UnityEngine.UI.Text>().text = pos.ToString();
             }
-            if (newAction != oldAction && !moveElevator)
+            if (moveElevator)
+            {
+                GetComponent<Animator>().Play("idle");
+            }
+            else if (newAction != oldAction || oldOrientation != orientation)
             {
                 Debug.Log("Playing walking");
                 GetComponent<Animator>().Play("walking");
@@ -336,6 +341,7 @@ public class MinerRicoBehavior : MonoBehaviour {
             workingRock = newWorkingRock;
         }
         oldAction = newAction;
+        oldOrientation = orientation;
     }
 
     private void CheckIfAlive()
