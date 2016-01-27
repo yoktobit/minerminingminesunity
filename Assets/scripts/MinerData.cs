@@ -25,7 +25,19 @@ public class MinerData {
 
     public int Slot { get; set; }
 
+    public float X { get; set; }
+    public float Y { get; set; }
+
+    public float ElevatorX { get; set; }
+    public float ElevatorY { get; set; }
+
     public MinerData(int slot)
+    {
+        Slot = slot;
+        Reset();
+    }
+
+    public void Reset()
     {
         Health = 100;
         FoodLevel = 100;
@@ -34,8 +46,12 @@ public class MinerData {
         Experience = 0;
         DayTime = 0;
         Rocks = new Rock[XCOUNT, YCOUNT];
-        Loaded = true;
-        Slot = slot;
+        HasData = false;
+        Loaded = false;
+        X = 307.5f;
+        Y = 10f;
+        ElevatorX = 337.5f;
+        ElevatorY = 10f;
     }
 
     public void setRock(int x, int y, Rock rock)

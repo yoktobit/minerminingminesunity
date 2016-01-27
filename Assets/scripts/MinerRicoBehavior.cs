@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class MinerRicoBehavior : MonoBehaviour {
 
@@ -28,6 +29,8 @@ public class MinerRicoBehavior : MonoBehaviour {
     public GameObject gameOver;
     public GameObject timeBarInner;
     public GameObject sun;
+    public GameObject inventory;
+    public GameObject inGameMenu;
     public Transform elevator;
     public GameObject[] arrSky;
 
@@ -39,6 +42,8 @@ public class MinerRicoBehavior : MonoBehaviour {
         gameOver = GameObject.Find("GameOver");
         timeBarInner = GameObject.Find("TimeBarInner");
         sun = GameObject.Find("Sun");
+        inventory = GameObject.Find("Inventory");
+        inGameMenu = GameObject.Find("InGameMenu");
 
         arrSky = new GameObject[4];
         for (int ii = 0; ii < 4; ii++)
@@ -47,9 +52,15 @@ public class MinerRicoBehavior : MonoBehaviour {
         }
 
         gameOver.SetActive(false);
+        inventory.SetActive(false);
+        inGameMenu.SetActive(false);
 
         UpdateBars();
         UpdateSun(true);
+        HandleInventorySelection();
+
+        transform.position = new Vector3(Data.X, Data.Y, transform.position.z);
+        elevator.transform.position = new Vector3(Data.ElevatorX, Data.ElevatorY, elevator.transform.position.z);
 
         InvokeRepeating("reduceFood", 1, 1);
         InvokeRepeating("save", 60, 60);
@@ -57,7 +68,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     void OnDestroy()
     {
-        MinerSaveGame.Save();
+        save();
     }
 
     public void save()
@@ -106,65 +117,142 @@ public class MinerRicoBehavior : MonoBehaviour {
         UpdateSun(false);        
     }
 
+    public Transform activeInventoryItem;
+    public int activeInventoryNumber = 0;
+    void HandleInventorySelection()
+    {
+        activeInventoryItem = inventory.transform.GetChild(activeInventoryNumber + 1);
+        for (int ii = 1; ii < inventory.transform.childCount; ii++)
+        {
+            var current = inventory.transform.GetChild(ii);
+            if (current == activeInventoryItem)
+            {
+                current.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/borderlargefilledselected");
+            }
+            else
+            {
+                current.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/borderlargefilled");
+            }
+        }
+    }
+
+    void HandleInventory()
+    {
+        if (Input.GetKeyUp(KeyCode.I))
+        {
+            inventory.SetActive(!inventory.activeSelf);
+        }
+        bool left, right, up, down;
+        left = right = up = down = false;
+        if (inventory.activeSelf)
+        {
+            if (Input.GetKeyUp(KeyCode.Escape))
+            {
+                inventory.SetActive(!inventory.activeSelf);
+            }
+            if (Input.GetButtonUp("Left"))
+            {
+                left = true;
+            }
+            else if (Input.GetButtonUp("Right"))
+            {
+                right = true;
+            }
+            else if (Input.GetButtonUp("Down"))
+            {
+                down = true;
+            }
+            else if (Input.GetButtonUp("Up"))
+            {
+                up = true;
+            }
+            else
+            {
+                // rest doesn't matter
+                return;
+            }
+            if (left) activeInventoryNumber--;
+            else if (right) activeInventoryNumber++;
+            else if (up) activeInventoryNumber -= 5;
+            else if (down) activeInventoryNumber += 5;
+            if (activeInventoryNumber < 0) activeInventoryNumber = 20 + activeInventoryNumber;
+            activeInventoryNumber %= 20;
+            HandleInventorySelection();
+        }
+    }
+
 	// Update is called once per frame
 	void Update () {
+        HandleReset();
+        CheckIfAlive();
         if (gameOver.activeSelf) return;
+
+        HandleInventory();
+        UpdateDayTime();
+        HandleInGameMenu();
+
         float step = 30 * Time.deltaTime; // Movement Speed
         bool left = false, right = false, up = false, down = false;
         Vector3 targetElevator = elevator.transform.position;
-        Vector3 current = target;
+        Vector3 currentTarget = target;
         bool arrived = false;
         bool workDone = false;
         bool shouldWalk = false;
         bool hasWorked = workingRock != null;
         MinerData.Rock oldWorkingRock = workingRock;
 
-        UpdateDayTime();
-        CheckIfAlive();
-
-        if (Input.GetAxis("Horizontal") < -0.1)
+        if (!inventory.activeSelf && !inGameMenu.activeSelf)
         {
-            left = true;
-        }
-        else if (Input.GetAxis("Horizontal") > 0.1)
-        {
-            right = true;
-        }
-        else if (Input.GetAxis("Vertical") < -0.1)
-        {
-            down = true;
-        }
-        else if (Input.GetAxis("Vertical") > 0.1)
-        {
-            up = true;
-        }
-        if (Input.GetMouseButton(0) && Input.mousePosition.x < Screen.width * 0.25)
-        {
-            left = true;
-        }
-        else if (Input.GetMouseButton(0) && Input.mousePosition.x > Screen.width * 0.75)
-        {
-            right = true;
-        }
-        else if (Input.GetMouseButton(0) && Input.mousePosition.y < Screen.height * 0.25)
-        {
-            down = true;
-        }
-        else if (Input.GetMouseButton(0) && Input.mousePosition.y > Screen.height * 0.75)
-        {
-            up = true;
+            if (Input.GetAxis("Horizontal") < -0.1)
+            {
+                left = true;
+            }
+            else if (Input.GetAxis("Horizontal") > 0.1)
+            {
+                right = true;
+            }
+            else if (Input.GetAxis("Vertical") < -0.1)
+            {
+                down = true;
+            }
+            else if (Input.GetAxis("Vertical") > 0.1)
+            {
+                up = true;
+            }
+            if (Input.GetMouseButton(0) && Input.mousePosition.x < Screen.width * 0.25)
+            {
+                left = true;
+            }
+            else if (Input.GetMouseButton(0) && Input.mousePosition.x > Screen.width * 0.75)
+            {
+                right = true;
+            }
+            else if (Input.GetMouseButton(0) && Input.mousePosition.y < Screen.height * 0.25)
+            {
+                down = true;
+            }
+            else if (Input.GetMouseButton(0) && Input.mousePosition.y > Screen.height * 0.75)
+            {
+                up = true;
+            }
         }
         if (isAnimated)
         {
             // Am Ziel angekommen?
             if (transform.position == target && oldAction == Action.Move)
             {
+                Debug.Log("arrived");
                 arrived = true;
+                Data.X = transform.position.x;
+                Data.Y = transform.position.y;
+                Data.ElevatorX = elevator.position.x;
+                Data.ElevatorY = elevator.position.y;
             }
 
             // Fertig mit der Arbeit?
             if (Time.time - workStartedTime > estimatedWorkTime && hasWorked)
             {
+                Debug.Log("work done");
                 workDone = true;
                 workingRock = null;
             }
@@ -244,7 +332,8 @@ public class MinerRicoBehavior : MonoBehaviour {
         {
             newAction = Action.Move;
         }
-        if (targetGridX < MinerData.XCOUNT && targetGridY < MinerData.YCOUNT && targetGridY >= 0 && targetGridX >= 0 && Data.Rocks[targetGridX, targetGridY] != null)
+        // Wenn er laufen soll, schauen, ob er buddeln müsste
+        if (newAction == Action.Move && targetGridX < MinerData.XCOUNT && targetGridY < MinerData.YCOUNT && targetGridY >= 0 && targetGridX >= 0 && Data.Rocks[targetGridX, targetGridY] != null)
         {
             newWorkingRock = Data.Rocks[targetGridX, targetGridY];
             if (newWorkingRock.Type.IndexOf("empty") < 0)
@@ -252,7 +341,7 @@ public class MinerRicoBehavior : MonoBehaviour {
                 newAction = Action.NeedsWork;
             }
         }
-        string orientation = "";
+        string orientation = oldOrientation;
         // Richtung ermitteln
         if (target.x < transform.position.x)
         {
@@ -290,7 +379,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
         if (newAction == Action.Idle || newAction == Action.NeedsWork)
         {
-            target = current;
+            target = currentTarget;
             if (newAction != oldAction)
             {
                 Debug.Log("Playing idle, Action = " + newAction);
@@ -320,28 +409,110 @@ public class MinerRicoBehavior : MonoBehaviour {
             }
             isAnimated = true;
         }
-        else if (newAction == Action.Pick && newAction != oldAction)
+        else if (newAction == Action.Pick && (newAction != oldAction || oldOrientation != orientation))
         {
-            target = current;
-            Debug.Log("Playing pick");
-            GetComponent<Animator>().Play("pick " + orientation);
-            isAnimated = true;
-            workStartedTime = Time.time;
-            estimatedWorkTime = 6f;
-            workingRock = newWorkingRock;
+            target = currentTarget;
+            if ((newAction != oldAction || oldOrientation != orientation))
+            {
+                Debug.Log("Playing pick");
+                GetComponent<Animator>().Play("pick " + orientation);
+                workStartedTime = Time.time;
+                estimatedWorkTime = 6f;
+                workingRock = newWorkingRock;
+                Debug.Log(workingRock);
+                isAnimated = true;
+            }
         }
-        else if (newAction == Action.Shovel && newAction != oldAction)
+        else if (newAction == Action.Shovel)
         {
-            target = current;
-            Debug.Log("Playing spade");
-            GetComponent<Animator>().Play("spade " + orientation);
-            isAnimated = true;
-            workStartedTime = Time.time;
-            estimatedWorkTime = 3f;
-            workingRock = newWorkingRock;
+            target = currentTarget;
+            if ((newAction != oldAction || oldOrientation != orientation))
+            {
+                Debug.Log("Playing spade");
+                GetComponent<Animator>().Play("spade " + orientation);
+                workStartedTime = Time.time;
+                estimatedWorkTime = 3f;
+                workingRock = newWorkingRock;
+                Debug.Log(workingRock);
+                isAnimated = true;
+            }
         }
         oldAction = newAction;
         oldOrientation = orientation;
+    }
+
+    public Transform activeInGameMenuItem;
+    public Transform continueItem;
+    public Transform mainMenuItem;
+    public Transform quitItem;
+    private void HandleInGameMenu()
+    {
+        bool freshActivated = false;
+        if (Input.GetButtonUp("Cancel"))
+        {
+            freshActivated = true;
+            inGameMenu.SetActive(!inGameMenu.activeSelf);
+        }
+        if (!inGameMenu.activeSelf) return;
+        bool up, down, submit, cancel;
+        up = down = submit = cancel = false;
+        if (Input.GetButtonUp("Up"))
+        {
+            up = true;
+        }
+        if (Input.GetButtonUp("Down"))
+        {
+            down = true;
+        }
+        if (Input.GetButtonUp("Submit"))
+        {
+            submit = true;
+        }
+        if (Input.GetButtonUp("Cancel") && !freshActivated)
+        {
+            cancel = true;
+        }
+
+        if (up)
+        {
+            if (activeInGameMenuItem == continueItem) activeInGameMenuItem = quitItem;
+            else if (activeInGameMenuItem == quitItem) activeInGameMenuItem = mainMenuItem;
+            else if (activeInGameMenuItem == mainMenuItem) activeInGameMenuItem = continueItem;
+        }
+        else if (down)
+        {
+            if (activeInGameMenuItem == continueItem) activeInGameMenuItem = mainMenuItem;
+            else if (activeInGameMenuItem == quitItem) activeInGameMenuItem = continueItem;
+            else if (activeInGameMenuItem == mainMenuItem) activeInGameMenuItem = quitItem;
+        }
+        else if (submit)
+        {
+            if (activeInGameMenuItem == continueItem) inGameMenu.SetActive(false);
+            if (activeInGameMenuItem == mainMenuItem) GotoMainMenu();
+            if (activeInGameMenuItem == quitItem) Application.Quit();
+        }
+        else if (cancel)
+        {
+            inGameMenu.SetActive(false);
+        }
+        quitItem.GetComponent<Text>().color = Color.black;
+        mainMenuItem.GetComponent<Text>().color = Color.black;
+        continueItem.GetComponent<Text>().color = Color.black;
+        activeInGameMenuItem.GetComponent<Text>().color = Color.red;
+    }
+
+    void GotoMainMenu()
+    {
+        SceneManager.LoadSceneAsync("MainMenu");
+    }
+
+    private void HandleReset()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            MinerSaveGame.Instance.Current.Reset();
+            GotoMainMenu();
+        }
     }
 
     private void CheckIfAlive()
@@ -349,6 +520,10 @@ public class MinerRicoBehavior : MonoBehaviour {
         if (Data.Health <= 0)
         {
             gameOver.SetActive(true);
+        }
+        else
+        {
+            gameOver.SetActive(false);
         }
     }
 

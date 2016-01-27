@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System;
 
 public class MainMenuScript : MonoBehaviour {
 
@@ -86,6 +87,12 @@ public class MainMenuScript : MonoBehaviour {
             else if (Selected == slot2) HandleSlot2();
             else if (Selected == slot3) HandleSlot3();
         }
+        if (Input.GetButtonUp("Delete"))
+        {
+            if (Selected == slot1) DeleteSlot(0);
+            else if (Selected == slot2) DeleteSlot(1);
+            else if (Selected == slot3) DeleteSlot(2);
+        }
         float vert = Input.GetAxis("Vertical");
         if (vert != 0 && (Mathf.Sign(vert) != Mathf.Sign(lastVert) || lastVert == 0))
         {
@@ -106,6 +113,11 @@ public class MainMenuScript : MonoBehaviour {
             }
         }
         lastVert = Input.GetAxis("Vertical");
+    }
+
+    private void DeleteSlot(int v)
+    {
+        MinerSaveGame.Instance.minerData[v] = new MinerData(v);
     }
 
     public void HandlePlayButton()

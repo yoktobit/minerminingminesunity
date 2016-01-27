@@ -52,7 +52,7 @@ public class RockGroupBehaviour : MonoBehaviour {
                 rock.SetParent(this.gameObject.transform);
                 rock.transform.position = new Vector3(xx * 15, (yy * -20) - 10);
 
-                if (true) // isFresh (also nicht aus Savegame)
+                if (!MinerSaveGame.Instance.Current.Loaded) // isFresh (also nicht aus Savegame)
                 {
                     var randomNumber = Mathf.FloorToInt(Random.Range(0, 100f));
                     if (arrTypes[xx] == "hard")
@@ -102,25 +102,29 @@ public class RockGroupBehaviour : MonoBehaviour {
                     {
                         type = "endstone";
                     }
-                    int randomImage = Random.Range(1, 6);
-                    string strRandomImage = ""+randomImage;
-                    strRandomImage = strRandomImage.PadLeft(2, '0');
-                    string spriteName = "rocks/rock " + type;
-                    if (type.IndexOf("empty") < 0)
-                    {
-                        spriteName += " " + strRandomImage;
-                    }
+                    // Im Savegame speíchern
                     MinerData.Rock r = new MinerData.Rock();
                     r.Type = type;
                     r.X = xx;
                     r.Y = yy;
                     MinerSaveGame.Instance.Current.setRock(xx, yy, r);
-                    rock.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(spriteName);
-                    //Debug.Log("SpriteName " + spriteName);
                 }
-                //Input.register(xx, yy, newRock);
-            }
-        }
+                else
+                {
+                    type = MinerSaveGame.Instance.Current.Rocks[xx, yy].Type;
+                }
+                int randomImage = Random.Range(1, 6);
+                string strRandomImage = "" + randomImage;
+                strRandomImage = strRandomImage.PadLeft(2, '0');
+                string spriteName = "rocks/rock " + type;
+                if (type.IndexOf("empty") < 0)
+                {
+                    spriteName += " " + strRandomImage;
+                }
+                rock.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(spriteName);
+            } // xx
+        } // yy
+        MinerSaveGame.Instance.Current.Loaded = true;
         template.gameObject.SetActive(false);
     }
 
