@@ -31,6 +31,7 @@ public class MinerRicoBehavior : MonoBehaviour {
     public GameObject sun;
     public GameObject inventory;
     public GameObject inGameMenu;
+    public GameObject elevatorLabel;
     public Transform elevator;
     public GameObject[] arrSky;
 
@@ -44,6 +45,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         sun = GameObject.Find("Sun");
         inventory = GameObject.Find("Inventory");
         inGameMenu = GameObject.Find("InGameMenu");
+        elevatorLabel = GameObject.Find("ElevatorLabel");
 
         arrSky = new GameObject[4];
         for (int ii = 0; ii < 4; ii++)
@@ -201,6 +203,9 @@ public class MinerRicoBehavior : MonoBehaviour {
         bool hasWorked = workingRock != null;
         MinerData.Rock oldWorkingRock = workingRock;
 
+        int pos = elevator.transform.position.y >= 0 ? 0 : Mathf.Abs((int)(elevator.transform.position.y + 10) / 20) + 1;
+        elevatorLabel.GetComponent<UnityEngine.UI.Text>().text = pos.ToString();
+
         if (!inventory.activeSelf && !inGameMenu.activeSelf)
         {
             if (Input.GetAxis("Horizontal") < -0.1)
@@ -295,7 +300,7 @@ public class MinerRicoBehavior : MonoBehaviour {
                 }
                 shouldWalk = true;
             }
-            if (up && transform.position.y < 10 && (transform.position.y != 10 || inElevator))
+            if (up && transform.position.y < 10 && (transform.position.y != 10 || inElevator) && (transform.position.y != -20 || inElevator))
             {
                 target = transform.position + new Vector3(0, 20);
                 if (transform.position.y == -20)
@@ -394,9 +399,6 @@ public class MinerRicoBehavior : MonoBehaviour {
             {
                 targetElevator = target;
                 elevator.transform.position = Vector3.MoveTowards(elevator.transform.position, targetElevator, step);
-                var elevatorLabel = GameObject.Find("ElevatorLabel");
-                int pos = elevator.transform.position.y >= 0 ? 0 : Mathf.Abs((int)(elevator.transform.position.y + 10) / 20) + 1;
-                elevatorLabel.GetComponent<UnityEngine.UI.Text>().text = pos.ToString();
             }
             if (moveElevator)
             {

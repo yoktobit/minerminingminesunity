@@ -26,6 +26,7 @@ public class RockGroupBehaviour : MonoBehaviour {
             }
             topRockCopy.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(spriteName);
         }
+        topRockTemplate.gameObject.SetActive(false);
 
         var template = this.gameObject.transform.GetChild(1);
         var hardFactor = 10.0;
