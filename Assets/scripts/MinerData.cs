@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 [Serializable]
 public class MinerData {
@@ -16,7 +17,12 @@ public class MinerData {
     public int Money { get; set; }
     public int Experience { get; set; }
     public float DayTime { get; set; }
-    
+    public int Level { get; set; }
+
+    public float Speed { get; set; }
+    public float MaxHealth { get; set; }
+    public int NextLevelExperience { get; set; }
+
     public Rock[,] Rocks { get; set; }
 
     public bool Loaded { get; set; }
@@ -30,6 +36,8 @@ public class MinerData {
 
     public float ElevatorX { get; set; }
     public float ElevatorY { get; set; }
+
+    public List<InventoryItem> Inventory { get; set; }
 
     public MinerData(int slot)
     {
@@ -52,6 +60,62 @@ public class MinerData {
         Y = 10f;
         ElevatorX = 337.5f;
         ElevatorY = 10f;
+        Speed = 3.5f;
+        MaxHealth = 100f;
+        Level = 0;
+        NextLevelExperience = 100;
+        FillInventory();
+    }
+
+    private void FillInventory()
+    {
+        Inventory = new List<InventoryItem>();
+        AddInventoryItem("shovel", true);
+        AddInventoryItem("pick", true);
+        AddInventoryItem("torch", true);
+        AddInventoryItem("apple", false);
+    }
+
+    private void AddInventoryItem(string type, bool equip = false)
+    {
+        InventoryItem newItem = null;
+        newItem = (from item in Inventory where item.Type == type select item).FirstOrDefault();
+        if (newItem == null)
+        {
+            newItem = new InventoryItem();
+            newItem.Type = type;
+            if (equip)
+                Equip(newItem);
+            else
+                UnEquip(newItem);
+            Inventory.Add(newItem);
+        }
+        ++newItem.Amount;
+    }
+
+    public void Equip(InventoryItem itemToEquip)
+    {
+        itemToEquip.IsEquipped = true;
+        itemToEquip.Position = -1;
+    }
+
+    public void UnEquip(InventoryItem itemToEquip)
+    {
+        itemToEquip.IsEquipped = false;
+        SetInventoryPosition(itemToEquip);
+    }
+
+    public void SetInventoryPosition(InventoryItem itemToPosition)
+    {
+        var arrFilled = from item in Inventory where !item.IsEquipped && item != itemToPosition select item.Position;
+        for(int ii = 0; ii < 20; ii++)
+        {
+            if (!arrFilled.Contains(ii))
+            {
+                itemToPosition.Position = ii;
+                break;
+            }
+        }
     }
 
     public void setRock(int x, int y, Rock rock)

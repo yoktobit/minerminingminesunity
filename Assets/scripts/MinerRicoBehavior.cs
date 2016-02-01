@@ -3,6 +3,7 @@ using System.Collections;
 using System;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class MinerRicoBehavior : MonoBehaviour {
 
@@ -32,6 +33,7 @@ public class MinerRicoBehavior : MonoBehaviour {
     public GameObject inventory;
     public GameObject inGameMenu;
     public GameObject elevatorLabel;
+    public GameObject experienceBarInner;
     public Transform elevator;
     public GameObject[] arrSky;
 
@@ -42,6 +44,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         foodBarInner = GameObject.Find("FoodBarInner");
         gameOver = GameObject.Find("GameOver");
         timeBarInner = GameObject.Find("TimeBarInner");
+        experienceBarInner = GameObject.Find("ExperienceBarInner");
         sun = GameObject.Find("Sun");
         inventory = GameObject.Find("Inventory");
         inGameMenu = GameObject.Find("InGameMenu");
@@ -60,11 +63,13 @@ public class MinerRicoBehavior : MonoBehaviour {
         UpdateBars();
         UpdateSun(true);
         HandleInventorySelection();
+        UpdateExperienceBar();
 
         transform.position = new Vector3(Data.X, Data.Y, transform.position.z);
         elevator.transform.position = new Vector3(Data.ElevatorX, Data.ElevatorY, elevator.transform.position.z);
 
-        InvokeRepeating("reduceFood", 1, 1);
+        InvokeRepeating("reduceFood", 12, 12);
+        InvokeRepeating("reduceHealth", 1, 1);
         InvokeRepeating("save", 60, 60);
 	}
 
@@ -81,7 +86,7 @@ public class MinerRicoBehavior : MonoBehaviour {
     public void UpdateBars()
     {
         foodBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.FoodLevel / 100.0f), 0.9f);
-        healthBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.Health / 100.0f), 0.9f);
+        healthBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.Health / Data.MaxHealth), 0.9f);
     }
 
     public void reduceFood()
@@ -90,6 +95,14 @@ public class MinerRicoBehavior : MonoBehaviour {
         if (Data.FoodLevel < 0)
         {
             Data.FoodLevel = 0;
+        }
+        UpdateBars();
+    }
+
+    public void reduceHealth()
+    {
+        if (Data.FoodLevel < 0)
+        {
             --Data.Health;
             if (Data.Health < 0) Data.Health = 0;
         }
@@ -110,6 +123,11 @@ public class MinerRicoBehavior : MonoBehaviour {
             }
         }
         sun.transform.position = new Vector2(Mathf.Lerp(-15f, 390f, (((Data.DayTime * 2f) % 100) / 100.0f)), sun.transform.position.y);
+    }
+
+    void UpdateExperienceBar()
+    {
+        experienceBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.Experience / Data.NextLevelExperience), 0.9f);
     }
 	
     void UpdateDayTime()
@@ -143,6 +161,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         if (Input.GetKeyUp(KeyCode.I))
         {
             inventory.SetActive(!inventory.activeSelf);
+            UpdateInventory();
         }
         bool left, right, up, down;
         left = right = up = down = false;
@@ -183,8 +202,31 @@ public class MinerRicoBehavior : MonoBehaviour {
         }
     }
 
-	// Update is called once per frame
-	void Update () {
+    private void UpdateInventory()
+    {
+        var slots = inventory.GetComponent<InventoryBehaviour>().InventorySlots;
+        
+        for (int ii = 0; ii < 20; ii++)
+        {
+            var slot = slots[ii];
+            var text = slot.GetChild(0);
+            var image = slot.GetChild(1);
+            var item = (from i in Data.Inventory where i.Position == ii select i).FirstOrDefault();
+            if (item != null)
+            {
+                text.GetComponent<Text>().text = item.Amount.ToString();
+                image.GetComponent<Image>().sprite = Resources.Load<Sprite>("items/item " + item.Type);
+            }
+            else
+            {
+                text.GetComponent<Text>().text = "";
+                image.GetComponent<Image>().sprite = Resources.Load("") as Sprite;
+            }
+        }
+    }
+
+    // Update is called once per frame
+    void Update () {
         HandleReset();
         CheckIfAlive();
         if (gameOver.activeSelf) return;
@@ -192,8 +234,9 @@ public class MinerRicoBehavior : MonoBehaviour {
         HandleInventory();
         UpdateDayTime();
         HandleInGameMenu();
+        CheckLevel();
 
-        float step = 30 * Time.deltaTime; // Movement Speed
+        float step = Data.Speed * 5 * Time.deltaTime; // Movement Speed
         bool left = false, right = false, up = false, down = false;
         Vector3 targetElevator = elevator.transform.position;
         Vector3 currentTarget = target;
@@ -529,6 +572,65 @@ public class MinerRicoBehavior : MonoBehaviour {
         }
     }
 
+    public void CheckLevel()
+    {
+        if (Data.Level == 0 && Data.Experience >= 100)
+        {
+            Data.MaxHealth = 105f;
+            Data.Speed = 3.75f;
+            Data.NextLevelExperience = 200;
+        }
+        else if (Data.Level == 1 && Data.Experience >= 200)
+        {
+            Data.MaxHealth = 110f;
+            Data.Speed = 4.00f;
+            Data.NextLevelExperience = 500;
+        }
+        else if (Data.Level == 2 && Data.Experience >= 500)
+        {
+            Data.MaxHealth = 115f;
+            Data.Speed = 4.25f;
+            Data.NextLevelExperience = 1000;
+        }
+        else if (Data.Level == 3 && Data.Experience >= 1000)
+        {
+            Data.MaxHealth = 120f;
+            Data.Speed = 4.5f;
+            Data.NextLevelExperience = 2500;
+        }
+        else if (Data.Level == 4 && Data.Experience >= 2500)
+        {
+            Data.MaxHealth = 125f;
+            Data.Speed = 4.75f;
+            Data.NextLevelExperience = 3000;
+        }
+        else if (Data.Level == 5 && Data.Experience >= 3000)
+        {
+            Data.MaxHealth = 130f;
+            Data.Speed = 5.0f;
+            Data.NextLevelExperience = 3500;
+        }
+        else if (Data.Level == 6 && Data.Experience >= 3500)
+        {
+            Data.MaxHealth = 135f;
+            Data.Speed = 5.25f;
+            Data.NextLevelExperience = 4000;
+        }
+        else if (Data.Level == 7 && Data.Experience >= 4000)
+        {
+            Data.MaxHealth = 140f;
+            Data.Speed = 5.5f;
+            Data.NextLevelExperience = 5000;
+        }
+        else if (Data.Level == 8 && Data.Experience >= 5000)
+        {
+            Data.MaxHealth = 150f;
+            Data.Speed = 5.75f;
+            Data.NextLevelExperience = 10000;
+        }
+
+    }
+
     void EnterElevator()
     {
         inElevator = true;
@@ -540,10 +642,23 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     void workDoneAction(MinerData.Rock rock)
     {
+        if (rock.Type == "light")
+        {
+            Data.Experience += 1;
+        }
+        else if (rock.Type == "hard")
+        {
+            Data.Experience += 2;
+        }
+        else if (rock.Type == "granite")
+        {
+            Data.Experience += 10;
+        }
         rock.Type += " empty";
         var rockObject = GameObject.Find("Rock_" + rock.X + "_" + rock.Y);
         string spriteName = "rocks/rock " + rock.Type;
         Debug.Log(spriteName);
         rockObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(spriteName);
+        UpdateExperienceBar();
     }
 }
