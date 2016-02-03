@@ -4,12 +4,13 @@ using System;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Linq;
+using System.Collections.Generic;
 
 public class MinerRicoBehavior : MonoBehaviour {
 
     enum Action
     {
-        Move, Pick, Shovel, Idle, NeedsWork
+        Move, Pick, Shovel, Idle, Collect, NeedsWork
     }
 
     bool isAnimated = false;
@@ -34,8 +35,10 @@ public class MinerRicoBehavior : MonoBehaviour {
     public GameObject inGameMenu;
     public GameObject elevatorLabel;
     public GameObject experienceBarInner;
+    public GameObject level;
     public Transform elevator;
     public GameObject[] arrSky;
+    public List<GameObject> resourcesToCollect;
 
     void Start () {
         Data = MinerSaveGame.Instance.Current;
@@ -49,6 +52,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         inventory = GameObject.Find("Inventory");
         inGameMenu = GameObject.Find("InGameMenu");
         elevatorLabel = GameObject.Find("ElevatorLabel");
+        level = GameObject.Find("Level");
 
         arrSky = new GameObject[4];
         for (int ii = 0; ii < 4; ii++)
@@ -127,7 +131,10 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     void UpdateExperienceBar()
     {
-        experienceBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.Experience / Data.NextLevelExperience), 0.9f);
+        float newValue = Mathf.Lerp(0.02f, 0.98f, (float)Data.Experience / (float)Data.NextLevelExperience);
+        Debug.Log("new AnchorMax X of Experience " + newValue);
+        experienceBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(newValue, 0.9f);
+        level.GetComponent<Text>().text = Data.Level.ToString();
     }
 	
     void UpdateDayTime()
@@ -158,7 +165,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     void HandleInventory()
     {
-        if (Input.GetKeyUp(KeyCode.I))
+        if (Input.GetButtonUp("Inventory"))
         {
             inventory.SetActive(!inventory.activeSelf);
             UpdateInventory();
@@ -167,7 +174,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         left = right = up = down = false;
         if (inventory.activeSelf)
         {
-            if (Input.GetKeyUp(KeyCode.Escape))
+            if (Input.GetButtonUp("Cancel"))
             {
                 inventory.SetActive(!inventory.activeSelf);
             }
@@ -267,6 +274,7 @@ public class MinerRicoBehavior : MonoBehaviour {
             {
                 up = true;
             }
+
             if (Input.GetMouseButton(0) && Input.mousePosition.x < Screen.width * 0.25)
             {
                 left = true;
@@ -366,16 +374,21 @@ public class MinerRicoBehavior : MonoBehaviour {
 
         MinerData.Rock newWorkingRock = null;
 
-        if (workDone)
-        {
-            workDoneAction(oldWorkingRock);
-        }
-
         if (arrived || workDone)
         {
             Debug.Log("Done, idling");
             newAction = Action.Idle;
         }
+
+        if (workDone)
+        {
+            workDoneAction(oldWorkingRock);
+        }
+        if (arrived)
+        {
+            HandleArrived(ref newAction);
+        }
+        
         if (shouldWalk) // kein else if, weil er sonst er stoppen würde und dann weiterlaufen, er soll aber direkt weiterlaufen
         {
             newAction = Action.Move;
@@ -425,7 +438,21 @@ public class MinerRicoBehavior : MonoBehaviour {
             }
         }
 
-        if (newAction == Action.Idle || newAction == Action.NeedsWork)
+        if (newAction == Action.Collect)
+        {
+            if (newAction != oldAction)
+            {
+                GetComponent<Animator>().Play("placing");
+            }
+            else
+            {
+                if (!GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("placing"))
+                {
+                    HandleCollect();
+                }
+            }
+        }
+        else if (newAction == Action.Idle || newAction == Action.NeedsWork)
         {
             target = currentTarget;
             if (newAction != oldAction)
@@ -484,6 +511,22 @@ public class MinerRicoBehavior : MonoBehaviour {
         }
         oldAction = newAction;
         oldOrientation = orientation;
+    }
+
+    private void HandleCollect()
+    {
+        foreach (var resource in resourcesToCollect)
+        {
+            var resB = resource.GetComponent<ResourceBehaviour>();
+            Debug.Log("Collecting " + resB.type);
+            if (resB.type == "copper")
+            {
+                Data.Experience += 20;
+            }
+            Destroy(resource);
+        }
+        resourcesToCollect.Clear();
+        UpdateExperienceBar();
     }
 
     public Transform activeInGameMenuItem;
@@ -579,54 +622,63 @@ public class MinerRicoBehavior : MonoBehaviour {
             Data.MaxHealth = 105f;
             Data.Speed = 3.75f;
             Data.NextLevelExperience = 200;
+            Data.Level++;
         }
         else if (Data.Level == 1 && Data.Experience >= 200)
         {
             Data.MaxHealth = 110f;
             Data.Speed = 4.00f;
             Data.NextLevelExperience = 500;
+            Data.Level++;
         }
         else if (Data.Level == 2 && Data.Experience >= 500)
         {
             Data.MaxHealth = 115f;
             Data.Speed = 4.25f;
             Data.NextLevelExperience = 1000;
+            Data.Level++;
         }
         else if (Data.Level == 3 && Data.Experience >= 1000)
         {
             Data.MaxHealth = 120f;
             Data.Speed = 4.5f;
             Data.NextLevelExperience = 2500;
+            Data.Level++;
         }
         else if (Data.Level == 4 && Data.Experience >= 2500)
         {
             Data.MaxHealth = 125f;
             Data.Speed = 4.75f;
             Data.NextLevelExperience = 3000;
+            Data.Level++;
         }
         else if (Data.Level == 5 && Data.Experience >= 3000)
         {
             Data.MaxHealth = 130f;
             Data.Speed = 5.0f;
             Data.NextLevelExperience = 3500;
+            Data.Level++;
         }
         else if (Data.Level == 6 && Data.Experience >= 3500)
         {
             Data.MaxHealth = 135f;
             Data.Speed = 5.25f;
             Data.NextLevelExperience = 4000;
+            Data.Level++;
         }
         else if (Data.Level == 7 && Data.Experience >= 4000)
         {
             Data.MaxHealth = 140f;
             Data.Speed = 5.5f;
             Data.NextLevelExperience = 5000;
+            Data.Level++;
         }
         else if (Data.Level == 8 && Data.Experience >= 5000)
         {
             Data.MaxHealth = 150f;
             Data.Speed = 5.75f;
             Data.NextLevelExperience = 10000;
+            Data.Level++;
         }
 
     }
@@ -638,6 +690,20 @@ public class MinerRicoBehavior : MonoBehaviour {
     void ExitElevator()
     {
         inElevator = false;
+    }
+
+    public void AddResourceToCollect(GameObject resource)
+    {
+        resourcesToCollect.Add(resource);
+    }
+
+    void HandleArrived(ref Action action)
+    {
+        if (resourcesToCollect.Count > 0)
+        {
+            GetComponent<Animator>().Play("placing");
+            action = Action.Collect;
+        }
     }
 
     void workDoneAction(MinerData.Rock rock)
@@ -660,5 +726,11 @@ public class MinerRicoBehavior : MonoBehaviour {
         Debug.Log(spriteName);
         rockObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(spriteName);
         UpdateExperienceBar();
+    }
+
+    void OnMouseDown()
+    {
+        UpdateInventory();
+        inventory.SetActive(true);
     }
 }

@@ -19,7 +19,6 @@ public class CameraBehaviour : MonoBehaviour {
         var camera = GetComponent<Camera>();
         float vertExtent = camera.orthographicSize;
         float horzExtent = vertExtent * Screen.width / Screen.height;
-        Rect bounds = new Rect(0, 0, 360, 2000); // 202
 
         /*float leftBound = bounds.min.x;
         float rightBound = bounds.max.x + horzExtent / 2;
