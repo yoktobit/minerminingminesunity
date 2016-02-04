@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class RockGroupBehaviour : MonoBehaviour {
 
     public List<Sprite> spriteCollection;
+    public Transform invisibleWallTemplate;
 
     void setRocks()
     {
@@ -43,6 +44,7 @@ public class RockGroupBehaviour : MonoBehaviour {
 
         for (var yy = 0; yy < MinerData.YCOUNT; yy++)
         {
+            var invisibleWall = Instantiate(invisibleWallTemplate, new Vector3(180, yy * -20 - 30), Quaternion.identity) as Transform;
             hardFactor = 10;
             graniteFactor = graniteFactorOriginal - (yy / 10.0);
             for (var xx = 0; xx < MinerData.XCOUNT; xx++)

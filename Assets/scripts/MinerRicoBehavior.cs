@@ -443,12 +443,14 @@ public class MinerRicoBehavior : MonoBehaviour {
             if (newAction != oldAction)
             {
                 GetComponent<Animator>().Play("placing");
+                isAnimated = true;
             }
             else
             {
                 if (!GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("placing"))
                 {
                     HandleCollect();
+                    isAnimated = false;
                 }
             }
         }
@@ -694,7 +696,10 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     public void AddResourceToCollect(GameObject resource)
     {
-        resourcesToCollect.Add(resource);
+        if (!resourcesToCollect.Contains(resource))
+        {
+            resourcesToCollect.Add(resource);
+        }
     }
 
     void HandleArrived(ref Action action)
@@ -726,6 +731,50 @@ public class MinerRicoBehavior : MonoBehaviour {
         Debug.Log(spriteName);
         rockObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(spriteName);
         UpdateExperienceBar();
+
+        TryCastMinerals(rock);
+    }
+
+    private void TryCastMinerals(MinerData.Rock rock)
+    {
+        int countMinerals = UnityEngine.Random.Range(0, 7);
+        for (int ii = 0; ii < countMinerals; ii++)
+        {
+            CastMineral(rock);
+        }
+    }
+
+    public Transform resourceTemplate;
+    void CastMineral(MinerData.Rock rock)
+    {
+        var xPos = UnityEngine.Random.Range(1, 15);
+        var yPos = UnityEngine.Random.Range(1, 11);
+        var what = UnityEngine.Random.Range(0, 101);
+        var type = "gold";
+        if (what < 20)
+        {
+            type = "copper";
+        }
+        else if (what < 40)
+        {
+            type = "gold";
+        }
+        else if (what < 60)
+        {
+            type = "silver";
+        }
+        else if (what < 80)
+        {
+            type = "platinum";
+        }
+        else if (what < 100)
+        {
+            type = "gem";
+        }
+        var variant = UnityEngine.Random.Range(1, 5);
+        var newResource = Instantiate(resourceTemplate, new Vector3(rock.X * 15 + xPos, rock.Y * -20 + yPos - 20), Quaternion.identity) as Transform;
+        newResource.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("resources/resources " + type + " " + variant.ToString().PadLeft(2, '0'));
+        newResource.GetComponent<ResourceBehaviour>().type = type;
     }
 
     void OnMouseDown()
