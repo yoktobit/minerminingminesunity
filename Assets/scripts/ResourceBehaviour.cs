@@ -11,7 +11,7 @@ public class ResourceBehaviour : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        var player = GameObject.FindGameObjectWithTag("Player");
+        /*var player = GameObject.FindGameObjectWithTag("Player");
         var collider = GetComponent<Collider2D>();
         Collider2D[] colTarget = Physics2D.OverlapAreaAll(collider.bounds.min, collider.bounds.max);
         foreach (var col in colTarget)
@@ -21,8 +21,11 @@ public class ResourceBehaviour : MonoBehaviour {
                 player.GetComponent<MinerRicoBehavior>().AddResourceToCollect(gameObject);
                 break;
             }
-        }
+        }*/
     }
+
+    public int gridX;
+    public int gridY;
 
     public string type;
 

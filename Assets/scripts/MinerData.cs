@@ -76,7 +76,7 @@ public class MinerData {
         AddInventoryItem("apple", false);
     }
 
-    private void AddInventoryItem(string type, bool equip = false)
+    public void AddInventoryItem(string type, bool equip = false)
     {
         InventoryItem newItem = null;
         newItem = (from item in Inventory where item.Type == type select item).FirstOrDefault();
