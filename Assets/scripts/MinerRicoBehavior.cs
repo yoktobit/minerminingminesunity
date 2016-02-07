@@ -32,6 +32,7 @@ public class MinerRicoBehavior : MonoBehaviour {
     public GameObject timeBarInner;
     public GameObject sun;
     public GameObject inventory;
+    public GameObject inventoryBackground;
     public GameObject inGameMenu;
     public GameObject elevatorLabel;
     public GameObject experienceBarInner;
@@ -45,6 +46,14 @@ public class MinerRicoBehavior : MonoBehaviour {
     public GameObject[] arrSky;
     public List<Transform> resourcesToCollect;
 
+    // Inventory
+    float lastInventoryHorz = 0;
+    float lastInventoryVert = 0;
+    string inventoryState = "";
+    public Transform activeInventoryItem;
+    public int activeInventoryNumber = 0;
+    string inventoryAction = "";
+
     void Start () {
         Data = MinerSaveGame.Instance.Current;
 
@@ -55,6 +64,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         experienceBarInner = GameObject.Find("ExperienceBarInner");
         sun = GameObject.Find("Sun");
         inventory = GameObject.Find("Inventory");
+        inventoryBackground = GameObject.Find("InventoryBackground");
         inGameMenu = GameObject.Find("InGameMenu");
         elevatorLabel = GameObject.Find("ElevatorLabel");
         level = GameObject.Find("Level");
@@ -159,8 +169,6 @@ public class MinerRicoBehavior : MonoBehaviour {
         UpdateSun(false);        
     }
 
-    public Transform activeInventoryItem;
-    public int activeInventoryNumber = 0;
     void HandleInventorySelection()
     {
         activeInventoryItem = inventory.transform.GetChild(activeInventoryNumber + 1);
@@ -176,10 +184,26 @@ public class MinerRicoBehavior : MonoBehaviour {
                 current.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/borderlargefilled");
             }
         }
+        if (inventoryState == "selected")
+        {
+            if (inventoryAction == "use")
+            {
+                inventoryBackground.transform.GetChild(0).GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/borderlargefilledselected");
+                inventoryBackground.transform.GetChild(1).GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/borderlargefilled");
+            }
+            else
+            {
+                inventoryBackground.transform.GetChild(0).GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/borderlargefilled");
+                inventoryBackground.transform.GetChild(1).GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/borderlargefilledselected");
+            }
+        }
+        else
+        {
+            inventoryBackground.transform.GetChild(0).GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/borderlargefilled");
+            inventoryBackground.transform.GetChild(1).GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/borderlargefilled");
+        }
     }
 
-    float lastHorz = 0;
-    float lastVert = 0;
     void HandleInventory()
     {
         if (Input.GetButtonUp("Inventory"))
@@ -195,21 +219,50 @@ public class MinerRicoBehavior : MonoBehaviour {
         {
             if (Input.GetButtonUp("Cancel"))
             {
-                inventory.SetActive(!inventory.activeSelf);
+                if (inventoryState == "")
+                {
+                    inventory.SetActive(!inventory.activeSelf);
+                }
+                else if (inventoryState == "selected")
+                {
+                    inventoryState = "";
+                }
             }
-            if (horz < 0 && (Mathf.Sign(horz) != Mathf.Sign(lastHorz) || lastHorz == 0))
+            if (Input.GetButtonUp("Submit"))
+            {
+                if (inventoryState == "")
+                {
+                    if (activeInventoryItem.transform.GetChild(1).GetComponent<Image>().sprite != null)
+                    {
+                        inventoryState = "selected";
+                        inventoryAction = "use";
+                    }
+                }
+                else if (inventoryState == "selected")
+                {
+                    if (inventoryAction == "use")
+                    {
+                        HandleInventoryUse();
+                    }
+                    else if (inventoryAction == "drop")
+                    {
+                        HandleInventoryDrop();
+                    }
+                }
+            }
+            if (horz < 0 && (Mathf.Sign(horz) != Mathf.Sign(lastInventoryHorz) || lastInventoryHorz == 0))
             {
                 left = true;
             }
-            if (horz > 0 && (Mathf.Sign(horz) != Mathf.Sign(lastHorz) || lastHorz == 0))
+            if (horz > 0 && (Mathf.Sign(horz) != Mathf.Sign(lastInventoryHorz) || lastInventoryHorz == 0))
             {
                 right = true;
             }
-            if (vert < 0 && (Mathf.Sign(vert) != Mathf.Sign(lastVert) || lastVert == 0))
+            if (vert < 0 && (Mathf.Sign(vert) != Mathf.Sign(lastInventoryVert) || lastInventoryVert == 0))
             {
                 down = true;
             }
-            if (vert > 0 && (Mathf.Sign(vert) != Mathf.Sign(lastVert) || lastVert == 0))
+            if (vert > 0 && (Mathf.Sign(vert) != Mathf.Sign(lastInventoryVert) || lastInventoryVert == 0))
             {
                 up = true;
             }
@@ -217,16 +270,58 @@ public class MinerRicoBehavior : MonoBehaviour {
             {
                 // rest doesn't matter
             }
-            if (left) activeInventoryNumber--;
-            else if (right) activeInventoryNumber++;
-            else if (up) activeInventoryNumber -= 5;
-            else if (down) activeInventoryNumber += 5;
-            if (activeInventoryNumber < 0) activeInventoryNumber = 20 + activeInventoryNumber;
-            activeInventoryNumber %= 20;
+            if (inventoryState == "")
+            {
+                if (left) activeInventoryNumber--;
+                else if (right) activeInventoryNumber++;
+                else if (up) activeInventoryNumber -= 5;
+                else if (down) activeInventoryNumber += 5;
+                if (activeInventoryNumber < 0) activeInventoryNumber = 20 + activeInventoryNumber;
+                activeInventoryNumber %= 20;
+            }
+            else if (inventoryState == "selected")
+            {
+                if (left) inventoryAction = inventoryAction == "use" ? "drop" : "use";
+                else if (right) inventoryAction = inventoryAction == "use" ? "drop" : "use";
+            }
             HandleInventorySelection();
         }
-        lastHorz = horz;
-        lastVert = vert;
+        lastInventoryHorz = horz;
+        lastInventoryVert = vert;
+    }
+
+    private void HandleInventoryDrop()
+    {
+        var item = (from i in Data.Inventory where i.Position == activeInventoryNumber select i).FirstOrDefault();
+        if (item != null)
+        {
+            item.Amount = Math.Max(item.Amount - 1, 0);
+            if (item.Amount <= 0)
+            {
+                item.Position = -1;
+                inventoryState = "";
+            }
+        }
+        UpdateInventory();
+    }
+
+    private void HandleInventoryUse()
+    {
+        var item = (from i in Data.Inventory where i.Position == activeInventoryNumber select i).FirstOrDefault();
+        if (item != null)
+        {
+            item.Amount = Math.Max(item.Amount - 1, 0);
+            if (item.Type == "apple")
+            {
+                Data.FoodLevel = Math.Min(Data.FoodLevel + 40, 100);
+            }
+            if (item.Amount <= 0)
+            {
+                item.Position = -1;
+                inventoryState = "";
+            }
+        }
+        UpdateInventory();
     }
 
     void GetGridPosition(Vector3 position, bool plusOne, out int x, out int y)
@@ -247,10 +342,15 @@ public class MinerRicoBehavior : MonoBehaviour {
             var text = slot.GetChild(0);
             var image = slot.GetChild(1);
             var item = (from i in Data.Inventory where i.Position == ii select i).FirstOrDefault();
-            if (item != null)
+            if (item != null && item.Amount > 0)
             {
                 text.GetComponent<Text>().text = item.Amount.ToString();
                 image.GetComponent<Image>().sprite = Resources.Load<Sprite>("items/item " + item.Type);
+            }
+            else if (item != null && item.Amount <= 0)
+            {
+                text.GetComponent<Text>().text = "";
+                image.GetComponent<Image>().sprite = Resources.Load("") as Sprite;
             }
             else
             {
@@ -266,9 +366,9 @@ public class MinerRicoBehavior : MonoBehaviour {
         CheckIfAlive();
         if (gameOver.activeSelf) return;
 
+        HandleInGameMenu();
         HandleInventory();
         UpdateDayTime();
-        HandleInGameMenu();
         CheckLevel();
 
         float step = Data.Speed * 5 * Time.deltaTime; // Movement Speed
@@ -569,6 +669,7 @@ public class MinerRicoBehavior : MonoBehaviour {
     private void HandleInGameMenu()
     {
         bool freshActivated = false;
+        if (inventory.activeSelf) return;
         if (Input.GetButtonUp("Cancel"))
         {
             freshActivated = true;
