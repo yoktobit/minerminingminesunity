@@ -130,5 +130,20 @@ public class MinerData {
         public int X { get; set; }
         public int Y { get; set; }
         public int Health { get; set; }
+        public EnemyType EnemyType { get; set; }
+        public int EnemyHealth { get; set; }
+        public EnemyState EnemyState { get; set; }
+        public float CounterStart { get; set; }
+        public float CounterInterval { get; set; }
     }
+}
+
+public enum EnemyState
+{
+    None, Eyes, Walking
+}
+
+public enum EnemyType
+{
+    MudGolem
 }

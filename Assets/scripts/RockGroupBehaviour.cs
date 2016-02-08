@@ -116,7 +116,7 @@ public class RockGroupBehaviour : MonoBehaviour {
                 {
                     type = MinerSaveGame.Instance.Current.Rocks[xx, yy].Type;
                 }
-                int randomImage = Random.Range(1, 6);
+                int randomImage = Random.Range(1, type.Contains("cave") ? 5 : 6);
                 string strRandomImage = "" + randomImage;
                 strRandomImage = strRandomImage.PadLeft(2, '0');
                 string spriteName = "rocks/rock " + type;
