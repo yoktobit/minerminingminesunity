@@ -47,9 +47,13 @@ public class RockGroupBehaviour : MonoBehaviour {
             var invisibleWall = Instantiate(invisibleWallTemplate, new Vector3(180, yy * -20 - 30), Quaternion.identity) as Transform;
             hardFactor = 10;
             graniteFactor = graniteFactorOriginal - (yy / 10.0);
+            int xCave = Random.Range(0, MinerData.XCOUNT);
+            int yRnd = Random.Range(0, 101);
+            bool hasCave = yRnd < yy;
             for (var xx = 0; xx < MinerData.XCOUNT; xx++)
             {
                 string type = "light";
+                string afterType = "light empty";
                 var rock = Instantiate(template);
                 rock.name = "Rock_" + xx + "_" + yy;
                 rock.SetParent(this.gameObject.transform);
@@ -105,9 +109,26 @@ public class RockGroupBehaviour : MonoBehaviour {
                     {
                         type = "endstone";
                     }
+
+                    if (type == "light empty")
+                    {
+                        afterType = "light empty";
+                    }
+                    else
+                    {
+                        if (hasCave && xCave == xx)
+                        {
+                            afterType = "cave " + type;
+                        }
+                        else
+                        {
+                            afterType = type + " empty";
+                        }
+                    }
                     // Im Savegame speíchern
                     MinerData.Rock r = new MinerData.Rock();
                     r.Type = type;
+                    r.AfterType = afterType;
                     r.X = xx;
                     r.Y = yy;
                     MinerSaveGame.Instance.Current.setRock(xx, yy, r);

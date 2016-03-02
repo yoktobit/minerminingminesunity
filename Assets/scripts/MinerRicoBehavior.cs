@@ -396,6 +396,16 @@ public class MinerRicoBehavior : MonoBehaviour {
 
         int pos = elevator.transform.position.y >= 0 ? 0 : Mathf.Abs((int)(elevator.transform.position.y + 10) / 20) + 1;
         elevatorLabel.GetComponent<UnityEngine.UI.Text>().text = pos.ToString();
+#if UNITY_EDITOR
+        if (HasLineCave(pos - 1))
+        {
+            elevatorLabel.GetComponent<UnityEngine.UI.Text>().color = Color.yellow;
+        }
+        else
+        {
+            elevatorLabel.GetComponent<UnityEngine.UI.Text>().color = Color.red;
+        }
+#endif
 
         GetComponent<Animator>().SetFloat("walkingSpeed", (Data.Speed / 3.5f) * 0.7f);
 
@@ -916,7 +926,7 @@ public class MinerRicoBehavior : MonoBehaviour {
     {
         for (var ii = 0; ii < 25; ++ii)
         {
-            if (Data.Rocks[ii,yy].Type.Contains("cave"))
+            if (Data.Rocks[ii,yy].AfterType.Contains("cave"))
             {
                 return true;
             }
@@ -940,17 +950,9 @@ public class MinerRicoBehavior : MonoBehaviour {
             Data.Experience += 10;
         }
 
-        var caveRnd = UnityEngine.Random.Range(1, 101);
-        if (!HasLineCave(rock.Y) && caveRnd <= rock.Y)
+        rock.Type = rock.AfterType;
+        if (rock.Type.Contains("cave"))
         {
-            if (rock.Type.Contains("hard"))
-            {
-                rock.Type = rock.Type.Replace("hard", "cave hard");
-            }
-            else if (rock.Type.Contains("light"))
-            {
-                rock.Type = rock.Type.Replace("light", "cave light");
-            }
             rock.CounterStart = Time.time;
             rock.EnemyState = EnemyState.None;
             rock.EnemyHealth = 100;
@@ -958,10 +960,7 @@ public class MinerRicoBehavior : MonoBehaviour {
             int randomTimer = UnityEngine.Random.Range(1, 30);
             rock.CounterInterval = randomTimer;
         }
-        else
-        {
-            rock.Type += " empty";
-        }
+        
         var rockObject = GameObject.Find("Rock_" + rock.X + "_" + rock.Y);
         string spriteName = "rocks/rock " + rock.Type;
         if (rock.Type.Contains("cave"))
