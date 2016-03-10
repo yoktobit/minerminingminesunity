@@ -10,7 +10,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     enum Action
     {
-        Move, Pick, Shovel, Idle, Collect, NeedsWork
+        Empty, Move, Pick, Shovel, Idle, Collect, NeedsWork
     }
 
     bool isAnimated = false;
@@ -21,6 +21,7 @@ public class MinerRicoBehavior : MonoBehaviour {
     public MinerData Data;
 
     Action oldAction = Action.Idle;
+    Action requestedAction = Action.Empty;
     string oldOrientation;
 
     float workStartedTime;
@@ -549,7 +550,13 @@ public class MinerRicoBehavior : MonoBehaviour {
         }
         if (arrived)
         {
-            HandleArrived(ref newAction);
+            HandleArrived();
+        }
+
+        if (newAction == Action.Idle && requestedAction != Action.Empty)
+        {
+            newAction = requestedAction;
+            requestedAction = Action.Empty;
         }
         
         // Wenn er laufen soll, schauen, ob er buddeln müsste
@@ -604,14 +611,7 @@ public class MinerRicoBehavior : MonoBehaviour {
             {
                 GetComponent<Animator>().Play("placing");
                 isAnimated = true;
-            }
-            else
-            {
-                if (!GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("placing"))
-                {
-                    HandleCollect();
-                    isAnimated = false;
-                }
+                Debug.Log("Playing placing animation");
             }
         }
         else if (newAction == Action.Idle || newAction == Action.NeedsWork)
@@ -720,9 +720,11 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     private void HandleCollect()
     {
+        isAnimated = false;
         int gridX, gridY;
         GetGridPosition(transform.position, true, out gridX, out gridY);
-        var resourcesToCollectNow = (from r in resourcesToCollect where r.GetComponent<ResourceBehaviour>().gridX == gridX && r.GetComponent<ResourceBehaviour>().gridY == gridY select r).ToList();
+        var resourcesToCollectNow = (from r in resourcesToCollect where r.GetComponent<ResourceBehaviour>().gridX == gridX && r.GetComponent<ResourceBehaviour>().gridY == gridY select r).Take(2).ToList();
+        Debug.Log("Collect Now: " + resourcesToCollectNow.Count );
         foreach (var resource in resourcesToCollectNow)
         {
             var resB = resource.GetComponent<ResourceBehaviour>();
@@ -731,6 +733,8 @@ public class MinerRicoBehavior : MonoBehaviour {
             resourcesToCollect.Remove(resource);
             Destroy(resource.gameObject);
         }
+        oldAction = Action.Idle;
+        TryPlanCollect(0.5f);
         UpdateExperienceBar();
     }
 
@@ -906,24 +910,36 @@ public class MinerRicoBehavior : MonoBehaviour {
         }
     }
 
-    void HandleArrived(ref Action action)
+    void SetNextActionCollect()
+    {
+        requestedAction = Action.Collect;
+    }
+
+    void TryPlanCollect(float inSeconds)
+    {
+        int gridX, gridY;
+        GetGridPosition(transform.position, true, out gridX, out gridY);
+        var count = (from r in resourcesToCollect where r.GetComponent<ResourceBehaviour>().gridX == gridX && r.GetComponent<ResourceBehaviour>().gridY == gridY select r).Count();
+        Debug.Log("Found " + count + " resources to collect here");
+        if (count > 0)
+        {
+            Invoke("SetNextActionCollect", inSeconds);
+        }
+    }
+
+    void HandleArrived()
     {
         Debug.Log("Found " + resourcesToCollect.Count + " resources to collect");
+        requestedAction = Action.Empty;
         if (resourcesToCollect.Count > 0)
         {
-            int gridX, gridY;
-            GetGridPosition(transform.position, true, out gridX, out gridY);
-            var count = (from r in resourcesToCollect where r.GetComponent<ResourceBehaviour>().gridX == gridX && r.GetComponent<ResourceBehaviour>().gridY == gridY select r).Count();
-            Debug.Log("Found " + count + " resources to collect here");
-            if (count > 0)
-            {
-                action = Action.Collect;
-            }
+            TryPlanCollect(0.5f);
         }
     }
 
     bool HasLineCave(int yy)
     {
+        if (yy < 0) return false;
         for (var ii = 0; ii < 25; ++ii)
         {
             if (Data.Rocks[ii,yy].AfterType.Contains("cave"))
