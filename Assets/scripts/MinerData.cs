@@ -141,10 +141,10 @@ public class MinerData {
 
 public enum EnemyState
 {
-    None, Eyes, Walking
+    None, Eyes, Walking, Hidden
 }
 
 public enum EnemyType
 {
-    MudGolem
+    None, MudGolem
 }

@@ -6,6 +6,7 @@ public class RockGroupBehaviour : MonoBehaviour {
 
     public List<Sprite> spriteCollection;
     public Transform invisibleWallTemplate;
+    public Transform enemyTemplate;
 
     void setRocks()
     {
@@ -131,11 +132,20 @@ public class RockGroupBehaviour : MonoBehaviour {
                     r.AfterType = afterType;
                     r.X = xx;
                     r.Y = yy;
+                    r.CounterInterval = 0;
+                    r.CounterStart = 0;
+                    r.EnemyHealth = 0;
+                    r.EnemyState = EnemyState.None;
+                    r.EnemyType = EnemyType.None;
                     MinerSaveGame.Instance.Current.setRock(xx, yy, r);
                 }
                 else
                 {
                     type = MinerSaveGame.Instance.Current.Rocks[xx, yy].Type;
+                }
+                if (type.Contains("cave"))
+                {
+                    CastEnemy(MinerSaveGame.Instance.Current.Rocks[xx, yy]);
                 }
                 int randomImage = Random.Range(1, type.Contains("cave") ? 5 : 6);
                 string strRandomImage = "" + randomImage;
@@ -152,8 +162,31 @@ public class RockGroupBehaviour : MonoBehaviour {
         template.gameObject.SetActive(false);
     }
 
-	// Use this for initialization
-	void Start () {
+    public static void GetGridPosition(Vector3 position, bool plusOne, out int x, out int y)
+    {
+        x = -1;
+        y = -1;
+        x = (int)position.x / 15;
+        y = (int)position.y == 10 ? -1 : Mathf.Abs((int)position.y / 20 + (plusOne ? 1 : 0));
+    }
+
+    public static Vector3 GetPosition(int x, int y)
+    {
+        Vector3 position = new Vector3(x * 15, (y * -20) - 10);
+        return position;
+    }
+
+    public void CastEnemy(MinerData.Rock rock)
+    {
+        var enemy = Instantiate<Transform>(enemyTemplate);
+        enemy.SetParent(this.transform.parent, false);
+        enemy.GetComponent<SpriteRenderer>().sortingOrder = 10;
+        enemy.GetComponent<EnemyBehaviour>().rock = rock;
+        enemy.transform.position = GetPosition(rock.X, rock.Y);
+    }
+
+    // Use this for initialization
+    void Start () {
         setRocks();
 	}
 	
