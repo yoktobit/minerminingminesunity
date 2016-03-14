@@ -170,9 +170,9 @@ public class RockGroupBehaviour : MonoBehaviour {
         y = (int)position.y == 10 ? -1 : Mathf.Abs((int)position.y / 20 + (plusOne ? 1 : 0));
     }
 
-    public static Vector3 GetPosition(int x, int y)
+    public static Vector3 GetPosition(int x, int y, bool centerPivot = false)
     {
-        Vector3 position = new Vector3(x * 15, (y * -20) - 10);
+        Vector3 position = new Vector3(x * 15 + (centerPivot ? 7.5f : 0), (y * -20) - 10 - (centerPivot ? 10 : 0));
         return position;
     }
 
@@ -182,7 +182,7 @@ public class RockGroupBehaviour : MonoBehaviour {
         enemy.SetParent(this.transform.parent, false);
         enemy.GetComponent<SpriteRenderer>().sortingOrder = 10;
         enemy.GetComponent<EnemyBehaviour>().rock = rock;
-        enemy.transform.position = GetPosition(rock.X, rock.Y);
+        enemy.transform.position = GetPosition(rock.X, rock.Y, true);
     }
 
     // Use this for initialization

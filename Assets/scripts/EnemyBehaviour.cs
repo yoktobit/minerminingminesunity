@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class EnemyBehaviour : MonoBehaviour {
 
@@ -23,14 +24,19 @@ public class EnemyBehaviour : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        //Debug.Log(GetComponent<Animator>().GetCurrentAnimatorClipInfo(0).Length);
+        /*foreach(var aci in GetComponent<Animator>().GetCurrentAnimatorClipInfo(0))
+        {
+            Debug.Log(aci.clip.name);
+        }*/
+        
         if (rock.EnemyState == EnemyState.Walking)
         {
             float step = 3 * 5 * Time.deltaTime;
             if (this.transform.position == target)
             {
                 isAnimated = false;
-                Debug.Log("Stopping animation");
-                //GetComponent<Animator>().Stop();
+                GetComponent<Animator>().Play("mud idle");
                 if (!IsInvoking("SetNewTarget"))
                 {
                     Invoke("SetNewTarget", 5);
@@ -42,15 +48,15 @@ public class EnemyBehaviour : MonoBehaviour {
                 if (!isAnimated)
                 {
                     Debug.Log("Playing animation");
-                    GetComponent<Animator>().Play("walking");
+                    GetComponent<SpriteRenderer>().flipX = (target - transform.position).normalized == Vector3.right;
+                    GetComponent<Animator>().Play("mud walking");
                 }
                 isAnimated = true;
             }
         }
         else
         {
-            Debug.Log("Stopping animation");
-            GetComponent<Animator>().Stop();
+            GetComponent<Animator>().Play("mud idle");
         }
     }
 
@@ -102,15 +108,48 @@ public class EnemyBehaviour : MonoBehaviour {
     {
         Debug.Log("Setting Target");
         int xx, yy;
-        RockGroupBehaviour.GetGridPosition(this.transform.position, false, out xx, out yy);
-        int newXX = xx;
+        RockGroupBehaviour.GetGridPosition(this.transform.position, true, out xx, out yy);
+        
+        var freeX = new List<int>();
+        for (var currentXX = xx; currentXX < 22; currentXX++)
+        {
+            MinerData.Rock rock = MinerSaveGame.Instance.Current.Rocks[currentXX, yy];
+            if (rock.Type.Contains("cave") || rock.Type.Contains("empty"))
+            {
+                freeX.Add(currentXX);
+            }
+            else
+            {
+                break;
+            }
+        }
+        for (var currentXX = xx; currentXX >= 0; currentXX--)
+        {
+            MinerData.Rock rock = MinerSaveGame.Instance.Current.Rocks[currentXX, yy];
+            if (rock.Type.Contains("cave") || rock.Type.Contains("empty"))
+            {
+                freeX.Add(currentXX);
+            }
+            else
+            {
+                break;
+            }
+        }
         int count = 0;
+        int newXX = xx;
         while (newXX == xx && count < 100)
         {
-            newXX = Random.Range(0, 23);
+            newXX = freeX[Random.Range(0, freeX.Count)];
             ++count;
         }
-        target = RockGroupBehaviour.GetPosition(newXX, yy);
+        if (count < 100)
+        {
+            target = RockGroupBehaviour.GetPosition(newXX, yy, true);
+        }
+        else
+        {
+            target = RockGroupBehaviour.GetPosition(xx, yy, true);
+        }
     }
 
     void SetState(EnemyState state)
