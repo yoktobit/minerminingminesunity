@@ -134,6 +134,10 @@ public class MinerData {
         public EnemyType EnemyType { get; set; }
         public int EnemyHealth { get; set; }
         public EnemyState EnemyState { get; set; }
+        public float EnemyX { get; set; }
+        public float EnemyY { get; set; }
+        public float EnemyTargetX { get; set; }
+        public float EnemyTargetY { get; set; }
         public float CounterStart { get; set; }
         public float CounterInterval { get; set; }
     }

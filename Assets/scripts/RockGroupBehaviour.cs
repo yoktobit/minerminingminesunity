@@ -145,7 +145,7 @@ public class RockGroupBehaviour : MonoBehaviour {
                 }
                 if (type.Contains("cave"))
                 {
-                    CastEnemy(MinerSaveGame.Instance.Current.Rocks[xx, yy]);
+                    Transform enemy = CastEnemy(MinerSaveGame.Instance.Current.Rocks[xx, yy], true);
                 }
                 int randomImage = Random.Range(1, type.Contains("cave") ? 5 : 6);
                 string strRandomImage = "" + randomImage;
@@ -176,13 +176,24 @@ public class RockGroupBehaviour : MonoBehaviour {
         return position;
     }
 
-    public void CastEnemy(MinerData.Rock rock)
+    public Transform CastEnemy(MinerData.Rock rock, bool fromSaveGame = false)
     {
         var enemy = Instantiate<Transform>(enemyTemplate);
         enemy.SetParent(this.transform.parent, false);
         enemy.GetComponent<SpriteRenderer>().sortingOrder = 10;
         enemy.GetComponent<EnemyBehaviour>().rock = rock;
-        enemy.transform.position = GetPosition(rock.X, rock.Y, true);
+        if (fromSaveGame)
+        {
+            enemy.transform.position = new Vector3(rock.EnemyX, rock.EnemyY);
+            enemy.GetComponent<EnemyBehaviour>().target = new Vector3(rock.EnemyTargetX, rock.EnemyTargetY);
+            enemy.GetComponent<EnemyBehaviour>().SetState(rock.EnemyState);
+        }
+        else
+        {
+            enemy.transform.position = GetPosition(rock.X, rock.Y, true);
+            enemy.GetComponent<EnemyBehaviour>().SetState(EnemyState.None);
+        }
+        return enemy;
     }
 
     // Use this for initialization
