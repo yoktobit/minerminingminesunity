@@ -184,12 +184,14 @@ public class RockGroupBehaviour : MonoBehaviour {
         enemy.GetComponent<EnemyBehaviour>().rock = rock;
         if (fromSaveGame)
         {
+            Debug.Log("Enemy Cast from SaveGame into State " + rock.EnemyState);
             enemy.transform.position = new Vector3(rock.EnemyX, rock.EnemyY);
             enemy.GetComponent<EnemyBehaviour>().target = new Vector3(rock.EnemyTargetX, rock.EnemyTargetY);
             enemy.GetComponent<EnemyBehaviour>().SetState(rock.EnemyState);
         }
         else
         {
+            Debug.Log("Enemy Cast New");
             enemy.transform.position = GetPosition(rock.X, rock.Y, true);
             enemy.GetComponent<EnemyBehaviour>().SetState(EnemyState.None);
         }

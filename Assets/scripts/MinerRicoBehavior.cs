@@ -76,8 +76,6 @@ public class MinerRicoBehavior : MonoBehaviour {
         ptCount = GameObject.Find("PtCount");
         gemCount = GameObject.Find("GemCount");
 
-        Data.Rocks.OfType<MinerData.Rock>().ToList().ForEach(r => { r.CounterStart = 0; r.EnemyState = EnemyState.None; });
-
         arrSky = new GameObject[4];
         for (int ii = 0; ii < 4; ii++)
         {

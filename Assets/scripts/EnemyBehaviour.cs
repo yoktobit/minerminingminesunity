@@ -8,11 +8,16 @@ public class EnemyBehaviour : MonoBehaviour {
     public Vector3 target;
     public bool isAnimated = false;
 
-    void Start () {
+    void Awake()
+    {
         GetComponent<Renderer>().enabled = false;
         Debug.Log("Enemy instantiated");
+    }
+
+    void Start () {
         Init();
-	}
+        Debug.Log("Enemy Started");
+    }
 
     void Init()
     {
@@ -58,7 +63,6 @@ public class EnemyBehaviour : MonoBehaviour {
                 rock.EnemyY = transform.position.y;
                 if (!isAnimated)
                 {
-                    Debug.Log("Playing animation");
                     GetComponent<SpriteRenderer>().flipX = (target - transform.position).normalized == Vector3.right;
                     GetComponent<Animator>().Play(GetEnemyType(rock.EnemyType) + " walking");
                 }
@@ -123,7 +127,6 @@ public class EnemyBehaviour : MonoBehaviour {
 
     public void SetNewTarget()
     {
-        Debug.Log("Setting Target");
         int xx, yy;
         RockGroupBehaviour.GetGridPosition(this.transform.position, true, out xx, out yy);
 
@@ -200,10 +203,12 @@ public class EnemyBehaviour : MonoBehaviour {
         Debug.Log(rock.EnemyState);
         if (state == EnemyState.None)
         {
+            Debug.Log("SetState None");
             InvokeNext(0.1f);
         }
         else if (state == EnemyState.Eyes)
         {
+            Debug.Log("SetState Eyes");
             GetComponent<Renderer>().enabled = true;
             string nextAnimation = GetEnemyType(rock.EnemyType) + " eyes";
             Debug.Log(nextAnimation);
@@ -213,12 +218,14 @@ public class EnemyBehaviour : MonoBehaviour {
         }
         else if (state == EnemyState.Hidden)
         {
+            Debug.Log("SetState Hidden");
             GetComponent<Renderer>().enabled = false;
             int randomTimer = UnityEngine.Random.Range(1, 10);
             StartCoroutine(SetEnemyNext(randomTimer));
         }
         else if (state == EnemyState.Walking)
         {
+            Debug.Log("SetState Walking");
             GetComponent<Renderer>().enabled = true;
             target = this.transform.position;
             //GetComponent<SpriteRenderer>().sprite = GetSprite();
@@ -227,6 +234,37 @@ public class EnemyBehaviour : MonoBehaviour {
             {
                 Invoke("SetNewTarget", randomTimer);
             }
+        }
+    }
+
+    void StartAttackPlayer()
+    {
+        GetComponent<Animator>().Play(GetEnemyType(rock.EnemyType) + " angry");
+    }
+
+    public void AttackPlayer()
+    {
+        if (playerToBite != null)
+        {
+            var player = playerToBite.GetComponent<MinerRicoBehavior>();
+            player.Data.Health -= 20;
+        }
+    }
+
+    Transform playerToBite;
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        Debug.Log("PlayerToByte " + other);
+        playerToBite = other.transform;
+        StartAttackPlayer();
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.transform == playerToBite)
+        {
+            Debug.Log("PlayerToByte null");
+            playerToBite = null;
         }
     }
 }
