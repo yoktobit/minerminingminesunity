@@ -967,7 +967,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         {
             type = "gem";
         }
-        var variant = UnityEngine.Random.Range(1, 5);
+        var variant = UnityEngine.Random.Range(1, type == "gem" ? 8 : 5);
         var targetPos = new Vector3(rock.X * 15 + xPos, rock.Y * -20 + yPos - 20);
         Debug.Log(String.Format("targetPos = {0}", targetPos));
         var newResource = Instantiate(resourceTemplate, targetPos, Quaternion.identity) as Transform;
