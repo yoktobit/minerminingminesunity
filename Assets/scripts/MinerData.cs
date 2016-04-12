@@ -12,7 +12,7 @@ public class MinerData {
 
     public float Health { get; set; }
     public float FoodLevel { get; set; }
-    public float O2 { get; set; }
+    public float Moral { get; set; }
 
     public int Money { get; set; }
     public int Experience { get; set; }
@@ -49,7 +49,7 @@ public class MinerData {
     {
         Health = 100;
         FoodLevel = 100;
-        O2 = 100;
+        Moral = 100;
         Money = 100;
         Experience = 0;
         DayTime = 0;

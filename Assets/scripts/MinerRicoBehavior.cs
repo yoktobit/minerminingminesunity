@@ -29,6 +29,8 @@ public class MinerRicoBehavior : MonoBehaviour {
     MinerData.Rock workingRock;
     public GameObject foodBarInner;
     public GameObject healthBarInner;
+    public GameObject moralBarInner;
+    public GameObject moral;
     public GameObject gameOver;
     public GameObject timeBarInner;
     public GameObject sun;
@@ -61,6 +63,8 @@ public class MinerRicoBehavior : MonoBehaviour {
 
         healthBarInner = GameObject.Find("HealthBarInner");
         foodBarInner = GameObject.Find("FoodBarInner");
+        moralBarInner = GameObject.Find("MoralBarInner");
+        moral = GameObject.Find("Moral");
         gameOver = GameObject.Find("GameOver");
         timeBarInner = GameObject.Find("TimeBarInner");
         experienceBarInner = GameObject.Find("ExperienceBarInner");
@@ -97,6 +101,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
         InvokeRepeating("reduceFood", 12, 12);
         InvokeRepeating("reduceHealth", 1, 1);
+        InvokeRepeating("UpdateMoral", 1, 1);
         InvokeRepeating("save", 60, 60);
 	}
 
@@ -114,6 +119,7 @@ public class MinerRicoBehavior : MonoBehaviour {
     {
         foodBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.FoodLevel / 100.0f), 0.9f);
         healthBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.Health / Data.MaxHealth), 0.9f);
+        moralBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.Moral / 100.0f), 0.9f);
     }
 
     public void reduceFood()
@@ -657,6 +663,33 @@ public class MinerRicoBehavior : MonoBehaviour {
         oldOrientation = orientation;
     }
 
+    private void UpdateMoral()
+    {
+        var lights = GameObject.FindGameObjectsWithTag("LightSource");
+        Debug.Log(lights.Length + " lights found");
+        float minDistance = 1000000000;
+        foreach (var light in lights)
+        {
+            float distance = Vector3.Distance(transform.position, new Vector3(light.transform.position.x, light.transform.position.y));
+            if (distance < minDistance) minDistance = distance;
+        }
+        Debug.Log("MinDistance " + minDistance);
+        if (minDistance > 400)
+        {
+            Data.Moral -= 2;
+            if (Data.Moral < 0) Data.Moral = 0;
+        }
+        else if (minDistance > 300)
+        {
+            Data.Moral--;
+            if (Data.Moral < 0) Data.Moral = 0;
+        }
+        else if (minDistance < 80)
+        {
+            Data.Moral += 4;
+            if (Data.Moral > 100) Data.Moral = 100;
+        }
+    }
 
     private void HandleCollect()
     {
