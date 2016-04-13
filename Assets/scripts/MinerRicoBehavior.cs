@@ -120,6 +120,18 @@ public class MinerRicoBehavior : MonoBehaviour {
         foodBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.FoodLevel / 100.0f), 0.9f);
         healthBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.Health / Data.MaxHealth), 0.9f);
         moralBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.Moral / 100.0f), 0.9f);
+        if (Data.Moral < 20)
+        {
+            moral.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/ui pic moral bad");
+        }
+        else if (Data.Moral < 50)
+        {
+            moral.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/ui pic moral medium");
+        }
+        else
+        {
+            moral.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/ui pic moral good");
+        }
     }
 
     public void reduceFood()
@@ -440,6 +452,26 @@ public class MinerRicoBehavior : MonoBehaviour {
             {
                 up = true;
             }
+            if (Input.GetButtonUp("Submit"))
+            {
+                var lights = GameObject.FindGameObjectsWithTag("LightSource");
+                if (lights.Count() <= 1)
+                {
+                    var torch = Instantiate(Resources.Load<Transform>("prefabs/Torch"));
+                    torch.SetParent(this.transform, false);
+                    Debug.Log("Instantiating new torch " + torch.name);
+                }
+                else
+                {
+                    foreach(var light in lights)
+                    {
+                        if (light.name.Contains("Torch"))
+                        {
+                            Destroy(light);
+                        }
+                    }
+                }
+            }
         }
         if (isAnimated)
         {
@@ -674,17 +706,17 @@ public class MinerRicoBehavior : MonoBehaviour {
             if (distance < minDistance) minDistance = distance;
         }
         Debug.Log("MinDistance " + minDistance);
-        if (minDistance > 400)
+        if (minDistance > 300)
         {
             Data.Moral -= 2;
             if (Data.Moral < 0) Data.Moral = 0;
         }
-        else if (minDistance > 300)
+        else if (minDistance > 220)
         {
             Data.Moral--;
             if (Data.Moral < 0) Data.Moral = 0;
         }
-        else if (minDistance < 80)
+        else if (minDistance < 120)
         {
             Data.Moral += 4;
             if (Data.Moral > 100) Data.Moral = 100;
