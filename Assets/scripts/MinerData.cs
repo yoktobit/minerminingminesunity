@@ -74,6 +74,11 @@ public class MinerData {
         AddInventoryItem("pick", true);
         AddInventoryItem("torch", true);
         AddInventoryItem("apple", false);
+        AddInventoryItem("candle", false);
+        AddInventoryItem("candle", false);
+        AddInventoryItem("candle", false);
+        AddInventoryItem("candle", false);
+        AddInventoryItem("candle", false);
     }
 
     public void AddInventoryItem(string type, bool equip = false)

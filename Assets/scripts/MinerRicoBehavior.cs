@@ -335,6 +335,14 @@ public class MinerRicoBehavior : MonoBehaviour {
             {
                 Data.FoodLevel = Math.Min(Data.FoodLevel + 40, 100);
             }
+            else if (item.Type == "candle")
+            {
+                CastCandle();
+            }
+            else
+            {
+                Debug.Log(item.Type);
+            }
             if (item.Amount <= 0)
             {
                 item.Position = -1;
@@ -342,6 +350,14 @@ public class MinerRicoBehavior : MonoBehaviour {
             }
         }
         UpdateInventory();
+    }
+
+    private void CastCandle()
+    {
+        var candle = Instantiate<Transform>(Resources.Load<Transform>("prefabs/Candle"));
+        candle.SetParent(this.transform.parent, false);
+        candle.transform.position = this.transform.position;
+        Debug.Log("candle casted");
     }
 
     private void UpdateInventory()
@@ -700,23 +716,29 @@ public class MinerRicoBehavior : MonoBehaviour {
         var lights = GameObject.FindGameObjectsWithTag("LightSource");
         Debug.Log(lights.Length + " lights found");
         float minDistance = 1000000000;
+        GameObject nearestLight = null;
         foreach (var light in lights)
         {
             float distance = Vector3.Distance(transform.position, new Vector3(light.transform.position.x, light.transform.position.y));
-            if (distance < minDistance) minDistance = distance;
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                nearestLight = light;
+            }
         }
+        bool isCandle = nearestLight.name.Contains("CandleLight");
         Debug.Log("MinDistance " + minDistance);
-        if (minDistance > 300)
+        if (minDistance > (isCandle ? 160 : 300))
         {
             Data.Moral -= 2;
             if (Data.Moral < 0) Data.Moral = 0;
         }
-        else if (minDistance > 220)
+        else if (minDistance > (isCandle ? 100 : 220))
         {
             Data.Moral--;
             if (Data.Moral < 0) Data.Moral = 0;
         }
-        else if (minDistance < 120)
+        else if (minDistance < (isCandle ? 80 : 120))
         {
             Data.Moral += 4;
             if (Data.Moral > 100) Data.Moral = 100;
