@@ -158,6 +158,10 @@ public class RockGroupBehaviour : MonoBehaviour {
                 rock.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(spriteName);
             } // xx
         } // yy
+        foreach (InventoryItem candle in MinerSaveGame.Instance.Current.Candles)
+        {
+            CastCandle(this.transform, candle);
+        }
         MinerSaveGame.Instance.Current.Loaded = true;
         template.gameObject.SetActive(false);
     }
@@ -174,6 +178,26 @@ public class RockGroupBehaviour : MonoBehaviour {
     {
         Vector3 position = new Vector3(x * 15 + (centerPivot ? 7.5f : 0), (y * -20) - 10 - (centerPivot ? 10 : 0));
         return position;
+    }
+
+    public void CastCandle(Transform target = null, InventoryItem candleItem = null)
+    {
+        var candle = Instantiate<Transform>(Resources.Load<Transform>("prefabs/Candle"));
+        candle.SetParent(target.parent, false);
+        if (candleItem == null)
+        {
+            candle.transform.position = target.position;
+            candleItem = new InventoryItem();
+            candleItem.X = candle.transform.position.x;
+            candleItem.Y = candle.transform.position.y;
+            MinerSaveGame.Instance.Current.Candles.Add(candleItem);
+        }
+        else
+        {
+            candle.transform.position = new Vector2(candleItem.X, candleItem.Y);
+        }
+        candle.GetComponent<CandleBehaviour>().candle = candleItem;
+        Debug.Log("candle casted");
     }
 
     public Transform CastEnemy(MinerData.Rock rock, bool fromSaveGame = false)

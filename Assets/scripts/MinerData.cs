@@ -39,6 +39,8 @@ public class MinerData {
 
     public List<InventoryItem> Inventory { get; set; }
 
+    public List<InventoryItem> Candles { get; set; }
+
     public MinerData(int slot)
     {
         Slot = slot;
@@ -70,15 +72,15 @@ public class MinerData {
     private void FillInventory()
     {
         Inventory = new List<InventoryItem>();
+        Candles = new List<InventoryItem>();
         AddInventoryItem("shovel", true);
         AddInventoryItem("pick", true);
         AddInventoryItem("torch", true);
         AddInventoryItem("apple", false);
-        AddInventoryItem("candle", false);
-        AddInventoryItem("candle", false);
-        AddInventoryItem("candle", false);
-        AddInventoryItem("candle", false);
-        AddInventoryItem("candle", false);
+        for (var ii = 1; ii < 100; ii++)
+        {
+            AddInventoryItem("candle", false);
+        }
     }
 
     public void AddInventoryItem(string type, bool equip = false)

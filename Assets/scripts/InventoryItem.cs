@@ -10,6 +10,8 @@ public class InventoryItem
     public float Health { get; set; }
     public int Position { get; set; }
     public bool IsEquipped { get; set; }
+    public float X { get; set; }
+    public float Y { get; set; }
 
     public InventoryItem()
     {

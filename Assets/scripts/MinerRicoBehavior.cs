@@ -337,7 +337,7 @@ public class MinerRicoBehavior : MonoBehaviour {
             }
             else if (item.Type == "candle")
             {
-                CastCandle();
+                rockGroup.GetComponent<RockGroupBehaviour>().CastCandle(this.transform, null);
             }
             else
             {
@@ -350,14 +350,6 @@ public class MinerRicoBehavior : MonoBehaviour {
             }
         }
         UpdateInventory();
-    }
-
-    private void CastCandle()
-    {
-        var candle = Instantiate<Transform>(Resources.Load<Transform>("prefabs/Candle"));
-        candle.SetParent(this.transform.parent, false);
-        candle.transform.position = this.transform.position;
-        Debug.Log("candle casted");
     }
 
     private void UpdateInventory()
