@@ -706,35 +706,34 @@ public class MinerRicoBehavior : MonoBehaviour {
     private void UpdateMoral()
     {
         var lights = GameObject.FindGameObjectsWithTag("LightSource");
-        Debug.Log(lights.Length + " lights found");
-        float minDistance = 1000000000;
-        GameObject nearestLight = null;
+        float looseMoral = -5;
         foreach (var light in lights)
         {
+            float range = light.GetComponent<Light>().range;
+            float z = light.transform.position.z;
+            float lightRange = (range - Math.Abs(z)) * 2.5f;
             float distance = Vector3.Distance(transform.position, new Vector3(light.transform.position.x, light.transform.position.y));
-            if (distance < minDistance)
+            //Debug.Log("distance " + distance + " " + );
+            if (distance > lightRange * 1.0f)
             {
-                minDistance = distance;
-                nearestLight = light;
+                looseMoral = Mathf.Max(-2, looseMoral);
+            }
+            // Reihenfolge ist wichtig
+            else if (distance > lightRange * 0.75f)
+            {
+                looseMoral = Mathf.Max(-1, looseMoral);
+            }
+            else if (distance < lightRange * 0.5f)
+            {
+                looseMoral = Mathf.Max(3, looseMoral);
+            }
+            else
+            {
+                looseMoral = Mathf.Max(0, looseMoral);
             }
         }
-        bool isCandle = nearestLight.name.Contains("CandleLight");
-        Debug.Log("MinDistance " + minDistance);
-        if (minDistance > (isCandle ? 160 : 300))
-        {
-            Data.Moral -= 2;
-            if (Data.Moral < 0) Data.Moral = 0;
-        }
-        else if (minDistance > (isCandle ? 100 : 220))
-        {
-            Data.Moral--;
-            if (Data.Moral < 0) Data.Moral = 0;
-        }
-        else if (minDistance < (isCandle ? 80 : 120))
-        {
-            Data.Moral += 4;
-            if (Data.Moral > 100) Data.Moral = 100;
-        }
+        Data.Moral += looseMoral;
+        Data.Moral = Mathf.Clamp(Data.Moral, 0, 100);
     }
 
     private void HandleCollect()
