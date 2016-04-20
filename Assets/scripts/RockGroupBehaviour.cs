@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -182,22 +183,26 @@ public class RockGroupBehaviour : MonoBehaviour {
 
     public void CastCandle(Transform target = null, InventoryItem candleItem = null)
     {
-        var candle = Instantiate<Transform>(Resources.Load<Transform>("prefabs/Candle"));
-        candle.SetParent(target.parent, false);
-        if (candleItem == null)
+        var existingCandles = MinerSaveGame.Instance.Current.Candles.Count(c => c.X == target.transform.position.x && c.Y == target.transform.position.y);
+        if (existingCandles == 0)
         {
-            candle.transform.position = target.position;
-            candleItem = new InventoryItem();
-            candleItem.X = candle.transform.position.x;
-            candleItem.Y = candle.transform.position.y;
-            MinerSaveGame.Instance.Current.Candles.Add(candleItem);
+            var candle = Instantiate<Transform>(Resources.Load<Transform>("prefabs/Candle"));
+            candle.SetParent(target.parent, false);
+            if (candleItem == null)
+            {
+                candle.transform.position = target.position;
+                candleItem = new InventoryItem();
+                candleItem.X = candle.transform.position.x;
+                candleItem.Y = candle.transform.position.y;
+                MinerSaveGame.Instance.Current.Candles.Add(candleItem);
+            }
+            else
+            {
+                candle.transform.position = new Vector2(candleItem.X, candleItem.Y);
+            }
+            candle.GetComponent<CandleBehaviour>().candle = candleItem;
+            Debug.Log("candle casted");
         }
-        else
-        {
-            candle.transform.position = new Vector2(candleItem.X, candleItem.Y);
-        }
-        candle.GetComponent<CandleBehaviour>().candle = candleItem;
-        Debug.Log("candle casted");
     }
 
     public Transform CastEnemy(MinerData.Rock rock, bool fromSaveGame = false)

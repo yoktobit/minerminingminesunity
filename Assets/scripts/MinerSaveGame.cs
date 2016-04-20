@@ -45,9 +45,16 @@ public class MinerSaveGame {
     }
 
     public static string saveGameFileName = Application.persistentDataPath + "/minerdata.dat";
+    public static string timeScaleFileName = Application.persistentDataPath + "/timeScale.txt";
 
     public static MinerSaveGame Load()
     {
+        if (File.Exists(timeScaleFileName))
+        {
+            string text = File.ReadAllText(timeScaleFileName);
+            float timeScale = float.Parse(text.Trim());
+            Time.timeScale = timeScale;
+        }
         if (File.Exists(saveGameFileName))
         {
             Debug.Log("Loading SaveGame...");

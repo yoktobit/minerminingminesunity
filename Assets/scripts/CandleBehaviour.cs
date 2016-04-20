@@ -7,7 +7,7 @@ public class CandleBehaviour : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        InvokeRepeating("ReduceHealth", 3, 3);
+        InvokeRepeating("ReduceHealth", 3f, 3f);
 	}
 	
 	// Update is called once per frame
