@@ -13,7 +13,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         Empty, Move, Pick, Shovel, Idle, Collect, NeedsWork
     }
 
-    bool isAnimated = false;
+    public bool isAnimated = false;
     bool moveElevator = false;
     bool inElevator = false;
     Vector3 target = Vector3.zero;
@@ -330,14 +330,17 @@ public class MinerRicoBehavior : MonoBehaviour {
         var item = (from i in Data.Inventory where i.Position == activeInventoryNumber select i).FirstOrDefault();
         if (item != null)
         {
-            item.Amount = Math.Max(item.Amount - 1, 0);
             if (item.Type == "apple")
             {
                 Data.FoodLevel = Math.Min(Data.FoodLevel + 40, 100);
+                item.Amount = Math.Max(item.Amount - 1, 0);
             }
             else if (item.Type == "candle")
             {
-                rockGroup.GetComponent<RockGroupBehaviour>().CastCandle(this.transform, null);
+                if (rockGroup.GetComponent<RockGroupBehaviour>().CastCandle(this.transform, null))
+                {
+                    item.Amount = Math.Max(item.Amount - 1, 0);
+                }
             }
             else
             {

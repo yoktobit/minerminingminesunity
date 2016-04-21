@@ -181,16 +181,17 @@ public class RockGroupBehaviour : MonoBehaviour {
         return position;
     }
 
-    public void CastCandle(Transform target = null, InventoryItem candleItem = null)
+    public bool CastCandle(Transform target = null, InventoryItem candleItem = null)
     {
-        var existingCandles = MinerSaveGame.Instance.Current.Candles.Count(c => c.X == target.transform.position.x && c.Y == target.transform.position.y);
-        if (existingCandles == 0)
+        var existingCandles = MinerSaveGame.Instance.Current.Candles.Count(c => c.X == target.transform.position.x && c.Y == target.transform.position.y - 4);
+        var minerBehaviour = GameObject.FindGameObjectWithTag("Player").GetComponent<MinerRicoBehavior>();
+        if (existingCandles == 0 && !minerBehaviour.isAnimated && target.transform.position.x != 337.5)
         {
             var candle = Instantiate<Transform>(Resources.Load<Transform>("prefabs/Candle"));
             candle.SetParent(target.parent, false);
             if (candleItem == null)
             {
-                candle.transform.position = target.position;
+                candle.transform.position = target.position - new Vector3(0, 4, 0);
                 candleItem = new InventoryItem();
                 candleItem.X = candle.transform.position.x;
                 candleItem.Y = candle.transform.position.y;
@@ -203,6 +204,11 @@ public class RockGroupBehaviour : MonoBehaviour {
             candle.GetComponent<CandleBehaviour>().candle = candleItem;
             Debug.Log("candle casted");
         }
+        else
+        {
+            return false;
+        }
+        return true;
     }
 
     public Transform CastEnemy(MinerData.Rock rock, bool fromSaveGame = false)
