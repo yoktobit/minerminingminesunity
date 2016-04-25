@@ -167,7 +167,9 @@ public class MinerRicoBehavior : MonoBehaviour {
                 arrSky[ii].GetComponent<SpriteRenderer>().sprite = Data.DayTime > 50.0f ? Resources.Load<Sprite>("world/world sky night") : Resources.Load<Sprite>("world/world sky day");
             }
         }
-        sun.transform.position = new Vector2(Mathf.Lerp(-15f, 390f, (((Data.DayTime * 2f) % 100) / 100.0f)), sun.transform.position.y);
+        var x = Mathf.Lerp(-15f, 390f, (((Data.DayTime * 2f) % 100) / 100.0f));
+        var y = (-1.0f / 450.0f) * Mathf.Pow(x - 180.0f, 2f) + 80f;
+        sun.transform.position = new Vector2(x, y);
     }
 
     void UpdateExperienceBar()
