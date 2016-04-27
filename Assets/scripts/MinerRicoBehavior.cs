@@ -146,7 +146,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     public void reduceHealth()
     {
-        if (Data.FoodLevel < 0)
+        if (Data.FoodLevel <= 0)
         {
             --Data.Health;
             if (Data.Health < 0) Data.Health = 0;
@@ -164,9 +164,35 @@ public class MinerRicoBehavior : MonoBehaviour {
             sun.GetComponent<SpriteRenderer>().sprite = Data.DayTime > 50.0f ? Resources.Load<Sprite>("world/world moon") : Resources.Load<Sprite>("world/world sun");
             for (int ii = 0; ii < 4; ii++)
             {
-                arrSky[ii].GetComponent<SpriteRenderer>().sprite = Data.DayTime > 50.0f ? Resources.Load<Sprite>("world/world sky night") : Resources.Load<Sprite>("world/world sky day");
+                //arrSky[ii].GetComponent<SpriteRenderer>().sprite = Data.DayTime > 50.0f ? Resources.Load<Sprite>("world/world sky night") : Resources.Load<Sprite>("world/world sky day");
             }
         }
+        // Durchsichtigkeit Nachthimmel
+        float opacity = 0;
+        float dauer = 12.5f;
+        float anstieg = 100f / dauer;
+        float stufe1 = dauer;
+        float stufe2 = 100f - dauer;
+        if (Data.DayTime < stufe1)
+        {
+            opacity = (Data.DayTime * -anstieg + 50) / 100f;
+        }
+        else if (Data.DayTime < stufe2)
+        {
+            opacity = (Data.DayTime * anstieg - (anstieg * (50 - dauer/2))) / 100f;
+        }
+        else
+        {
+            opacity = (Data.DayTime * -anstieg + (100 + anstieg * (100 - dauer/2))) / 100f;
+        }
+        Debug.Log("Opacity NightSky: " + opacity);
+        var nightSky = GameObject.FindGameObjectsWithTag("SkyNight");
+        foreach (GameObject nightSkySingle in nightSky)
+        {
+            nightSkySingle.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, Mathf.Clamp(opacity, 0, 1));
+        }
+
+        // elyptische Bahn der Sonne
         var x = Mathf.Lerp(-15f, 390f, (((Data.DayTime * 2f) % 100) / 100.0f));
         var y = (-1.0f / 450.0f) * Mathf.Pow(x - 180.0f, 2f) + 80f;
         sun.transform.position = new Vector2(x, y);
