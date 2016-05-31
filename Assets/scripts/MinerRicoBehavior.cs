@@ -296,6 +296,8 @@ public class MinerRicoBehavior : MonoBehaviour {
                     {
                         HandleInventoryDrop();
                     }
+                    inventory.SetActive(!inventory.activeSelf);
+                    inventoryState = "";
                 }
             }
             if (horz < 0 && (Mathf.Sign(horz) != Mathf.Sign(lastInventoryHorz) || lastInventoryHorz == 0))
