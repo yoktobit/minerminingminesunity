@@ -185,7 +185,6 @@ public class MinerRicoBehavior : MonoBehaviour {
         {
             opacity = (Data.DayTime * -anstieg + (100 + anstieg * (100 - dauer/2))) / 100f;
         }
-        Debug.Log("Opacity NightSky: " + opacity);
         var nightSky = GameObject.FindGameObjectsWithTag("SkyNight");
         foreach (GameObject nightSkySingle in nightSky)
         {
@@ -780,7 +779,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         {
             var resB = resource.GetComponent<ResourceBehaviour>();
             Debug.Log("Collecting " + resB.type);
-            Data.AddInventoryItem(resB.type, true);
+            Data.AddInventoryItem(resB.type, false);
             resourcesToCollect.Remove(resource);
             Destroy(resource.gameObject);
         }
