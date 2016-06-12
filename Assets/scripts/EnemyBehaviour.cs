@@ -255,8 +255,11 @@ public class EnemyBehaviour : MonoBehaviour {
     void OnTriggerEnter2D(Collider2D other)
     {
         Debug.Log("PlayerToByte " + other);
-        playerToBite = other.transform;
-        StartAttackPlayer();
+        if (other.tag == "Player")
+        {
+            playerToBite = other.transform;
+            StartAttackPlayer();
+        }
     }
 
     void OnTriggerExit2D(Collider2D other)

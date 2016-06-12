@@ -492,10 +492,10 @@ public class MinerRicoBehavior : MonoBehaviour {
             {
                 up = true;
             }
-            if (Input.GetButtonUp("Submit"))
+            if (Input.GetButtonUp("Torch"))
             {
-                var lights = GameObject.FindGameObjectsWithTag("LightSource");
-                if (lights.Count() <= 1)
+                var torches = GameObject.FindGameObjectsWithTag("Torch");
+                if (torches.Count() == 0)
                 {
                     var torch = Instantiate(Resources.Load<Transform>("prefabs/Torch"));
                     torch.SetParent(this.transform, false);
@@ -503,11 +503,11 @@ public class MinerRicoBehavior : MonoBehaviour {
                 }
                 else
                 {
-                    foreach(var light in lights)
+                    foreach(var torch in torches)
                     {
-                        if (light.name.Contains("Torch"))
+                        if (torch.name.Contains("Torch"))
                         {
-                            Destroy(light);
+                            Destroy(torch);
                         }
                     }
                 }
@@ -1043,10 +1043,17 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     private void TryCastMinerals(MinerData.Rock rock)
     {
-        int countMinerals = UnityEngine.Random.Range(0, 7);
-        for (int ii = 0; ii < countMinerals; ii++)
+        // check if there is anything at all
+        float x = rock.Y;
+        float y = (8.0f / 10.0f) * x + 10.0f;
+        int random = UnityEngine.Random.Range(0, 100);
+        if (random < y)
         {
-            CastMineral(rock);
+            int countMinerals = UnityEngine.Random.Range(0, 7);
+            for (int ii = 0; ii < countMinerals; ii++)
+            {
+                CastMineral(rock);
+            }
         }
     }
 
@@ -1057,25 +1064,73 @@ public class MinerRicoBehavior : MonoBehaviour {
         var yPos = UnityEngine.Random.Range(1, 6);
         var what = UnityEngine.Random.Range(0, 101);
         var type = "gold";
-        if (what < 20)
+        if (rock.Y < 11)
         {
-            type = "copper";
+            if (what < 75)
+            {
+                type = "copper";
+            }
+            else
+            {
+                type = "silver";
+            }
+        } 
+        else if (rock.Y < 29)
+        {
+            if (what < 50)
+            {
+                type = "copper";
+            }
+            else if (what < 80)
+            {
+                type = "silver";
+            }
+            else
+            {
+                type = "gold";
+            }
         }
-        else if (what < 40)
+        else if (rock.Y < 44)
         {
-            type = "gold";
+            if (what < 40)
+            {
+                type = "copper";
+            }
+            else if (what < 70)
+            {
+                type = "silver";
+            }
+            else if (what < 90)
+            {
+                type = "gold";
+            }
+            else
+            {
+                type = "platinum";
+            }
         }
-        else if (what < 60)
+        else
         {
-            type = "silver";
-        }
-        else if (what < 80)
-        {
-            type = "platinum";
-        }
-        else if (what < 100)
-        {
-            type = "gem";
+            if (what < 35)
+            {
+                type = "copper";
+            }
+            else if (what < 65)
+            {
+                type = "gold";
+            }
+            else if (what < 80)
+            {
+                type = "silver";
+            }
+            else if (what < 90)
+            {
+                type = "platinum";
+            }
+            else
+            {
+                type = "gem";
+            }
         }
         var variant = UnityEngine.Random.Range(1, type == "gem" ? 8 : 5);
         var targetPos = new Vector3(rock.X * 15 + xPos, rock.Y * -20 + yPos - 20);

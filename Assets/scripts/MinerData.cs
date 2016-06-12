@@ -76,9 +76,9 @@ public class MinerData {
         AddInventoryItem("shovel", true);
         AddInventoryItem("pick", true);
         AddInventoryItem("torch", true);
-        AddInventoryItem("apple", false);
         for (var ii = 1; ii < 100; ii++)
         {
+            AddInventoryItem("apple", false);
             AddInventoryItem("candle", false);
         }
     }
