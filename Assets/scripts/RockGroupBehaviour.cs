@@ -34,8 +34,8 @@ public class RockGroupBehaviour : MonoBehaviour {
         var template = this.gameObject.transform.GetChild(1);
         var hardFactor = 10.0;
         var graniteFactor = 98.0;
-        var graniteFactorOriginal = 98.0;
-        var graniteFactorOriginal1 = 77.0;
+        var graniteFactorOriginal = 90.0;
+        var graniteFactorOriginal1 = 65.0;
         var endStoneFactor = 101.0;
         var arrTypes = new string[MinerData.XCOUNT];
         Random rnd = new Random();
@@ -48,7 +48,7 @@ public class RockGroupBehaviour : MonoBehaviour {
         {
             var invisibleWall = Instantiate(invisibleWallTemplate, new Vector3(180, yy * -20 - 30), Quaternion.identity) as Transform;
             hardFactor = 10;
-            graniteFactor = graniteFactorOriginal - (yy / 10.0);
+            graniteFactor = graniteFactorOriginal - (yy / 5.0);
             int xCave = Random.Range(0, MinerData.XCOUNT);
             int yRnd = Random.Range(0, 101);
             bool hasCave = yRnd < yy;
@@ -70,7 +70,7 @@ public class RockGroupBehaviour : MonoBehaviour {
                     }
                     if (arrTypes[xx] == "granite")
                     {
-                        graniteFactor = graniteFactorOriginal1 - (yy / 10.0);
+                        graniteFactor = graniteFactorOriginal1 - (yy / 5.0);
                     }
                     if (randomNumber < hardFactor)
                     {
@@ -85,11 +85,11 @@ public class RockGroupBehaviour : MonoBehaviour {
                     if (randomNumber > graniteFactor)
                     {
                         type = "granite";
-                        graniteFactor = graniteFactorOriginal1 - (yy / 10.0);
+                        graniteFactor = graniteFactorOriginal1 - (yy / 5.0);
                     }
                     else
                     {
-                        graniteFactor = graniteFactorOriginal - (yy / 10.0);
+                        graniteFactor = graniteFactorOriginal - (yy / 5.0);
                     }
 
                     if (yy == 96) endStoneFactor = 75;
