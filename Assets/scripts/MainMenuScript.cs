@@ -58,6 +58,9 @@ public class MainMenuScript : MonoBehaviour {
     GameObject slot1;
     GameObject slot2;
     GameObject slot3;
+    GameObject slot1Info;
+    GameObject slot2Info;
+    GameObject slot3Info;
     GameObject saveGameSelector;
 
     // Use this for initialization
@@ -68,10 +71,16 @@ public class MainMenuScript : MonoBehaviour {
         slot1 = GameObject.Find("Slot1");
         slot2 = GameObject.Find("Slot2");
         slot3 = GameObject.Find("Slot3");
+        slot1Info = GameObject.Find("Slot1Info");
+        slot2Info = GameObject.Find("Slot2Info");
+        slot3Info = GameObject.Find("Slot3Info");
         saveGameSelector = GameObject.Find("SaveGameSelector");
 
         Selected = playButton;
         MinerSaveGame saveGame = MinerSaveGame.Instance;
+        slot1Info.GetComponent<Text>().text = saveGame.minerData[0].SaveDate.ToShortDateString() + " " + saveGame.minerData[0].SaveDate.ToShortTimeString();
+        slot2Info.GetComponent<Text>().text = saveGame.minerData[1].SaveDate.ToShortDateString() + " " + saveGame.minerData[1].SaveDate.ToShortTimeString();
+        slot3Info.GetComponent<Text>().text = saveGame.minerData[2].SaveDate.ToShortDateString() + " " + saveGame.minerData[2].SaveDate.ToShortTimeString();
         saveGameSelector.SetActive(false);
     }
 
