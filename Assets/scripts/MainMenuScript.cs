@@ -78,10 +78,17 @@ public class MainMenuScript : MonoBehaviour {
 
         Selected = playButton;
         MinerSaveGame saveGame = MinerSaveGame.Instance;
-        slot1Info.GetComponent<Text>().text = saveGame.minerData[0].SaveDate.ToShortDateString() + " " + saveGame.minerData[0].SaveDate.ToShortTimeString();
-        slot2Info.GetComponent<Text>().text = saveGame.minerData[1].SaveDate.ToShortDateString() + " " + saveGame.minerData[1].SaveDate.ToShortTimeString();
-        slot3Info.GetComponent<Text>().text = saveGame.minerData[2].SaveDate.ToShortDateString() + " " + saveGame.minerData[2].SaveDate.ToShortTimeString();
+
+        RefreshDateTimeOfSlots();
+
         saveGameSelector.SetActive(false);
+    }
+
+    void RefreshDateTimeOfSlots()
+    {
+        slot1Info.GetComponent<Text>().text = MinerSaveGame.Instance.minerData[0].SaveDate.HasValue ? MinerSaveGame.Instance.minerData[0].SaveDate.Value.ToShortDateString() + " " + MinerSaveGame.Instance.minerData[0].SaveDate.Value.ToShortTimeString() : "EMPTY";
+        slot2Info.GetComponent<Text>().text = MinerSaveGame.Instance.minerData[1].SaveDate.HasValue ? MinerSaveGame.Instance.minerData[1].SaveDate.Value.ToShortDateString() + " " + MinerSaveGame.Instance.minerData[1].SaveDate.Value.ToShortTimeString() : "EMPTY";
+        slot3Info.GetComponent<Text>().text = MinerSaveGame.Instance.minerData[2].SaveDate.HasValue ? MinerSaveGame.Instance.minerData[2].SaveDate.Value.ToShortDateString() + " " + MinerSaveGame.Instance.minerData[2].SaveDate.Value.ToShortTimeString() : "EMPTY";
     }
 
     float lastVert;
@@ -159,6 +166,25 @@ public class MainMenuScript : MonoBehaviour {
         Debug.Log("Loading Slot 3");
         MinerSaveGame.Instance.Current = MinerSaveGame.Instance.minerData[2];
         LoadSlot();
+    }
+
+    public void HandleSlot1Delete()
+    {
+        Debug.Log("Deleting Slot 1");
+        DeleteSlot(0);
+        RefreshDateTimeOfSlots();
+    }
+    public void HandleSlot2Delete()
+    {
+        Debug.Log("Deleting Slot 2");
+        DeleteSlot(1);
+        RefreshDateTimeOfSlots();
+    }
+    public void HandleSlot3Delete()
+    {
+        Debug.Log("Deleting Slot 3");
+        DeleteSlot(2);
+        RefreshDateTimeOfSlots();
     }
     public void LoadSlot()
     {

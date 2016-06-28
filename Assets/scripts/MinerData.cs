@@ -10,7 +10,7 @@ public class MinerData {
     public static int XCOUNT = 26;
     public static int YCOUNT = 115;
 
-    public DateTime SaveDate { get; set; }
+    public DateTime? SaveDate { get; set; }
 
     public float Health { get; set; }
     public float FoodLevel { get; set; }
@@ -68,6 +68,7 @@ public class MinerData {
         MaxHealth = 100f;
         Level = 0;
         NextLevelExperience = 100;
+        SaveDate = null;
         FillInventory();
     }
 
