@@ -100,7 +100,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         elevator.transform.position = new Vector3(Data.ElevatorX, Data.ElevatorY, elevator.transform.position.z);
 
         InvokeRepeating("reduceFood", 12, 12);
-        InvokeRepeating("reduceHealth", 1, 1);
+        InvokeRepeating("UpdateHealth", 1, 1);
         InvokeRepeating("UpdateMoral", 1, 1);
         InvokeRepeating("save", 60, 60);
 	}
@@ -144,12 +144,17 @@ public class MinerRicoBehavior : MonoBehaviour {
         UpdateBars();
     }
 
-    public void reduceHealth()
+    public void UpdateHealth()
     {
         if (Data.FoodLevel <= 0)
         {
             --Data.Health;
             if (Data.Health < 0) Data.Health = 0;
+        }
+        else if (Data.FoodLevel >= 80)
+        {
+            var regenerationRate = Mathf.Max(3.0f - 1.0f/33.0f * Data.Health, 0.0f);
+            Data.Health += regenerationRate / 2.0f;
         }
         UpdateBars();
     }
@@ -766,6 +771,10 @@ public class MinerRicoBehavior : MonoBehaviour {
         }
         Data.Moral += looseMoral;
         Data.Moral = Mathf.Clamp(Data.Moral, 0, 100);
+        if (Data.Moral < 20)
+        {
+            Data.FoodLevel--;
+        }
     }
 
     private void HandleCollect()
