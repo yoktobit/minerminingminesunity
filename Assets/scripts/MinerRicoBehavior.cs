@@ -744,29 +744,36 @@ public class MinerRicoBehavior : MonoBehaviour {
     {
         var lights = GameObject.FindGameObjectsWithTag("LightSource");
         float looseMoral = -5;
-        foreach (var light in lights)
+        if (transform.position.y > 0)
         {
-            float range = light.GetComponent<Light>().range;
-            float z = light.transform.position.z;
-            float lightRange = (range - Math.Abs(z)) * 2.5f;
-            float distance = Vector3.Distance(transform.position, new Vector3(light.transform.position.x, light.transform.position.y));
-            //Debug.Log("distance " + distance + " " + );
-            if (distance > lightRange * 1.0f)
+            looseMoral = 0;
+        }
+        else
+        {
+            foreach (var light in lights)
             {
-                looseMoral = Mathf.Max(-2, looseMoral);
-            }
-            // Reihenfolge ist wichtig
-            else if (distance > lightRange * 0.75f)
-            {
-                looseMoral = Mathf.Max(-1, looseMoral);
-            }
-            else if (distance < lightRange * 0.5f)
-            {
-                looseMoral = Mathf.Max(3, looseMoral);
-            }
-            else
-            {
-                looseMoral = Mathf.Max(0, looseMoral);
+                float range = light.GetComponent<Light>().range;
+                float z = light.transform.position.z;
+                float lightRange = (range - Math.Abs(z)) * 2.5f;
+                float distance = Vector3.Distance(transform.position, new Vector3(light.transform.position.x, light.transform.position.y));
+                //Debug.Log("distance " + distance + " " + );
+                if (distance > lightRange * 1.0f)
+                {
+                    looseMoral = Mathf.Max(-2, looseMoral);
+                }
+                // Reihenfolge ist wichtig
+                else if (distance > lightRange * 0.75f)
+                {
+                    looseMoral = Mathf.Max(-1, looseMoral);
+                }
+                else if (distance < lightRange * 0.5f)
+                {
+                    looseMoral = Mathf.Max(3, looseMoral);
+                }
+                else
+                {
+                    looseMoral = Mathf.Max(0, looseMoral);
+                }
             }
         }
         Data.Moral += looseMoral;
