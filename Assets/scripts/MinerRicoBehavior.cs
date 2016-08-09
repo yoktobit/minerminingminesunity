@@ -28,17 +28,23 @@ public class MinerRicoBehavior : MonoBehaviour {
     float estimatedWorkTime;
     MinerData.Rock workingRock;
     public GameObject foodBarInner;
+    public GameObject foodBarText;
     public GameObject healthBarInner;
+    public GameObject healthBarText;
     public GameObject moralBarInner;
+    public GameObject moralBarText;
     public GameObject moral;
     public GameObject gameOver;
     public GameObject timeBarInner;
+    public GameObject timeBarText;
     public GameObject sun;
     public GameObject inventory;
     public GameObject inventoryBackground;
     public GameObject inGameMenu;
     public GameObject elevatorLabel;
     public GameObject experienceBarInner;
+    public GameObject experienceBarText;
+    public GameObject moneyBarText;
     public GameObject level;
     public GameObject cuCount;
     public GameObject auCount;
@@ -62,12 +68,17 @@ public class MinerRicoBehavior : MonoBehaviour {
         Data = MinerSaveGame.Instance.Current;
 
         healthBarInner = GameObject.Find("HealthBarInner");
+        healthBarText = GameObject.Find("HealthBarText");
         foodBarInner = GameObject.Find("FoodBarInner");
+        foodBarText = GameObject.Find("FoodBarText");
         moralBarInner = GameObject.Find("MoralBarInner");
+        moralBarText = GameObject.Find("MoralBarText");
         moral = GameObject.Find("Moral");
         gameOver = GameObject.Find("GameOver");
         timeBarInner = GameObject.Find("TimeBarInner");
         experienceBarInner = GameObject.Find("ExperienceBarInner");
+        experienceBarText = GameObject.Find("ExperienceBarText");
+        moneyBarText = GameObject.Find("MoneyBarText");
         sun = GameObject.Find("Sun");
         inventory = GameObject.Find("Inventory");
         inventoryBackground = GameObject.Find("InventoryBackground");
@@ -94,6 +105,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         UpdateSun(true);
         HandleInventorySelection();
         UpdateExperienceBar();
+        UpdateMoneyBar();
 
         transform.position = new Vector3(Data.X, Data.Y, transform.position.z);
         target = transform.position;
@@ -118,8 +130,11 @@ public class MinerRicoBehavior : MonoBehaviour {
     public void UpdateBars()
     {
         foodBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.FoodLevel / 100.0f), 0.9f);
+        foodBarText.GetComponent<Text>().text = Math.Round(Data.FoodLevel) + "/100";
         healthBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.Health / Data.MaxHealth), 0.9f);
+        healthBarText.GetComponent<Text>().text = Math.Round(Data.Health) + "/" + Data.MaxHealth;
         moralBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.Moral / 100.0f), 0.9f);
+        moralBarText.GetComponent<Text>().text = Math.Round(Data.Moral) + "/100";
         if (Data.Moral < 20)
         {
             moral.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/ui pic moral bad");
@@ -206,12 +221,18 @@ public class MinerRicoBehavior : MonoBehaviour {
     {
         float newValue = Mathf.Lerp(0.02f, 0.98f, (float)Data.Experience / (float)Data.NextLevelExperience);
         experienceBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(newValue, 0.9f);
+        experienceBarText.GetComponent<Text>().text = Data.Experience + "/" + Data.NextLevelExperience;
         level.GetComponent<Text>().text = Data.Level.ToString();
         cuCount.GetComponent<Text>().text = (from inv in Data.Inventory where inv.Type == "copper" select inv.Amount).Sum().ToString();
         auCount.GetComponent<Text>().text = (from inv in Data.Inventory where inv.Type == "gold" select inv.Amount).Sum().ToString();
         agCount.GetComponent<Text>().text = (from inv in Data.Inventory where inv.Type == "silver" select inv.Amount).Sum().ToString();
         ptCount.GetComponent<Text>().text = (from inv in Data.Inventory where inv.Type == "platinum" select inv.Amount).Sum().ToString();
         gemCount.GetComponent<Text>().text = (from inv in Data.Inventory where inv.Type == "gem" select inv.Amount).Sum().ToString();
+    }
+
+    void UpdateMoneyBar()
+    {
+        moneyBarText.GetComponent<Text>().text = Data.Money.ToString();
     }
 	
     void UpdateDayTime()
@@ -881,6 +902,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     private void CheckIfAlive()
     {
+        if (gameOver == null) return;
         if (Data.Health <= 0)
         {
             gameOver.SetActive(true);
