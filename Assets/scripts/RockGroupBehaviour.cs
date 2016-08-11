@@ -183,7 +183,7 @@ public class RockGroupBehaviour : MonoBehaviour {
 
     public bool CastCandle(Transform target = null, InventoryItem candleItem = null)
     {
-        var existingCandles = MinerSaveGame.Instance.Current.Candles.Count(c => c.X == target.transform.position.x && c.Y == target.transform.position.y - 4);
+        var existingCandles = MinerSaveGame.Instance.Current.Candles.Count(c => c.X == target.transform.position.x && c.Y == target.transform.position.y - 9);
         var minerBehaviour = GameObject.FindGameObjectWithTag("Player").GetComponent<MinerRicoBehavior>();
         if (existingCandles == 0 && !minerBehaviour.isAnimated && target.transform.position.x != 337.5)
         {
@@ -191,7 +191,7 @@ public class RockGroupBehaviour : MonoBehaviour {
             candle.SetParent(target.parent, false);
             if (candleItem == null)
             {
-                candle.transform.position = target.position - new Vector3(0, 4, 0);
+                candle.transform.position = target.position + new Vector3(0, -9, 0);
                 candleItem = new InventoryItem();
                 candleItem.X = candle.transform.position.x;
                 candleItem.Y = candle.transform.position.y;
