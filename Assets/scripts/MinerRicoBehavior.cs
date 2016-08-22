@@ -13,6 +13,8 @@ public class MinerRicoBehavior : MonoBehaviour {
         Empty, Move, Pick, Shovel, Idle, Collect, NeedsWork
     }
 
+    public const float BASIC_SPEED = 7.5f;
+
     public bool isAnimated = false;
     bool moveElevator = false;
     bool inElevator = false;
@@ -456,7 +458,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         UpdateDayTime();
         CheckLevel();
 
-        float step = Data.Speed * 5 * Time.deltaTime; // Movement Speed
+        float step = Data.Speed * BASIC_SPEED * Time.deltaTime; // Movement Speed
         bool left = false, right = false, up = false, down = false;
         Vector3 targetElevator = elevator.transform.position;
         Vector3 currentTarget = target;
@@ -715,6 +717,8 @@ public class MinerRicoBehavior : MonoBehaviour {
         }
         else if (newAction == Action.Move)
         {
+            // speed up elevator
+            if (moveElevator) step *= 1.25f;
             transform.position = Vector3.MoveTowards(transform.position, target, step);
 
             if (moveElevator)
@@ -739,7 +743,7 @@ public class MinerRicoBehavior : MonoBehaviour {
             Debug.Log("Playing pick");
             GetComponent<Animator>().Play("pick " + orientation);
             workStartedTime = Time.time;
-            estimatedWorkTime = 6f;
+            estimatedWorkTime = 4.5f;
             workingRock = newWorkingRock;
             Debug.Log(workingRock);
             isAnimated = true;
@@ -750,7 +754,7 @@ public class MinerRicoBehavior : MonoBehaviour {
             Debug.Log("Playing spade " + orientation);
             GetComponent<Animator>().Play("spade " + orientation);
             workStartedTime = Time.time;
-            estimatedWorkTime = 3f;
+            estimatedWorkTime = 2.25f;
             workingRock = newWorkingRock;
             Debug.Log(workingRock);
             isAnimated = true;
