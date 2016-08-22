@@ -152,10 +152,7 @@ public class MinerRicoBehavior : MonoBehaviour {
     public void reduceFood()
     {
         --Data.FoodLevel;
-        if (Data.FoodLevel < 0)
-        {
-            Data.FoodLevel = 0;
-        }
+        Data.FoodLevel = Mathf.Clamp(Data.FoodLevel, 0, 100);
         UpdateBars();
     }
 
@@ -164,12 +161,13 @@ public class MinerRicoBehavior : MonoBehaviour {
         if (Data.FoodLevel <= 0)
         {
             --Data.Health;
-            if (Data.Health < 0) Data.Health = 0;
+            Data.Health = Mathf.Clamp(Data.Health, 0, 100);
         }
         else if (Data.FoodLevel >= 80)
         {
             var regenerationRate = Mathf.Max(3.0f - 1.0f/33.0f * Data.Health, 0.0f);
             Data.Health += regenerationRate / 2.0f;
+            Data.Health = Mathf.Clamp(Data.Health, 0, 100);
         }
         UpdateBars();
     }
@@ -767,7 +765,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         float looseMoral = -5;
         if (transform.position.y > 0)
         {
-            looseMoral = 0;
+            looseMoral = 3;
         }
         else
         {
@@ -802,6 +800,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         if (Data.Moral < 20)
         {
             Data.FoodLevel--;
+            Data.FoodLevel = Mathf.Clamp(Data.FoodLevel, 0, 100);
         }
     }
 
