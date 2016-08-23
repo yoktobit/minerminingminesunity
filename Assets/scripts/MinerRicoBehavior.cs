@@ -178,7 +178,7 @@ public class MinerRicoBehavior : MonoBehaviour {
     {
         Color preColor = timeBarInner.GetComponent<Image>().color;
         timeBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, (Data.DayTime / 100.0f)), 0.9f);
-        timeBarInner.GetComponent<Image>().color = Data.DayTime > 50.0f ? Color.black : Color.white;
+        timeBarInner.GetComponent<Image>().color = Data.DayTime > 50.0f ? (Color)new Vector4(0.02f, 0, 0.2f, 1f) : Color.white;
         if (preColor != timeBarInner.GetComponent<Image>().color || first)
         {
             sun.GetComponent<SpriteRenderer>().sprite = Data.DayTime > 50.0f ? Resources.Load<Sprite>("world/world moon") : Resources.Load<Sprite>("world/world sun");
