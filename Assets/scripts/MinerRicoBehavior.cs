@@ -14,6 +14,7 @@ public class MinerRicoBehavior : MonoBehaviour {
     }
 
     public const float BASIC_SPEED = 7.5f;
+    public const float DAY_DURATION = 1200.0f;
 
     public bool isAnimated = false;
     bool moveElevator = false;
@@ -237,7 +238,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 	
     void UpdateDayTime()
     {
-        Data.DayTime += Time.deltaTime;
+        Data.DayTime += Time.deltaTime * (100/(DAY_DURATION));
         Data.DayTime %= 100.0f;
         UpdateSun(false);        
     }
