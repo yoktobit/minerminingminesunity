@@ -49,6 +49,7 @@ public class MinerRicoBehavior : MonoBehaviour {
     public GameObject experienceBarText;
     public GameObject moneyBarText;
     public GameObject level;
+    public GameObject dayCount;
     public GameObject cuCount;
     public GameObject auCount;
     public GameObject agCount;
@@ -88,6 +89,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         inGameMenu = GameObject.Find("InGameMenu");
         elevatorLabel = GameObject.Find("ElevatorLabel");
         level = GameObject.Find("Level");
+        dayCount = GameObject.Find("DayCount");
         cuCount = GameObject.Find("CuCount");
         agCount = GameObject.Find("AgCount");
         auCount = GameObject.Find("AuCount");
@@ -188,6 +190,7 @@ public class MinerRicoBehavior : MonoBehaviour {
                 //arrSky[ii].GetComponent<SpriteRenderer>().sprite = Data.DayTime > 50.0f ? Resources.Load<Sprite>("world/world sky night") : Resources.Load<Sprite>("world/world sky day");
             }
         }
+        dayCount.GetComponent<Text>().text = "" + Data.Day;
         // Durchsichtigkeit Nachthimmel
         float opacity = 0;
         float dauer = 12.5f;
@@ -238,8 +241,13 @@ public class MinerRicoBehavior : MonoBehaviour {
 	
     void UpdateDayTime()
     {
+        if (Data.Day == 0) Data.Day = 1;
         Data.DayTime += Time.deltaTime * (100/(DAY_DURATION));
-        Data.DayTime %= 100.0f;
+        if (Data.DayTime > 100)
+        {
+            Data.DayTime = 0.0f;
+            Data.Day++;
+        }
         UpdateSun(false);        
     }
 

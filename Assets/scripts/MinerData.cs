@@ -19,6 +19,7 @@ public class MinerData {
     public int Money { get; set; }
     public int Experience { get; set; }
     public float DayTime { get; set; }
+    public int Day { get; set; }
     public int Level { get; set; }
 
     public float Speed { get; set; }
@@ -56,6 +57,7 @@ public class MinerData {
         Moral = 100;
         Money = 100;
         Experience = 0;
+        Day = 1;
         DayTime = 0;
         Rocks = new Rock[XCOUNT, YCOUNT];
         HasData = false;
