@@ -223,9 +223,9 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     void UpdateExperienceBar()
     {
-        float newValue = Mathf.Lerp(0.02f, 0.98f, (float)Data.Experience / (float)Data.NextLevelExperience);
+        float newValue = Mathf.Lerp(0.02f, 0.98f, (float)(Data.Experience - Data.GetExperienceByLevel(Data.Level)) / (float)(Data.NextLevelExperience - Data.GetExperienceByLevel(Data.Level)));
         experienceBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(newValue, 0.9f);
-        experienceBarText.GetComponent<Text>().text = Data.Experience + "/" + Data.NextLevelExperience;
+        experienceBarText.GetComponent<Text>().text = (Data.Experience - Data.GetExperienceByLevel(Data.Level)) + "/" + (Data.NextLevelExperience - Data.GetExperienceByLevel(Data.Level));
         level.GetComponent<Text>().text = Data.Level.ToString();
         cuCount.GetComponent<Text>().text = (from inv in Data.Inventory where inv.Type == "copper" select inv.Amount).Sum().ToString();
         auCount.GetComponent<Text>().text = (from inv in Data.Inventory where inv.Type == "gold" select inv.Amount).Sum().ToString();
@@ -927,68 +927,57 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     public void CheckLevel()
     {
-        if (Data.Level == 0 && Data.Experience >= 100)
+        if (Data.Experience >= Data.NextLevelExperience && Data.Level < MinerData.MAXLVL)
         {
-            Data.MaxHealth = 105f;
-            Data.Speed = 3.75f;
-            Data.NextLevelExperience = 200;
             Data.Level++;
-        }
-        else if (Data.Level == 1 && Data.Experience >= 200)
-        {
-            Data.MaxHealth = 110f;
-            Data.Speed = 4.00f;
-            Data.NextLevelExperience = 500;
-            Data.Level++;
-        }
-        else if (Data.Level == 2 && Data.Experience >= 500)
-        {
-            Data.MaxHealth = 115f;
-            Data.Speed = 4.25f;
-            Data.NextLevelExperience = 1000;
-            Data.Level++;
-        }
-        else if (Data.Level == 3 && Data.Experience >= 1000)
-        {
-            Data.MaxHealth = 120f;
-            Data.Speed = 4.5f;
-            Data.NextLevelExperience = 2500;
-            Data.Level++;
-        }
-        else if (Data.Level == 4 && Data.Experience >= 2500)
-        {
-            Data.MaxHealth = 125f;
-            Data.Speed = 4.75f;
-            Data.NextLevelExperience = 3000;
-            Data.Level++;
-        }
-        else if (Data.Level == 5 && Data.Experience >= 3000)
-        {
-            Data.MaxHealth = 130f;
-            Data.Speed = 5.0f;
-            Data.NextLevelExperience = 3500;
-            Data.Level++;
-        }
-        else if (Data.Level == 6 && Data.Experience >= 3500)
-        {
-            Data.MaxHealth = 135f;
-            Data.Speed = 5.25f;
-            Data.NextLevelExperience = 4000;
-            Data.Level++;
-        }
-        else if (Data.Level == 7 && Data.Experience >= 4000)
-        {
-            Data.MaxHealth = 140f;
-            Data.Speed = 5.5f;
-            Data.NextLevelExperience = 5000;
-            Data.Level++;
-        }
-        else if (Data.Level == 8 && Data.Experience >= 5000)
-        {
-            Data.MaxHealth = 150f;
-            Data.Speed = 5.75f;
-            Data.NextLevelExperience = 10000;
-            Data.Level++;
+            if (Data.Level == 2)
+            {
+                Data.MaxHealth = 110f;
+                Data.Speed += Data.Speed * 0.05f;
+                Data.NextLevelExperience = MinerData.LVL3;
+            }
+            else if (Data.Level == 3)
+            {
+                Data.MaxHealth = 120f;
+                Data.Speed += Data.Speed * 0.05f;
+                Data.NextLevelExperience = MinerData.LVL4;
+            }
+            else if (Data.Level == 4)
+            {
+                Data.MaxHealth = 130f;
+                Data.Speed += Data.Speed * 0.04f;
+                Data.NextLevelExperience = MinerData.LVL5;
+            }
+            else if (Data.Level == 5)
+            {
+                Data.MaxHealth = 140f;
+                Data.Speed += Data.Speed * 0.04f;
+                Data.NextLevelExperience = MinerData.LVL6;
+            }
+            else if (Data.Level == 6)
+            {
+                Data.MaxHealth = 150f;
+                Data.Speed += Data.Speed * 0.03f;
+                Data.NextLevelExperience = MinerData.LVL7;
+            }
+            else if (Data.Level == 7)
+            {
+                Data.MaxHealth = 160f;
+                Data.Speed += Data.Speed * 0.03f;
+                Data.NextLevelExperience = MinerData.LVL8;
+            }
+            else if (Data.Level == 8)
+            {
+                Data.MaxHealth = 170f;
+                Data.Speed += Data.Speed * 0.02f;
+                Data.NextLevelExperience = MinerData.LVL9;
+            }
+            else if (Data.Level == 9)
+            {
+                Data.MaxHealth = 180f;
+                Data.Speed += Data.Speed * 0.02f;
+                Data.NextLevelExperience = 999999999;
+            }
         }
 
     }

@@ -10,6 +10,17 @@ public class MinerData {
     public static int XCOUNT = 26;
     public static int YCOUNT = 115;
 
+    public static int LVL2 = 50;
+    public static int LVL3 = 150;
+    public static int LVL4 = 300;
+    public static int LVL5 = 500;
+    public static int LVL6 = 750;
+    public static int LVL7 = 1050;
+    public static int LVL8 = 1400;
+    public static int LVL9 = 1800;
+
+    public static int MAXLVL = 9;
+
     public DateTime? SaveDate { get; set; }
 
     public float Health { get; set; }
@@ -68,10 +79,27 @@ public class MinerData {
         ElevatorY = 10f;
         Speed = 3.5f;
         MaxHealth = 100f;
-        Level = 0;
-        NextLevelExperience = 100;
+        Level = 1;
+        NextLevelExperience = MinerData.LVL2;
         SaveDate = null;
         FillInventory();
+    }
+
+    public int GetExperienceByLevel(int level)
+    {
+        switch(level)
+        {
+            case 1: return 0;
+            case 2: return LVL2;
+            case 3: return LVL3;
+            case 4: return LVL4;
+            case 5: return LVL5;
+            case 6: return LVL6;
+            case 7: return LVL7;
+            case 8: return LVL8;
+            case 9: return LVL9;
+            default: return 0;
+        }
     }
 
     private void FillInventory()
