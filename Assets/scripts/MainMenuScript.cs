@@ -105,9 +105,17 @@ public class MainMenuScript : MonoBehaviour {
         }
         if (Input.GetButtonUp("Delete"))
         {
-            if (Selected == slot1) DeleteSlot(0);
-            else if (Selected == slot2) DeleteSlot(1);
-            else if (Selected == slot3) DeleteSlot(2);
+            if (Selected == slot1) HandleSlot1Delete();
+            else if (Selected == slot2) HandleSlot2Delete();
+            else if (Selected == slot3) HandleSlot3Delete();
+        }
+        if (Input.GetButtonUp("Cancel"))
+        {
+            if (State != "mainMenu")
+            {
+                State = "mainMenu";
+                Selected = playButton;
+            }
         }
         float vert = Input.GetAxis("Vertical");
         if (vert != 0 && (Mathf.Sign(vert) != Mathf.Sign(lastVert) || lastVert == 0))
