@@ -130,4 +130,10 @@ Und nun: Viel Spass beim Spielen! :-)
 Die Entwickler
 www.minerminingmines.de</value>
 	</data>
+	<data name="GameOverSurvived" xml:space="preserve">
+		<value />
+	</data>
+	<data name="GameOverValue" xml:space="preserve">
+		<value />
+	</data>
 </root>

@@ -116,6 +116,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+	<data name="GameOverSurvived" xml:space="preserve">
+		<value>YOU SURVIVED 
+
+{DAYS} days</value>
+	</data>
+	<data name="GameOverValue" xml:space="preserve">
+		<value>VALUE OF INVENTORY: 
+
+{VALUE}</value>
+	</data>
 	<data name="PrereleaseNotice" xml:space="preserve">
 		<value>Dear player,
 

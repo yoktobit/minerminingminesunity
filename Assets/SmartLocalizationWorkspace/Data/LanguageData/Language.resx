@@ -119,4 +119,10 @@
 	<data name="PrereleaseNotice" xml:space="preserve">
 		<value>Notice for Prerelease</value>
 	</data>
+	<data name="GameOverSurvived" xml:space="preserve">
+		<value>The Text, how long you survived</value>
+	</data>
+	<data name="GameOverValue" xml:space="preserve">
+		<value>The Text that informs you about the value of the inventory</value>
+	</data>
 </root>

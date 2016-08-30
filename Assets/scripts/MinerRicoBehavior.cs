@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Linq;
 using System.Collections.Generic;
+using SmartLocalization;
 
 public class MinerRicoBehavior : MonoBehaviour {
 
@@ -912,12 +913,25 @@ public class MinerRicoBehavior : MonoBehaviour {
         }
     }
 
+    private int CalculateValue()
+    {
+        int value = 0;
+        Data.Inventory.Where(ii => ii.Type == "copper").ToList().ForEach(ii => value += ii.Amount * 1);
+        Data.Inventory.Where(ii => ii.Type == "silver").ToList().ForEach(ii => value += ii.Amount * 2);
+        Data.Inventory.Where(ii => ii.Type == "gold").ToList().ForEach(ii => value += ii.Amount * 3);
+        Data.Inventory.Where(ii => ii.Type == "platinum").ToList().ForEach(ii => value += ii.Amount * 4);
+        Data.Inventory.Where(ii => ii.Type == "gem").ToList().ForEach(ii => value += ii.Amount * 6);
+        return value;
+    }
+
     private void CheckIfAlive()
     {
         if (gameOver == null) return;
         if (Data.Health <= 0)
         {
             gameOver.SetActive(true);
+            gameOver.transform.FindChild("SurvivedText").GetComponent<Text>().text = LanguageManager.Instance.GetTextValue("GameOverSurvived").Replace("{DAYS}", Data.Day.ToString());
+            gameOver.transform.FindChild("ValueText").GetComponent<Text>().text = LanguageManager.Instance.GetTextValue("GameOverValue").Replace("{VALUE}", CalculateValue().ToString());
         }
         else
         {
