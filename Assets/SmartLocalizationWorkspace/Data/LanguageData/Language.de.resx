@@ -116,6 +116,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+	<data name="GameOverSurvived" xml:space="preserve">
+		<value>TAGE UEBERLEBT:
+
+{DAYS}</value>
+	</data>
+	<data name="GameOverValue" xml:space="preserve">
+		<value>WERT DES INVENTARS: 
+
+{VALUE}</value>
+	</data>
+	<data name="MainMenuPlay" xml:space="preserve">
+		<value>LOS</value>
+	</data>
+	<data name="MainMenuQuit" xml:space="preserve">
+		<value>ENDE</value>
+	</data>
 	<data name="PrereleaseNotice" xml:space="preserve">
 		<value>Lieber Spieler,
 
@@ -129,11 +145,5 @@ Und nun: Viel Spass beim Spielen! :-)
 
 Die Entwickler
 www.minerminingmines.de</value>
-	</data>
-	<data name="GameOverSurvived" xml:space="preserve">
-		<value />
-	</data>
-	<data name="GameOverValue" xml:space="preserve">
-		<value />
 	</data>
 </root>

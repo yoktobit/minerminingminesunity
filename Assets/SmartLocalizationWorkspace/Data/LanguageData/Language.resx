@@ -116,13 +116,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-	<data name="PrereleaseNotice" xml:space="preserve">
-		<value>Notice for Prerelease</value>
-	</data>
 	<data name="GameOverSurvived" xml:space="preserve">
 		<value>The Text, how long you survived</value>
 	</data>
 	<data name="GameOverValue" xml:space="preserve">
 		<value>The Text that informs you about the value of the inventory</value>
+	</data>
+	<data name="PrereleaseNotice" xml:space="preserve">
+		<value>Notice for Prerelease</value>
+	</data>
+	<data name="MainMenuPlay" xml:space="preserve">
+		<value>Play</value>
+	</data>
+	<data name="MainMenuQuit" xml:space="preserve">
+		<value>Quit</value>
 	</data>
 </root>

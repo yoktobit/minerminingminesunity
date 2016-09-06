@@ -121,10 +121,22 @@ public class MinerRicoBehavior : MonoBehaviour {
         InvokeRepeating("UpdateHealth", 1, 1);
         InvokeRepeating("UpdateMoral", 1, 1);
         InvokeRepeating("save", 60, 60);
-	}
+
+        LanguageManager languageManager = LanguageManager.Instance;
+        SmartCultureInfo deviceCulture = languageManager.GetDeviceCultureIfSupported();
+        languageManager.OnChangeLanguage += OnChangeLanguage;
+        languageManager.ChangeLanguage(deviceCulture);
+    }
+
+    void OnChangeLanguage(LanguageManager languageManager)
+    {
+        // braucht eigentlich gar nichts tun erstmal
+    }
 
     void OnDestroy()
     {
+        if (LanguageManager.HasInstance)
+            LanguageManager.Instance.OnChangeLanguage -= OnChangeLanguage;
         save();
     }
 
@@ -929,9 +941,13 @@ public class MinerRicoBehavior : MonoBehaviour {
         if (gameOver == null) return;
         if (Data.Health <= 0)
         {
-            gameOver.SetActive(true);
-            gameOver.transform.FindChild("SurvivedText").GetComponent<Text>().text = LanguageManager.Instance.GetTextValue("GameOverSurvived").Replace("{DAYS}", Data.Day.ToString());
-            gameOver.transform.FindChild("ValueText").GetComponent<Text>().text = LanguageManager.Instance.GetTextValue("GameOverValue").Replace("{VALUE}", CalculateValue().ToString());
+            if (!gameOver.activeSelf)
+            {
+                gameOver.SetActive(true);
+                Debug.Log(LanguageManager.Instance.CurrentlyLoadedCulture.nativeName);
+                gameOver.transform.FindChild("SurvivedText").GetComponent<Text>().text = LanguageManager.Instance.GetTextValue("GameOverSurvived").Replace("{DAYS}", Data.Day.ToString());
+                gameOver.transform.FindChild("ValueText").GetComponent<Text>().text = LanguageManager.Instance.GetTextValue("GameOverValue").Replace("{VALUE}", CalculateValue().ToString());
+            }
         }
         else
         {

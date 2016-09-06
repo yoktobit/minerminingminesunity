@@ -11,7 +11,10 @@ public class GameOverBehaviour : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+	    if (Input.GetButtonUp("Submit") || Input.GetButtonUp("Cancel"))
+        {
+            HandleGameOverClick();
+        }
 	}
 
     public void HandleGameOverClick()

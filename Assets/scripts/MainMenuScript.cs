@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System;
+using SmartLocalization;
 
 public class MainMenuScript : MonoBehaviour {
 
@@ -81,7 +82,17 @@ public class MainMenuScript : MonoBehaviour {
 
         RefreshDateTimeOfSlots();
 
+        LanguageManager languageManager = LanguageManager.Instance;
+        languageManager.OnChangeLanguage += OnLanguageChanged;
+        SmartCultureInfo deviceCultureInfo = languageManager.GetDeviceCultureIfSupported();
+        languageManager.ChangeLanguage(deviceCultureInfo);
+
         saveGameSelector.SetActive(false);
+    }
+
+    void OnLanguageChanged(LanguageManager languageManager)
+    {
+
     }
 
     void RefreshDateTimeOfSlots()

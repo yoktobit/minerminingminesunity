@@ -126,6 +126,12 @@
 
 {VALUE}</value>
 	</data>
+	<data name="MainMenuPlay" xml:space="preserve">
+		<value>Play</value>
+	</data>
+	<data name="MainMenuQuit" xml:space="preserve">
+		<value>Quit</value>
+	</data>
 	<data name="PrereleaseNotice" xml:space="preserve">
 		<value>Dear player,
 
