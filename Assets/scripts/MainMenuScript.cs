@@ -157,7 +157,7 @@ public class MainMenuScript : MonoBehaviour {
 
     public void HandlePlayButton()
     {
-        Debug.Log("Select Slots");
+        //Debug.Log("Select Slots");
         State = "SlotSelect";
         Selected = slot1;
     }
@@ -209,5 +209,9 @@ public class MainMenuScript : MonoBehaviour {
     {
         MinerSaveGame.Instance.Current.HasData = true;
         SceneManager.LoadSceneAsync("game");
+    }
+    public void OpenFacebook()
+    {
+        Application.OpenURL("https://www.facebook.com/minerminingmines/");
     }
 }

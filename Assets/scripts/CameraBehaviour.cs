@@ -25,8 +25,6 @@ public class CameraBehaviour : MonoBehaviour {
         float bottomBound = bounds.min.y;
         float topBound = bounds.max.y - vertExtent / 2;*/
 
-        //Debug.Log(string.Format("{0}, {1}, {2}, {3}", Screen.width, Screen.height, horzExtent, vertExtent));
-
         float leftBound = 180 - (180 - horzExtent);
         float rightBound = 180 + (180 - horzExtent);
         float bottomBound = -2000 - (2000 - vertExtent);

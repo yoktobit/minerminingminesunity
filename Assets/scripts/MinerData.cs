@@ -133,7 +133,7 @@ public class MinerData {
                 UnEquip(newItem);
             Inventory.Add(newItem);
         }
-        Debug.Log("Adding Item " + newItem.Type);
+        //Debug.Log("Adding Item " + newItem.Type);
         ++newItem.Amount;
     }
 

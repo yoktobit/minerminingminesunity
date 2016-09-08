@@ -198,10 +198,6 @@ public class MinerRicoBehavior : MonoBehaviour {
         if (preColor != timeBarInner.GetComponent<Image>().color || first)
         {
             sun.GetComponent<SpriteRenderer>().sprite = Data.DayTime > 50.0f ? Resources.Load<Sprite>("world/world moon") : Resources.Load<Sprite>("world/world sun");
-            for (int ii = 0; ii < 4; ii++)
-            {
-                //arrSky[ii].GetComponent<SpriteRenderer>().sprite = Data.DayTime > 50.0f ? Resources.Load<Sprite>("world/world sky night") : Resources.Load<Sprite>("world/world sky day");
-            }
         }
         dayCount.GetComponent<Text>().text = "" + Data.Day;
         // Durchsichtigkeit Nachthimmel
@@ -421,7 +417,7 @@ public class MinerRicoBehavior : MonoBehaviour {
             }
             else
             {
-                Debug.Log(item.Type);
+                //Debug.Log(item.Type);
             }
             if (item.Amount <= 0)
             {
@@ -547,7 +543,7 @@ public class MinerRicoBehavior : MonoBehaviour {
                 {
                     var torch = Instantiate(Resources.Load<Transform>("prefabs/Torch"));
                     torch.SetParent(this.transform, false);
-                    Debug.Log("Instantiating new torch " + torch.name);
+                    //Debug.Log("Instantiating new torch " + torch.name);
                 }
                 else
                 {
@@ -566,7 +562,7 @@ public class MinerRicoBehavior : MonoBehaviour {
             // Am Ziel angekommen?
             if (transform.position == target && oldAction == Action.Move)
             {
-                Debug.Log("arrived");
+                //Debug.Log("arrived");
                 arrived = true;
                 Data.X = transform.position.x;
                 Data.Y = transform.position.y;
@@ -577,7 +573,7 @@ public class MinerRicoBehavior : MonoBehaviour {
             // Fertig mit der Arbeit?
             if (Time.time - workStartedTime > estimatedWorkTime && hasWorked)
             {
-                Debug.Log("work done");
+                //Debug.Log("work done");
                 workDone = true;
                 workingRock = null;
             }
@@ -641,7 +637,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
         if (shouldWalk)
         {
-            Debug.Log("Target " + target.ToString());
+            //Debug.Log("Target " + target.ToString());
         } 
 
         Action newAction = oldAction;
@@ -650,7 +646,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
         if (arrived || workDone)
         {
-            Debug.Log("Done, idling");
+            //Debug.Log("Done, idling");
             newAction = Action.Idle;
         }
 
@@ -725,7 +721,7 @@ public class MinerRicoBehavior : MonoBehaviour {
             {
                 GetComponent<Animator>().Play("placing");
                 isAnimated = true;
-                Debug.Log("Playing placing animation");
+                //Debug.Log("Playing placing animation");
             }
         }
         else if (newAction == Action.Idle || newAction == Action.NeedsWork)
@@ -733,7 +729,7 @@ public class MinerRicoBehavior : MonoBehaviour {
             target = currentTarget;
             if (newAction != oldAction)
             {
-                Debug.Log("Playing idle, Action = " + newAction);
+                //Debug.Log("Playing idle, Action = " + newAction);
                 GetComponent<Animator>().Play("idle");
             }
         }
@@ -754,7 +750,7 @@ public class MinerRicoBehavior : MonoBehaviour {
             }
             else if (newAction != oldAction || oldOrientation != orientation)
             {
-                Debug.Log("Playing walking");
+                //Debug.Log("Playing walking");
                 GetComponent<Animator>().Play("walking");
             }
             isAnimated = true;
@@ -762,23 +758,23 @@ public class MinerRicoBehavior : MonoBehaviour {
         else if (newAction == Action.Pick && (newAction != oldAction || oldOrientation != orientation))
         {
             target = currentTarget;
-            Debug.Log("Playing pick");
+            //Debug.Log("Playing pick");
             GetComponent<Animator>().Play("pick " + orientation);
             workStartedTime = Time.time;
             estimatedWorkTime = 4.5f;
             workingRock = newWorkingRock;
-            Debug.Log(workingRock);
+            //Debug.Log(workingRock);
             isAnimated = true;
         }
         else if (newAction == Action.Shovel && (newAction != oldAction || oldOrientation != orientation))
         {
             target = currentTarget;
-            Debug.Log("Playing spade " + orientation);
+            //Debug.Log("Playing spade " + orientation);
             GetComponent<Animator>().Play("spade " + orientation);
             workStartedTime = Time.time;
             estimatedWorkTime = 2.25f;
             workingRock = newWorkingRock;
-            Debug.Log(workingRock);
+            //Debug.Log(workingRock);
             isAnimated = true;
         }
         oldAction = newAction;
@@ -836,11 +832,11 @@ public class MinerRicoBehavior : MonoBehaviour {
         int gridX, gridY;
         RockGroupBehaviour.GetGridPosition(transform.position, true, out gridX, out gridY);
         var resourcesToCollectNow = (from r in resourcesToCollect where r.GetComponent<ResourceBehaviour>().gridX == gridX && r.GetComponent<ResourceBehaviour>().gridY == gridY select r).Take(2).ToList();
-        Debug.Log("Collect Now: " + resourcesToCollectNow.Count );
+        //Debug.Log("Collect Now: " + resourcesToCollectNow.Count );
         foreach (var resource in resourcesToCollectNow)
         {
             var resB = resource.GetComponent<ResourceBehaviour>();
-            Debug.Log("Collecting " + resB.type);
+            //Debug.Log("Collecting " + resB.type);
             Data.AddInventoryItem(resB.type, false);
             resourcesToCollect.Remove(resource);
             Destroy(resource.gameObject);
@@ -944,14 +940,15 @@ public class MinerRicoBehavior : MonoBehaviour {
             if (!gameOver.activeSelf)
             {
                 gameOver.SetActive(true);
-                Debug.Log(LanguageManager.Instance.CurrentlyLoadedCulture.nativeName);
+                //Debug.Log(LanguageManager.Instance.CurrentlyLoadedCulture.nativeName);
                 gameOver.transform.FindChild("SurvivedText").GetComponent<Text>().text = LanguageManager.Instance.GetTextValue("GameOverSurvived").Replace("{DAYS}", Data.Day.ToString());
                 gameOver.transform.FindChild("ValueText").GetComponent<Text>().text = LanguageManager.Instance.GetTextValue("GameOverValue").Replace("{VALUE}", CalculateValue().ToString());
             }
         }
         else
         {
-            gameOver.SetActive(false);
+            if (gameOver.activeSelf)
+                gameOver.SetActive(false);
         }
     }
 
@@ -1039,7 +1036,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         int gridX, gridY;
         RockGroupBehaviour.GetGridPosition(transform.position, true, out gridX, out gridY);
         var count = (from r in resourcesToCollect where r.GetComponent<ResourceBehaviour>().gridX == gridX && r.GetComponent<ResourceBehaviour>().gridY == gridY select r).Count();
-        Debug.Log("Found " + count + " resources to collect here");
+        //Debug.Log("Found " + count + " resources to collect here");
         if (count > 0)
         {
             Invoke("SetNextActionCollect", inSeconds);
@@ -1048,7 +1045,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     void HandleArrived()
     {
-        Debug.Log("Found " + resourcesToCollect.Count + " resources to collect");
+        //Debug.Log("Found " + resourcesToCollect.Count + " resources to collect");
         requestedAction = Action.Empty;
         if (resourcesToCollect.Count > 0)
         {
@@ -1071,7 +1068,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     void HandleWorkDone(MinerData.Rock rock)
     {
-        Debug.Log("Begin HandleWorkDone");
+        //Debug.Log("Begin HandleWorkDone");
         if (rock.Type == "light")
         {
             Data.Experience += 1;
@@ -1102,12 +1099,12 @@ public class MinerRicoBehavior : MonoBehaviour {
             int rnd = UnityEngine.Random.Range(1, 4);
             spriteName += " " + rnd.ToString().PadLeft(2, '0');
         }
-        Debug.Log(spriteName);
+        //Debug.Log(spriteName);
         rockObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(spriteName);
         UpdateExperienceBar();
 
         TryCastMinerals(rock);
-        Debug.Log("End HandleWorkDone");
+        //Debug.Log("End HandleWorkDone");
     }
 
     private void TryCastMinerals(MinerData.Rock rock)
@@ -1203,12 +1200,12 @@ public class MinerRicoBehavior : MonoBehaviour {
         }
         var variant = UnityEngine.Random.Range(1, type == "gem" ? 8 : 5);
         var targetPos = new Vector3(rock.X * 15 + xPos, rock.Y * -20 + yPos - 20);
-        Debug.Log(String.Format("targetPos = {0}", targetPos));
+        //Debug.Log(String.Format("targetPos = {0}", targetPos));
         var newResource = Instantiate(resourceTemplate, targetPos, Quaternion.identity) as Transform;
         newResource.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("resources/resources " + type + " " + variant.ToString().PadLeft(2, '0'));
         newResource.GetComponent<ResourceBehaviour>().type = type;
         RockGroupBehaviour.GetGridPosition(targetPos, false, out newResource.GetComponent<ResourceBehaviour>().gridX, out newResource.GetComponent<ResourceBehaviour>().gridY);
-        Debug.Log("Resource " + type + " added with gridX = " + newResource.GetComponent<ResourceBehaviour>().gridX + " and gridY = " + newResource.GetComponent<ResourceBehaviour>().gridY);
+        //Debug.Log("Resource " + type + " added with gridX = " + newResource.GetComponent<ResourceBehaviour>().gridX + " and gridY = " + newResource.GetComponent<ResourceBehaviour>().gridY);
         AddResourceToCollect(newResource);
     }
 

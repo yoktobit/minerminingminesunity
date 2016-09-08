@@ -11,7 +11,10 @@ public class PrereleaseNoticeBehaviour : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+	    if (Input.GetButtonUp("Submit") || Input.GetButtonUp("Cancel"))
+        {
+            HandleClick();
+        }
 	}
 
     public void HandleClick()

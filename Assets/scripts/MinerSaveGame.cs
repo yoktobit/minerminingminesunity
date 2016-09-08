@@ -77,7 +77,7 @@ public class MinerSaveGame {
 
     public static void Save()
     {
-        Debug.Log("Saving Game...");
+        //Debug.Log("Saving Game...");
         if (Instance.Current != null)
         {
             Instance.Current.SaveDate = DateTime.Now;
