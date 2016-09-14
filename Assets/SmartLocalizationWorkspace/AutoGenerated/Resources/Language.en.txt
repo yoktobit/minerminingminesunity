@@ -126,6 +126,18 @@
 
 {VALUE}</value>
 	</data>
+	<data name="HUD_DAY" xml:space="preserve">
+		<value>DAY</value>
+	</data>
+	<data name="HUD_GEM" xml:space="preserve">
+		<value>GEM</value>
+	</data>
+	<data name="HUD_PICK" xml:space="preserve">
+		<value>PICK</value>
+	</data>
+	<data name="HUD_SPADE" xml:space="preserve">
+		<value>SPADE</value>
+	</data>
 	<data name="MainMenuPlay" xml:space="preserve">
 		<value>Play</value>
 	</data>

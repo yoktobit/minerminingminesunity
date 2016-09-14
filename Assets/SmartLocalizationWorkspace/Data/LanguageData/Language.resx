@@ -122,13 +122,25 @@
 	<data name="GameOverValue" xml:space="preserve">
 		<value>The Text that informs you about the value of the inventory</value>
 	</data>
-	<data name="PrereleaseNotice" xml:space="preserve">
-		<value>Notice for Prerelease</value>
+	<data name="HUD_DAY" xml:space="preserve">
+		<value>DAY</value>
+	</data>
+	<data name="HUD_PICK" xml:space="preserve">
+		<value>PICK</value>
+	</data>
+	<data name="HUD_SPADE" xml:space="preserve">
+		<value>SPADE</value>
 	</data>
 	<data name="MainMenuPlay" xml:space="preserve">
 		<value>Play</value>
 	</data>
 	<data name="MainMenuQuit" xml:space="preserve">
 		<value>Quit</value>
+	</data>
+	<data name="PrereleaseNotice" xml:space="preserve">
+		<value>Notice for Prerelease</value>
+	</data>
+	<data name="HUD_GEM" xml:space="preserve">
+		<value>GEM</value>
 	</data>
 </root>

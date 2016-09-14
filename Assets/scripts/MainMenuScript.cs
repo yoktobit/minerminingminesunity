@@ -128,6 +128,10 @@ public class MainMenuScript : MonoBehaviour {
                 Selected = playButton;
             }
         }
+        if (Input.GetButtonUp("X"))
+        {
+            OpenFacebook();
+        }
         float vert = Input.GetAxis("Vertical");
         if (vert != 0 && (Mathf.Sign(vert) != Mathf.Sign(lastVert) || lastVert == 0))
         {

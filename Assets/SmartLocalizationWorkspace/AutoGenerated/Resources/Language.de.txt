@@ -126,6 +126,19 @@
 
 {VALUE}</value>
 	</data>
+	<data name="HUD_DAY" xml:space="preserve">
+		<value>TAG</value>
+	</data>
+	<data name="HUD_GEM" xml:space="preserve">
+		<value>DIA-
+MANT</value>
+	</data>
+	<data name="HUD_PICK" xml:space="preserve">
+		<value>HACKE</value>
+	</data>
+	<data name="HUD_SPADE" xml:space="preserve">
+		<value>SPATEN</value>
+	</data>
 	<data name="MainMenuPlay" xml:space="preserve">
 		<value>LOS</value>
 	</data>
