@@ -116,6 +116,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+	<data name="DeletePanelText" xml:space="preserve">
+		<value>DO YOU REALLY WANT TO DELETE SLOT {SLOT}?</value>
+	</data>
 	<data name="GameOverSurvived" xml:space="preserve">
 		<value>The Text, how long you survived</value>
 	</data>
@@ -124,6 +127,9 @@
 	</data>
 	<data name="HUD_DAY" xml:space="preserve">
 		<value>DAY</value>
+	</data>
+	<data name="HUD_GEM" xml:space="preserve">
+		<value>GEM</value>
 	</data>
 	<data name="HUD_PICK" xml:space="preserve">
 		<value>PICK</value>
@@ -140,7 +146,10 @@
 	<data name="PrereleaseNotice" xml:space="preserve">
 		<value>Notice for Prerelease</value>
 	</data>
-	<data name="HUD_GEM" xml:space="preserve">
-		<value>GEM</value>
+	<data name="Yes" xml:space="preserve">
+		<value>Yes</value>
+	</data>
+	<data name="No" xml:space="preserve">
+		<value>No</value>
 	</data>
 </root>

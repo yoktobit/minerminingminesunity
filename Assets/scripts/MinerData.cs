@@ -81,6 +81,7 @@ public class MinerData {
         MaxHealth = 100f;
         Level = 1;
         NextLevelExperience = MinerData.LVL2;
+        Debug.Log("Resetting");
         SaveDate = null;
         FillInventory();
     }

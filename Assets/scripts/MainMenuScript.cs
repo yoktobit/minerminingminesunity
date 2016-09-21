@@ -22,6 +22,8 @@ public class MainMenuScript : MonoBehaviour {
             slot1.GetComponent<Text>().color = Color.black;
             slot2.GetComponent<Text>().color = Color.black;
             slot3.GetComponent<Text>().color = Color.black;
+            deletePanelYes.GetComponent<Text>().color = Color.black;
+            deletePanelNo.GetComponent<Text>().color = Color.black;
 
             _selected.GetComponent<Text>().color = Color.red;
         }
@@ -38,18 +40,32 @@ public class MainMenuScript : MonoBehaviour {
         }
         set
         {
+            string previous = _state;
             _state = value;
             if (_state == "mainMenu")
             {
                 playButton.SetActive(true);
                 quitButton.SetActive(true);
                 saveGameSelector.SetActive(false);
+                deletePanel.SetActive(false);
             }
-            else
+            else if (_state == "SlotSelect")
             {
                 playButton.SetActive(false);
                 quitButton.SetActive(false);
                 saveGameSelector.SetActive(true);
+                deletePanel.SetActive(false);
+                Selected = slot1;
+                if (previous == "Delete")
+                {
+                    Selected = slotToDelete == 0 ? slot1 : slotToDelete == 1 ? slot2 : slot3;
+                }
+            }
+            else
+            {
+                Selected = deletePanelNo;
+                deletePanelText.GetComponent<Text>().text = LanguageManager.Instance.GetTextValue("DeletePanelText").Replace("{SLOT}", (slotToDelete + 1).ToString());
+                deletePanel.SetActive(true);
             }
         }
     }
@@ -63,6 +79,10 @@ public class MainMenuScript : MonoBehaviour {
     GameObject slot2Info;
     GameObject slot3Info;
     GameObject saveGameSelector;
+    GameObject deletePanel;
+    GameObject deletePanelText;
+    GameObject deletePanelYes;
+    GameObject deletePanelNo;
 
     // Use this for initialization
     void Start () {
@@ -76,6 +96,12 @@ public class MainMenuScript : MonoBehaviour {
         slot2Info = GameObject.Find("Slot2Info");
         slot3Info = GameObject.Find("Slot3Info");
         saveGameSelector = GameObject.Find("SaveGameSelector");
+        deletePanel = GameObject.Find("DeletePanel");
+        deletePanelText = GameObject.Find("DeletePanelText");
+        deletePanelYes = GameObject.Find("YES");
+        deletePanelNo = GameObject.Find("NO");
+
+        deletePanel.SetActive(false);
 
         Selected = playButton;
         MinerSaveGame saveGame = MinerSaveGame.Instance;
@@ -97,12 +123,14 @@ public class MainMenuScript : MonoBehaviour {
 
     void RefreshDateTimeOfSlots()
     {
+        Debug.Log(MinerSaveGame.Instance.minerData[0].SaveDate);
         slot1Info.GetComponent<Text>().text = MinerSaveGame.Instance.minerData[0].SaveDate.HasValue ? MinerSaveGame.Instance.minerData[0].SaveDate.Value.ToShortDateString() + " " + MinerSaveGame.Instance.minerData[0].SaveDate.Value.ToShortTimeString() : "EMPTY";
         slot2Info.GetComponent<Text>().text = MinerSaveGame.Instance.minerData[1].SaveDate.HasValue ? MinerSaveGame.Instance.minerData[1].SaveDate.Value.ToShortDateString() + " " + MinerSaveGame.Instance.minerData[1].SaveDate.Value.ToShortTimeString() : "EMPTY";
         slot3Info.GetComponent<Text>().text = MinerSaveGame.Instance.minerData[2].SaveDate.HasValue ? MinerSaveGame.Instance.minerData[2].SaveDate.Value.ToShortDateString() + " " + MinerSaveGame.Instance.minerData[2].SaveDate.Value.ToShortTimeString() : "EMPTY";
     }
 
     float lastVert;
+    float lastHorz;
 	
 	// Update is called once per frame
 	void Update () {
@@ -113,6 +141,8 @@ public class MainMenuScript : MonoBehaviour {
             else if (Selected == slot1) HandleSlot1();
             else if (Selected == slot2) HandleSlot2();
             else if (Selected == slot3) HandleSlot3();
+            else if (Selected == deletePanelYes) DeleteSlotConfirm();
+            else if (Selected == deletePanelNo) DeleteSlotAbort();
         }
         if (Input.GetButtonUp("Delete"))
         {
@@ -133,13 +163,14 @@ public class MainMenuScript : MonoBehaviour {
             OpenFacebook();
         }
         float vert = Input.GetAxis("Vertical");
+        float horz = Input.GetAxis("Horizontal");
         if (vert != 0 && (Mathf.Sign(vert) != Mathf.Sign(lastVert) || lastVert == 0))
         {
             if (State == "mainMenu")
             {
                 Selected = (Selected == playButton) ? quitButton : playButton;
             }
-            else
+            else if (State == "SlotSelect")
             {
                 if (vert < 0)
                 {
@@ -150,8 +181,20 @@ public class MainMenuScript : MonoBehaviour {
                     Selected = (Selected == slot1 ? slot3 : (Selected == slot2 ? slot1 : slot2));
                 }
             }
+            else
+            {
+                Selected = (Selected == deletePanelYes) ? deletePanelNo: deletePanelYes;
+            }
+        }
+        if (horz != 0 && (Mathf.Sign(horz) != Mathf.Sign(lastHorz) || lastHorz == 0))
+        {
+            if (State == "Delete")
+            {
+                Selected = (Selected == deletePanelYes) ? deletePanelNo : deletePanelYes;
+            }
         }
         lastVert = Input.GetAxis("Vertical");
+        lastHorz = Input.GetAxis("Horizontal");
     }
 
     private void DeleteSlot(int v)
@@ -163,6 +206,7 @@ public class MainMenuScript : MonoBehaviour {
     {
         //Debug.Log("Select Slots");
         State = "SlotSelect";
+        RefreshDateTimeOfSlots();
         Selected = slot1;
     }
 
@@ -191,23 +235,38 @@ public class MainMenuScript : MonoBehaviour {
         LoadSlot();
     }
 
+    int slotToDelete;
     public void HandleSlot1Delete()
     {
         Debug.Log("Deleting Slot 1");
-        DeleteSlot(0);
+        slotToDelete = 0;
+        State = "Delete";
         RefreshDateTimeOfSlots();
     }
     public void HandleSlot2Delete()
     {
         Debug.Log("Deleting Slot 2");
-        DeleteSlot(1);
+        slotToDelete = 1;
+        State = "Delete";
         RefreshDateTimeOfSlots();
     }
     public void HandleSlot3Delete()
     {
         Debug.Log("Deleting Slot 3");
-        DeleteSlot(2);
+        slotToDelete = 2;
+        State = "Delete";
         RefreshDateTimeOfSlots();
+    }
+
+    public void DeleteSlotConfirm()
+    {
+        DeleteSlot(slotToDelete);
+        State = "SlotSelect";
+        RefreshDateTimeOfSlots();
+    }
+    public void DeleteSlotAbort()
+    {
+        State = "SlotSelect";
     }
     public void LoadSlot()
     {
@@ -217,5 +276,17 @@ public class MainMenuScript : MonoBehaviour {
     public void OpenFacebook()
     {
         Application.OpenURL("https://www.facebook.com/minerminingmines/");
+    }
+
+    public void OnDestroy()
+    {
+        if (LanguageManager.HasInstance)
+            LanguageManager.Instance.OnChangeLanguage -= OnLanguageChanged;
+        save();
+    }
+
+    public void save()
+    {
+        MinerSaveGame.Save();
     }
 }

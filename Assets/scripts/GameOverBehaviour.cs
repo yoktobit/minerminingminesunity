@@ -11,6 +11,8 @@ public class GameOverBehaviour : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if (MinerSaveGame.Instance.Current.Health > 0) return;
+        if (!gameObject.activeInHierarchy) return;
 	    if (Input.GetButtonUp("Submit") || Input.GetButtonUp("Cancel"))
         {
             HandleGameOverClick();

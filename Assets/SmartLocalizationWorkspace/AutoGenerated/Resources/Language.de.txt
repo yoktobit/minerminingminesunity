@@ -116,6 +116,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+	<data name="DeletePanelText" xml:space="preserve">
+		<value>MOECHTEST DU WIRKLICH SLOT {SLOT} LOESCHEN?</value>
+	</data>
 	<data name="GameOverSurvived" xml:space="preserve">
 		<value>TAGE UEBERLEBT:
 
@@ -145,6 +148,9 @@ MANT</value>
 	<data name="MainMenuQuit" xml:space="preserve">
 		<value>ENDE</value>
 	</data>
+	<data name="No" xml:space="preserve">
+		<value>Nein</value>
+	</data>
 	<data name="PrereleaseNotice" xml:space="preserve">
 		<value>Lieber Spieler,
 
@@ -158,5 +164,8 @@ Und nun: Viel Spass beim Spielen! :-)
 
 Die Entwickler
 www.minerminingmines.de</value>
+	</data>
+	<data name="Yes" xml:space="preserve">
+		<value>Ja</value>
 	</data>
 </root>

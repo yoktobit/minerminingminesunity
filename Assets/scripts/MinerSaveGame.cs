@@ -80,11 +80,13 @@ public class MinerSaveGame {
         //Debug.Log("Saving Game...");
         if (Instance.Current != null)
         {
+            Debug.Log("Setting SaveDate to " + DateTime.Now.ToShortDateString());
             Instance.Current.SaveDate = DateTime.Now;
         }
         System.IO.FileStream fs = System.IO.File.Open(saveGameFileName, System.IO.FileMode.Create);
         BinaryFormatter formatter = new BinaryFormatter();
         formatter.Serialize(fs, Instance);
+        fs.Flush();
         fs.Close();
     }
 

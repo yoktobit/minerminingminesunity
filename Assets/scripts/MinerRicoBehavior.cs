@@ -854,7 +854,11 @@ public class MinerRicoBehavior : MonoBehaviour {
     {
         bool freshActivated = false;
         if (inventory.activeSelf) return;
-        if (Input.GetButtonUp("Cancel"))
+#if UNITY_ANDROID
+        if (Input.GetKeyUp(KeyCode.Menu))
+#else
+        if (Input.GetButtonUp("Menu"))
+#endif
         {
             freshActivated = true;
             inGameMenu.SetActive(!inGameMenu.activeSelf);
@@ -862,13 +866,23 @@ public class MinerRicoBehavior : MonoBehaviour {
         if (!inGameMenu.activeSelf) return;
         bool up, down, submit, cancel;
         up = down = submit = cancel = false;
-        if (Input.GetButtonUp("Up"))
+        float horz = Input.GetAxis("Horizontal");
+        float vert = Input.GetAxis("Vertical");
+        /*if (Input.GetButtonUp("Up"))
         {
             up = true;
         }
         if (Input.GetButtonUp("Down"))
         {
             down = true;
+        }*/
+        if (vert < 0 && (Mathf.Sign(vert) != Mathf.Sign(lastInventoryVert) || lastInventoryVert == 0))
+        {
+            down = true;
+        }
+        if (vert > 0 && (Mathf.Sign(vert) != Mathf.Sign(lastInventoryVert) || lastInventoryVert == 0))
+        {
+            up = true;
         }
         if (Input.GetButtonUp("Submit"))
         {
@@ -905,10 +919,13 @@ public class MinerRicoBehavior : MonoBehaviour {
         mainMenuItem.GetComponent<Text>().color = Color.black;
         continueItem.GetComponent<Text>().color = Color.black;
         activeInGameMenuItem.GetComponent<Text>().color = Color.red;
+        lastInventoryHorz = horz;
+        lastInventoryVert = vert;
     }
 
     void GotoMainMenu()
     {
+        MinerSaveGame.Save();
         SceneManager.LoadSceneAsync("MainMenu");
     }
 
