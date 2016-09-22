@@ -407,12 +407,14 @@ public class MinerRicoBehavior : MonoBehaviour {
             {
                 Data.FoodLevel = Math.Min(Data.FoodLevel + 40, 100);
                 item.Amount = Math.Max(item.Amount - 1, 0);
+                GetComponent<Animator>().Play("apple");
             }
             else if (item.Type == "candle")
             {
                 if (rockGroup.GetComponent<RockGroupBehaviour>().CastCandle(this.transform, null))
                 {
                     item.Amount = Math.Max(item.Amount - 1, 0);
+                    GetComponent<Animator>().Play("placing");
                 }
             }
             else
