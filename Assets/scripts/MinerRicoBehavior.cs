@@ -909,7 +909,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         }
         else if (submit)
         {
-            if (activeInGameMenuItem == continueItem) inGameMenu.SetActive(false);
+            if (activeInGameMenuItem == continueItem) HandleSubmitInGameMenuContinue();
             if (activeInGameMenuItem == mainMenuItem) GotoMainMenu();
             if (activeInGameMenuItem == quitItem) Application.Quit();
         }
@@ -925,7 +925,17 @@ public class MinerRicoBehavior : MonoBehaviour {
         lastInventoryVert = vert;
     }
 
-    void GotoMainMenu()
+    public void HandleSubmitInGameMenuContinue()
+    {
+        inGameMenu.SetActive(false);
+    }
+
+    public void HandleSubmitInGameMenuQuit()
+    {
+        Application.Quit();
+    }
+
+    public void GotoMainMenu()
     {
         MinerSaveGame.Save();
         SceneManager.LoadSceneAsync("MainMenu");
