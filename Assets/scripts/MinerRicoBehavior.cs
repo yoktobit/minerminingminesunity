@@ -11,7 +11,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     enum Action
     {
-        Empty, Move, Pick, Shovel, Idle, Collect, NeedsWork
+        Empty, Move, Pick, Shovel, Idle, Collect, NeedsWork, UseItem
     }
 
     public const float BASIC_SPEED = 7.5f;
@@ -31,6 +31,9 @@ public class MinerRicoBehavior : MonoBehaviour {
     float workStartedTime;
     float estimatedWorkTime;
     MinerData.Rock workingRock;
+    bool itemUseHandled = false;
+    InventoryItem itemToUse;
+
     public GameObject foodBarInner;
     public GameObject foodBarText;
     public GameObject healthBarInner;
@@ -400,34 +403,22 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     private void HandleInventoryUse()
     {
-        var item = (from i in Data.Inventory where i.Position == activeInventoryNumber select i).FirstOrDefault();
-        if (item != null)
+        itemToUse = (from i in Data.Inventory where i.Position == activeInventoryNumber select i).FirstOrDefault();
+        if (itemToUse != null && !isAnimated)
         {
-            if (item.Type == "apple")
+            itemUseHandled = false;
+            requestedAction = Action.UseItem;
+            isAnimated = true;
+            if (itemToUse.Type == "apple")
             {
-                Data.FoodLevel = Math.Min(Data.FoodLevel + 40, 100);
-                item.Amount = Math.Max(item.Amount - 1, 0);
                 GetComponent<Animator>().Play("apple");
             }
-            else if (item.Type == "candle")
+            else if (itemToUse.Type == "candle")
             {
-                if (rockGroup.GetComponent<RockGroupBehaviour>().CastCandle(this.transform, null))
-                {
-                    item.Amount = Math.Max(item.Amount - 1, 0);
-                    GetComponent<Animator>().Play("placing");
-                }
+                GetComponent<Animator>().Play("placing");
             }
-            else
-            {
-                //Debug.Log(item.Type);
-            }
-            if (item.Amount <= 0)
-            {
-                item.Position = -1;
-                inventoryState = "";
-            }
+            inventoryState = "";
         }
-        UpdateInventory();
     }
 
     private void UpdateInventory()
@@ -484,8 +475,10 @@ public class MinerRicoBehavior : MonoBehaviour {
         Vector3 currentTarget = target;
         bool arrived = false;
         bool workDone = false;
+        bool itemUseDone = false;
         bool shouldWalk = false;
         bool hasWorked = (oldAction == Action.Pick || oldAction == Action.Shovel);//workingRock != null;
+        bool hasUsedItem = oldAction == Action.UseItem;
         MinerData.Rock oldWorkingRock = workingRock;
 
         int pos = elevator.transform.position.y >= 0 ? 0 : Mathf.Abs((int)(elevator.transform.position.y + 10) / 20) + 1;
@@ -559,7 +552,7 @@ public class MinerRicoBehavior : MonoBehaviour {
                 }
             }
         }
-        if (isAnimated)
+        if (isAnimated) // gucken, ob er mit irgendwas fertig ist
         {
             // Am Ziel angekommen?
             if (transform.position == target && oldAction == Action.Move)
@@ -580,7 +573,30 @@ public class MinerRicoBehavior : MonoBehaviour {
                 workingRock = null;
             }
 
-            if (arrived || (workDone && hasWorked))
+            // Kerze
+            if (hasUsedItem && !itemUseHandled &&
+                this.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("placing") &&
+                this.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime > (0.5f * this.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).speed))
+            {
+                HandleItemUse();
+            }
+
+            // Apfel
+            if (hasUsedItem && !itemUseHandled &&
+                this.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("apple") &&
+                this.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime > (0.6f * this.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).speed))
+            {
+                HandleItemUse();
+            }
+
+            if (hasUsedItem &&
+                !(this.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("apple")
+                || this.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("placing")))
+            {
+                itemUseDone = true;
+            }
+
+            if (arrived || (workDone && hasWorked) || (hasUsedItem && itemUseDone))
             {
                 isAnimated = false;
                 if (moveElevator)
@@ -637,16 +653,11 @@ public class MinerRicoBehavior : MonoBehaviour {
         int targetGridX, targetGridY;
         RockGroupBehaviour.GetGridPosition(target, true, out targetGridX, out targetGridY);
 
-        if (shouldWalk)
-        {
-            //Debug.Log("Target " + target.ToString());
-        } 
-
         Action newAction = oldAction;
 
         MinerData.Rock newWorkingRock = null;
 
-        if (arrived || workDone)
+        if (arrived || workDone || itemUseDone)
         {
             //Debug.Log("Done, idling");
             newAction = Action.Idle;
@@ -781,6 +792,29 @@ public class MinerRicoBehavior : MonoBehaviour {
         }
         oldAction = newAction;
         oldOrientation = orientation;
+    }
+
+    private void HandleItemUse()
+    {
+        itemUseHandled = true;
+        if (itemToUse != null && itemToUse.Type == "candle")
+        {
+            if (rockGroup.GetComponent<RockGroupBehaviour>().CastCandle(this.transform, null))
+            {
+                itemToUse.Amount = Math.Max(itemToUse.Amount - 1, 0);
+            }
+        }
+        else if (itemToUse != null && itemToUse.Type == "apple")
+        {
+            Data.FoodLevel = Math.Min(Data.FoodLevel + 40, 100);
+            itemToUse.Amount = Math.Max(itemToUse.Amount - 1, 0);
+        }
+        if (itemToUse.Amount <= 0)
+        {
+            itemToUse.Position = -1;
+        }
+        itemToUse = null;
+        UpdateInventory();
     }
 
     private void UpdateMoral()
@@ -1087,7 +1121,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         if (yy < 0) return false;
         for (var ii = 0; ii < 25; ++ii)
         {
-            if (Data.Rocks[ii,yy].AfterType.Contains("cave"))
+            if (Data.Rocks != null && Data.Rocks[ii, yy] != null && Data.Rocks[ii,yy].AfterType.Contains("cave"))
             {
                 return true;
             }

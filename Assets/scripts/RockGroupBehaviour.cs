@@ -185,7 +185,7 @@ public class RockGroupBehaviour : MonoBehaviour {
     {
         var existingCandles = MinerSaveGame.Instance.Current.Candles.Count(c => c.X == target.transform.position.x && c.Y == target.transform.position.y - 9);
         var minerBehaviour = GameObject.FindGameObjectWithTag("Player").GetComponent<MinerRicoBehavior>();
-        if (existingCandles == 0 && !minerBehaviour.isAnimated && target.transform.position.x != 337.5)
+        if (existingCandles == 0 && target.transform.position.x != 337.5)
         {
             var candle = Instantiate<Transform>(Resources.Load<Transform>("prefabs/Candle"));
             candle.SetParent(target.parent, false);
