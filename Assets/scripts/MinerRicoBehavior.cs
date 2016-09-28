@@ -263,6 +263,18 @@ public class MinerRicoBehavior : MonoBehaviour {
         UpdateSun(false);        
     }
 
+    public void SelectInventoryItem(Transform inventoryItem)
+    {
+        var inventoryNumberString = inventoryItem.name.Replace("Inventory", "");
+        var inventoryNumber = int.Parse(inventoryNumberString);
+        activeInventoryNumber = inventoryNumber;
+        if (inventory.transform.GetChild(activeInventoryNumber + 1).transform.GetChild(1).GetComponent<Image>().sprite != null)
+        {
+            inventoryState = "selected";
+            HandleInventorySelection();
+        }
+    }
+
     void HandleInventorySelection()
     {
         activeInventoryItem = inventory.transform.GetChild(activeInventoryNumber + 1);
@@ -342,8 +354,6 @@ public class MinerRicoBehavior : MonoBehaviour {
                     {
                         HandleInventoryDrop();
                     }
-                    inventory.SetActive(!inventory.activeSelf);
-                    inventoryState = "";
                 }
             }
             if (horz < 0 && (Mathf.Sign(horz) != Mathf.Sign(lastInventoryHorz) || lastInventoryHorz == 0))
@@ -386,7 +396,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         lastInventoryVert = vert;
     }
 
-    private void HandleInventoryDrop()
+    public void HandleInventoryDrop()
     {
         var item = (from i in Data.Inventory where i.Position == activeInventoryNumber select i).FirstOrDefault();
         if (item != null)
@@ -399,9 +409,11 @@ public class MinerRicoBehavior : MonoBehaviour {
             }
         }
         UpdateInventory();
+        inventory.SetActive(!inventory.activeSelf);
+        inventoryState = "";
     }
 
-    private void HandleInventoryUse()
+    public void HandleInventoryUse()
     {
         itemToUse = (from i in Data.Inventory where i.Position == activeInventoryNumber select i).FirstOrDefault();
         if (itemToUse != null && !isAnimated)
@@ -419,6 +431,15 @@ public class MinerRicoBehavior : MonoBehaviour {
             }
             inventoryState = "";
         }
+        inventory.SetActive(!inventory.activeSelf);
+        inventoryState = "";
+    }
+
+    public void SwitchInventory()
+    {
+        UpdateInventory();
+        inventory.SetActive(!inventory.activeSelf);
+        inventoryState = "";
     }
 
     private void UpdateInventory()
