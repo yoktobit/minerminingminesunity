@@ -315,6 +315,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         if (Input.GetButtonUp("Inventory"))
         {
             inventory.SetActive(!inventory.activeSelf);
+            inventoryState = "";
             UpdateInventory();
         }
         bool left, right, up, down;
@@ -437,9 +438,9 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     public void SwitchInventory()
     {
-        UpdateInventory();
         inventory.SetActive(!inventory.activeSelf);
         inventoryState = "";
+        UpdateInventory();
     }
 
     private void UpdateInventory()
