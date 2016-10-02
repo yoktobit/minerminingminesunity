@@ -14,7 +14,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         Empty, Move, Pick, Shovel, Idle, Collect, NeedsWork, UseItem
     }
 
-    public const float BASIC_SPEED = 7.5f;
+    public const float BASIC_SPEED = 9.375f;
     public const float DAY_DURATION = 1200.0f;
 
     public bool isAnimated = false;
@@ -33,6 +33,7 @@ public class MinerRicoBehavior : MonoBehaviour {
     MinerData.Rock workingRock;
     bool itemUseHandled = false;
     InventoryItem itemToUse;
+    bool inventoryWasClosed = false;
 
     public GameObject foodBarInner;
     public GameObject foodBarText;
@@ -314,9 +315,7 @@ public class MinerRicoBehavior : MonoBehaviour {
     {
         if (Input.GetButtonUp("Inventory"))
         {
-            inventory.SetActive(!inventory.activeSelf);
-            inventoryState = "";
-            UpdateInventory();
+            SwitchInventory();
         }
         bool left, right, up, down;
         left = right = up = down = false;
@@ -328,7 +327,7 @@ public class MinerRicoBehavior : MonoBehaviour {
             {
                 if (inventoryState == "")
                 {
-                    inventory.SetActive(!inventory.activeSelf);
+                    SwitchInventory();
                 }
                 else if (inventoryState == "selected")
                 {
@@ -409,9 +408,7 @@ public class MinerRicoBehavior : MonoBehaviour {
                 inventoryState = "";
             }
         }
-        UpdateInventory();
-        inventory.SetActive(!inventory.activeSelf);
-        inventoryState = "";
+        SwitchInventory();
     }
 
     public void HandleInventoryUse()
@@ -432,8 +429,7 @@ public class MinerRicoBehavior : MonoBehaviour {
             }
             inventoryState = "";
         }
-        inventory.SetActive(!inventory.activeSelf);
-        inventoryState = "";
+        SwitchInventory();
     }
 
     public void SwitchInventory()
@@ -441,6 +437,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         inventory.SetActive(!inventory.activeSelf);
         inventoryState = "";
         UpdateInventory();
+        inventoryWasClosed = true;
     }
 
     private void UpdateInventory()
@@ -482,6 +479,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
+
         HandleReset();
         CheckIfAlive();
         if (gameOver.activeSelf) return;
@@ -518,7 +516,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
         GetComponent<Animator>().SetFloat("walkingSpeed", (Data.Speed / 3.5f) * 0.7f);
 
-        if (!inventory.activeSelf && !inGameMenu.activeSelf)
+        if (!inventory.activeSelf && !inGameMenu.activeSelf && !inventoryWasClosed)
         {
             if (Input.GetAxis("Horizontal") < -0.1)
             {
@@ -669,6 +667,11 @@ public class MinerRicoBehavior : MonoBehaviour {
                 }
                 shouldWalk = true;
             }
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            inventoryWasClosed = false;
         }
 
         //int targetGridX = (int)target.x / 15;
@@ -1292,11 +1295,5 @@ public class MinerRicoBehavior : MonoBehaviour {
         RockGroupBehaviour.GetGridPosition(targetPos, false, out newResource.GetComponent<ResourceBehaviour>().gridX, out newResource.GetComponent<ResourceBehaviour>().gridY);
         //Debug.Log("Resource " + type + " added with gridX = " + newResource.GetComponent<ResourceBehaviour>().gridX + " and gridY = " + newResource.GetComponent<ResourceBehaviour>().gridY);
         AddResourceToCollect(newResource);
-    }
-
-    void OnMouseDown()
-    {
-        UpdateInventory();
-        inventory.SetActive(true);
     }
 }
