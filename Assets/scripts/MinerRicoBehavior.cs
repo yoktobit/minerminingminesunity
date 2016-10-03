@@ -60,6 +60,7 @@ public class MinerRicoBehavior : MonoBehaviour {
     public GameObject agCount;
     public GameObject ptCount;
     public GameObject gemCount;
+    public GameObject inventoryText;
     public Transform elevator;
     public GameObject[] arrSky;
     public List<Transform> resourcesToCollect;
@@ -100,6 +101,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         auCount = GameObject.Find("AuCount");
         ptCount = GameObject.Find("PtCount");
         gemCount = GameObject.Find("GemCount");
+        inventoryText = GameObject.Find("InventoryText");
 
         arrSky = new GameObject[4];
         for (int ii = 0; ii < 4; ii++)
@@ -116,6 +118,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         HandleInventorySelection();
         UpdateExperienceBar();
         UpdateMoneyBar();
+        UpdateInventoryText();
 
         transform.position = new Vector3(Data.X, Data.Y, transform.position.z);
         target = transform.position;
@@ -315,7 +318,7 @@ public class MinerRicoBehavior : MonoBehaviour {
     {
         if (Input.GetButtonUp("Inventory"))
         {
-            SwitchInventory();
+            SwitchInventory(false);
         }
         bool left, right, up, down;
         left = right = up = down = false;
@@ -327,7 +330,7 @@ public class MinerRicoBehavior : MonoBehaviour {
             {
                 if (inventoryState == "")
                 {
-                    SwitchInventory();
+                    SwitchInventory(false);
                 }
                 else if (inventoryState == "selected")
                 {
@@ -348,11 +351,11 @@ public class MinerRicoBehavior : MonoBehaviour {
                 {
                     if (inventoryAction == "use")
                     {
-                        HandleInventoryUse();
+                        HandleInventoryUse(false);
                     }
                     else if (inventoryAction == "drop")
                     {
-                        HandleInventoryDrop();
+                        HandleInventoryDrop(false);
                     }
                 }
             }
@@ -396,7 +399,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         lastInventoryVert = vert;
     }
 
-    public void HandleInventoryDrop()
+    public void HandleInventoryDrop(bool mouseUsed)
     {
         var item = (from i in Data.Inventory where i.Position == activeInventoryNumber select i).FirstOrDefault();
         if (item != null)
@@ -408,10 +411,11 @@ public class MinerRicoBehavior : MonoBehaviour {
                 inventoryState = "";
             }
         }
-        SwitchInventory();
+        UpdateExperienceBar();
+        SwitchInventory(mouseUsed);
     }
 
-    public void HandleInventoryUse()
+    public void HandleInventoryUse(bool mouseUsed)
     {
         itemToUse = (from i in Data.Inventory where i.Position == activeInventoryNumber select i).FirstOrDefault();
         if (itemToUse != null && !isAnimated)
@@ -429,15 +433,21 @@ public class MinerRicoBehavior : MonoBehaviour {
             }
             inventoryState = "";
         }
-        SwitchInventory();
+        SwitchInventory(mouseUsed);
     }
 
-    public void SwitchInventory()
+    public void SwitchInventory(bool mouseUsed)
     {
         inventory.SetActive(!inventory.activeSelf);
         inventoryState = "";
         UpdateInventory();
-        inventoryWasClosed = true;
+        if (mouseUsed)
+            inventoryWasClosed = true;
+    }
+
+    private void UpdateInventoryText()
+    {
+        inventoryText.GetComponent<Text>().text = Data.Inventory.Count(i => i.Amount > 0 && i.Position >= 0).ToString() +  "/20";
     }
 
     private void UpdateInventory()
@@ -466,6 +476,7 @@ public class MinerRicoBehavior : MonoBehaviour {
                 image.GetComponent<Image>().sprite = Resources.Load("") as Sprite;
             }
         }
+        UpdateInventoryText();
     }
 
     bool IsWalkable(int xx, int yy)
@@ -476,6 +487,17 @@ public class MinerRicoBehavior : MonoBehaviour {
         }
         return false;
     }
+
+    public bool mouseOverRucksack = false;
+    public void MouseEnterRucksack()
+    {
+        mouseOverRucksack = true;
+    }
+    public void MouseExitRucksack()
+    {
+        mouseOverRucksack = false;
+    }
+
 
     // Update is called once per frame
     void Update () {
@@ -535,19 +557,19 @@ public class MinerRicoBehavior : MonoBehaviour {
                 up = true;
             }
 
-            if (Input.GetMouseButton(0) && Input.mousePosition.x < Screen.width * 0.25)
+            if (Input.GetMouseButton(0) && Input.mousePosition.x < Screen.width * 0.25 && !mouseOverRucksack)
             {
                 left = true;
             }
-            else if (Input.GetMouseButton(0) && Input.mousePosition.x > Screen.width * 0.75)
+            else if (Input.GetMouseButton(0) && Input.mousePosition.x > Screen.width * 0.75 && !mouseOverRucksack)
             {
                 right = true;
             }
-            else if (Input.GetMouseButton(0) && Input.mousePosition.y < Screen.height * 0.25)
+            else if (Input.GetMouseButton(0) && Input.mousePosition.y < Screen.height * 0.25 && !mouseOverRucksack)
             {
                 down = true;
             }
-            else if (Input.GetMouseButton(0) && Input.mousePosition.y > Screen.height * 0.75)
+            else if (Input.GetMouseButton(0) && Input.mousePosition.y > Screen.height * 0.75 && !mouseOverRucksack)
             {
                 up = true;
             }
