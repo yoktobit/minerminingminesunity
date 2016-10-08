@@ -447,6 +447,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     private void UpdateInventoryText()
     {
+        //inventoryText.GetComponent<Text>().text = "20/20";
         inventoryText.GetComponent<Text>().text = Data.Inventory.Count(i => i.Amount > 0 && i.Position >= 0).ToString() +  "/20";
     }
 
@@ -927,6 +928,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         oldAction = Action.Idle;
         TryPlanCollect(0.5f);
         UpdateExperienceBar();
+        UpdateInventoryText();
     }
 
     public Transform activeInGameMenuItem;
