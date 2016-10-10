@@ -155,22 +155,31 @@ public class MinerRicoBehavior : MonoBehaviour {
     public void UpdateBars()
     {
         foodBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.FoodLevel / 100.0f), 0.9f);
-        foodBarText.GetComponent<Text>().text = Math.Round(Data.FoodLevel) + "/100";
+        string text = Math.Round(Data.FoodLevel) + "/100";
+        if (foodBarText.GetComponent<Text>().text != text)
+            foodBarText.GetComponent<Text>().text = text;
         healthBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.Health / Data.MaxHealth), 0.9f);
-        healthBarText.GetComponent<Text>().text = Math.Round(Data.Health) + "/" + Data.MaxHealth;
+        text = Math.Round(Data.Health) + "/" + Data.MaxHealth;
+        if (healthBarText.GetComponent<Text>().text != text)
+            healthBarText.GetComponent<Text>().text = text;
         moralBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.Moral / 100.0f), 0.9f);
-        moralBarText.GetComponent<Text>().text = Math.Round(Data.Moral) + "/100";
+        text = Math.Round(Data.Moral) + "/100";
+        if (moralBarText.GetComponent<Text>().text != text)
+            moralBarText.GetComponent<Text>().text = text;
         if (Data.Moral < 20)
         {
-            moral.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/ui pic moral bad");
+            if (moral.GetComponent<Image>().sprite.name != "ui pic moral bad")
+                moral.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/ui pic moral bad");
         }
         else if (Data.Moral < 50)
         {
-            moral.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/ui pic moral medium");
+            if (moral.GetComponent<Image>().sprite.name != "ui pic moral medium")
+                moral.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/ui pic moral medium");
         }
         else
         {
-            moral.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/ui pic moral good");
+            if (moral.GetComponent<Image>().sprite.name != "ui pic moral good")
+                moral.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/ui pic moral good");
         }
     }
 
@@ -206,7 +215,9 @@ public class MinerRicoBehavior : MonoBehaviour {
         {
             sun.GetComponent<SpriteRenderer>().sprite = Data.DayTime > 50.0f ? Resources.Load<Sprite>("world/world moon") : Resources.Load<Sprite>("world/world sun");
         }
-        dayCount.GetComponent<Text>().text = "" + Data.Day;
+        string dayTime = "" + Data.Day;
+        if (dayCount.GetComponent<Text>().text != dayTime)
+            dayCount.GetComponent<Text>().text = dayTime;
         // Durchsichtigkeit Nachthimmel
         float opacity = 0;
         float dauer = 12.5f;
@@ -525,7 +536,8 @@ public class MinerRicoBehavior : MonoBehaviour {
         MinerData.Rock oldWorkingRock = workingRock;
 
         int pos = elevator.transform.position.y >= 0 ? 0 : Mathf.Abs((int)(elevator.transform.position.y + 10) / 20) + 1;
-        elevatorLabel.GetComponent<UnityEngine.UI.Text>().text = pos.ToString();
+        if (elevatorLabel.GetComponent<UnityEngine.UI.Text>().text != pos.ToString())
+            elevatorLabel.GetComponent<UnityEngine.UI.Text>().text = pos.ToString();
 #if UNITY_EDITOR
         if (HasLineCave(pos - 1))
         {
@@ -916,11 +928,9 @@ public class MinerRicoBehavior : MonoBehaviour {
         int gridX, gridY;
         RockGroupBehaviour.GetGridPosition(transform.position, true, out gridX, out gridY);
         var resourcesToCollectNow = (from r in resourcesToCollect where r.GetComponent<ResourceBehaviour>().gridX == gridX && r.GetComponent<ResourceBehaviour>().gridY == gridY select r).Take(2).ToList();
-        //Debug.Log("Collect Now: " + resourcesToCollectNow.Count );
         foreach (var resource in resourcesToCollectNow)
         {
             var resB = resource.GetComponent<ResourceBehaviour>();
-            //Debug.Log("Collecting " + resB.type);
             Data.AddInventoryItem(resB.type, false);
             resourcesToCollect.Remove(resource);
             Destroy(resource.gameObject);
@@ -1147,8 +1157,7 @@ public class MinerRicoBehavior : MonoBehaviour {
     {
         int gridX, gridY;
         RockGroupBehaviour.GetGridPosition(transform.position, true, out gridX, out gridY);
-        var count = (from r in resourcesToCollect where r.GetComponent<ResourceBehaviour>().gridX == gridX && r.GetComponent<ResourceBehaviour>().gridY == gridY select r).Count();
-        //Debug.Log("Found " + count + " resources to collect here");
+        var count = resourcesToCollect.Count(r => r.GetComponent<ResourceBehaviour>().gridX == gridX && r.GetComponent<ResourceBehaviour>().gridY == gridY);
         if (count > 0)
         {
             Invoke("SetNextActionCollect", inSeconds);
