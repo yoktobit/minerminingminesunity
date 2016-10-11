@@ -8,6 +8,56 @@ public class RockGroupBehaviour : MonoBehaviour {
     public List<Sprite> spriteCollection;
     public Transform invisibleWallTemplate;
     public Transform enemyTemplate;
+    public Dictionary<string, int> SpriteAtlas = new Dictionary<string, int>() {
+        { "rock cave eyes blue", 0 },
+        { "rock cave eyes green", 1 },
+        { "rock cave eyes grey", 2 },
+        { "rock cave eyes purple", 3 },
+        { "rock cave eyes red", 4 },
+        { "rock cave eyes yellow", 5 },
+        { "rock cave hard 01", 6 },
+        { "rock cave hard 02", 7 },
+        { "rock cave hard 03", 8 },
+        { "rock cave hard 04", 9 },
+        { "rock cave light 01", 10 },
+        { "rock cave light 02", 11 },
+        { "rock cave light 03", 12 },
+        { "rock cave light 04", 13 },
+        { "rock endstone 02", 14 },
+        { "rock endstone 01", 15 },
+        { "rock endstone 03", 16 },
+        { "rock endstone 04", 17 },
+        { "rock endstone 05", 18 },
+        { "rock endstone 06", 19 },
+        { "rock granite 01", 20 },
+        { "rock granite 02", 21 },
+        { "rock granite 03", 22 },
+        { "rock granite 04", 23 },
+        { "rock granite 05", 24 },
+        { "rock granite 06", 25 },
+        { "rock granite empty", 26 },
+        { "rock hard 01", 27 },
+        { "rock hard 02", 28 },
+        { "rock hard 03", 29 },
+        { "rock hard 04", 30 },
+        { "rock hard 05", 31 },
+        { "rock hard 06", 32 },
+        { "rock hard empty", 33 },
+        { "rock light 01", 34 },
+        { "rock light 02", 35 },
+        { "rock light 03", 36 },
+        { "rock light 04", 37 },
+        { "rock light 05", 38 },
+        { "rock light 06", 39 },
+        { "rock light empty", 40 },
+        { "world top rocks 01", 41 },
+        { "world top rocks 02", 42 },
+        { "world top rocks 03", 43 },
+        { "world top rocks 04", 44 },
+        { "world top rocks 05", 45 },
+        { "world top rocks 06", 46 },
+        { "world top rocks empty", 47 },
+    };
 
     void setRocks()
     {
@@ -18,7 +68,7 @@ public class RockGroupBehaviour : MonoBehaviour {
             var topRockCopy = Instantiate(topRockTemplate);
             topRockCopy.transform.position = new Vector3(xx * 15, 0);
             string spriteCount = ("" + ((xx % 6) + 1)).PadLeft(2, '0');
-            var spriteName = "rocks/world top rocks ";
+            var spriteName = "world top rocks ";
             if (xx == 22)
             {
                 spriteName += "empty";
@@ -27,7 +77,8 @@ public class RockGroupBehaviour : MonoBehaviour {
             {
                 spriteName += spriteCount;
             }
-            topRockCopy.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(spriteName);
+            var spriteAtlasIndex = SpriteAtlas[spriteName];
+            topRockCopy.GetComponent<SpriteRenderer>().sprite = spriteCollection[spriteAtlasIndex];//Resources.Load<Sprite>(spriteName);
         }
         topRockTemplate.gameObject.SetActive(false);
 
@@ -151,12 +202,14 @@ public class RockGroupBehaviour : MonoBehaviour {
                 int randomImage = Random.Range(1, type.Contains("cave") ? 5 : 6);
                 string strRandomImage = "" + randomImage;
                 strRandomImage = strRandomImage.PadLeft(2, '0');
-                string spriteName = "rocks/rock " + type;
+                //string spriteName = "rocks/rock " + type;
+                string spriteName = "rock " + type;
                 if (type.IndexOf("empty") < 0)
                 {
                     spriteName += " " + strRandomImage;
                 }
-                rock.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(spriteName);
+                int spriteAtlasIndex = SpriteAtlas[spriteName];
+                rock.GetComponent<SpriteRenderer>().sprite = spriteCollection[spriteAtlasIndex]; //Resources.Load<Sprite>(spriteName);
             } // xx
         } // yy
         foreach (InventoryItem candle in MinerSaveGame.Instance.Current.Candles)

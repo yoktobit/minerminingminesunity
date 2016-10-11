@@ -46,12 +46,14 @@ TextureImporter:
   spriteBorder: {x: 1, y: 1, z: 1, w: 1}
   spritePixelsToUnits: 100
   alphaIsTransparency: 1
+  spriteTessellationDetail: -1
   textureType: 8
   buildTargetSettings: []
   spriteSheet:
+    serializedVersion: 2
     sprites: []
     outline: []
-  spritePackingTag: 
+  spritePackingTag: ui
   userData: 
   assetBundleName: 
   assetBundleVariant: 

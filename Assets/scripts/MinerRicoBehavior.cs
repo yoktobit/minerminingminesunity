@@ -1214,14 +1214,15 @@ public class MinerRicoBehavior : MonoBehaviour {
         }
         
         var rockObject = GameObject.Find("Rock_" + rock.X + "_" + rock.Y);
-        string spriteName = "rocks/rock " + rock.Type;
+        string spriteName = "rock " + rock.Type;
         if (rock.Type.Contains("cave"))
         {
             int rnd = UnityEngine.Random.Range(1, 4);
             spriteName += " " + rnd.ToString().PadLeft(2, '0');
         }
         //Debug.Log(spriteName);
-        rockObject.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(spriteName);
+        var spriteAtlasIndex = rockGroup.GetComponent<RockGroupBehaviour>().SpriteAtlas[spriteName];
+        rockObject.GetComponent<SpriteRenderer>().sprite = rockGroup.GetComponent<RockGroupBehaviour>().spriteCollection[spriteAtlasIndex];//Resources.Load<Sprite>(spriteName);
         UpdateExperienceBar();
 
         TryCastMinerals(rock);
