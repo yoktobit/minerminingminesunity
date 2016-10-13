@@ -950,7 +950,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         bool freshActivated = false;
         if (inventory.activeSelf) return;
 #if UNITY_ANDROID
-        if (Input.GetKeyUp(KeyCode.Menu))
+        if (Input.GetKeyUp(KeyCode.Menu) || Input.GetButtonUp("Menu"))
 #else
         if (Input.GetButtonUp("Menu"))
 #endif
