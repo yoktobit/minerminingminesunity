@@ -159,7 +159,7 @@ void UnityDeferredCalculateLightParams (
 		half3 lightDir = -normalize (tolight);
 		
 		float att = dot(tolight, tolight) * _LightPos.w;
-		att = att * att;
+		att = att * att * 0.2f;
 		float atten = tex2D (_LightTextureB0, att.rr).UNITY_ATTEN_CHANNEL;
 		
 		atten *= UnityDeferredComputeShadow (tolight, fadeDist, uv);
