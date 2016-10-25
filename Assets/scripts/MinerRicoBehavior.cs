@@ -514,7 +514,6 @@ public class MinerRicoBehavior : MonoBehaviour {
     // Update is called once per frame
     void Update () {
 
-        HandleReset();
         CheckIfAlive();
         if (gameOver.activeSelf) return;
 
@@ -1032,15 +1031,6 @@ public class MinerRicoBehavior : MonoBehaviour {
     {
         MinerSaveGame.Save();
         SceneManager.LoadSceneAsync("MainMenu");
-    }
-
-    private void HandleReset()
-    {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            MinerSaveGame.Instance.Current.Reset();
-            GotoMainMenu();
-        }
     }
 
     private int CalculateValue()
