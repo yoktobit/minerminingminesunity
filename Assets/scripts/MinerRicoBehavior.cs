@@ -510,7 +510,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         mouseOverRucksack = false;
     }
 
-
+    
     // Update is called once per frame
     void Update () {
 
@@ -876,6 +876,30 @@ public class MinerRicoBehavior : MonoBehaviour {
         UpdateInventory();
     }
 
+    void CheckLightSource(int checkLightX, int checkLightY, int range, ref float looseMoral)
+    {
+        int lightX, lightY, x, y;
+        RockGroupBehaviour.GetGridPosition(new Vector3((int)checkLightX, (int)checkLightY), false, out lightX, out lightY);
+        RockGroupBehaviour.GetGridPosition(transform.position, false, out x, out y);
+        float distance = Vector3.Distance(new Vector3(x, y), new Vector3(lightX, lightY));
+        if (distance > range)
+        {
+            looseMoral = Mathf.Max(-2, looseMoral);
+        }
+        else if (distance > range - 2)
+        {
+            looseMoral = Mathf.Max(-1, looseMoral);
+        }
+        else if (distance < range * 0.5f)
+        {
+            looseMoral = Mathf.Max(3, looseMoral);
+        }
+        else
+        {
+            looseMoral = Mathf.Max(0, looseMoral);
+        }
+    }
+
     private void UpdateMoral()
     {
         var lights = GameObject.FindGameObjectsWithTag("LightSource");
@@ -886,7 +910,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         }
         else
         {
-            foreach (var light in lights)
+            /*foreach (var light in lights)
             {
                 float range = light.GetComponent<Light>().range;
                 float z = light.transform.position.z;
@@ -910,7 +934,12 @@ public class MinerRicoBehavior : MonoBehaviour {
                 {
                     looseMoral = Mathf.Max(0, looseMoral);
                 }
+            }*/
+            foreach (var light in Data.Candles)
+            {
+                CheckLightSource((int)light.X, (int)light.Y, MinerData.CANDLERANGE, ref looseMoral);
             }
+            CheckLightSource(23, 0, MinerData.SUNRANGE, ref looseMoral);
         }
         Data.Moral += looseMoral;
         Data.Moral = Mathf.Clamp(Data.Moral, 0, 100);

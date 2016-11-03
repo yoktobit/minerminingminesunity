@@ -21,6 +21,10 @@ public class CandleBehaviour : MonoBehaviour {
         if (candle.Health < 0)
         {
             MinerSaveGame.Instance.Current.Candles.Remove(candle);
+            int x = 0, y = 0;
+            RockGroupBehaviour.GetGridPosition(new Vector3(candle.X, candle.Y), false, out x, out y);
+            GameObject.Find("RockGroup").GetComponent<RockGroupBehaviour>().SetRocksLight(x, y, 0f, MinerData.CANDLERANGE);
+            GameObject.Find("RockGroup").GetComponent<RockGroupBehaviour>().UpdateLights();
             Destroy(this.gameObject);
         }
     }

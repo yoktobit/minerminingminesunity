@@ -261,6 +261,7 @@ public class RockGroupBehaviour : MonoBehaviour {
         {
             return false;
         }
+        UpdateLights();
         return true;
     }
 
@@ -286,10 +287,84 @@ public class RockGroupBehaviour : MonoBehaviour {
         return enemy;
     }
 
+    void SetRockLight(int x, int y, float level)
+    {
+        if (x < 0 || y < 0 || x >= MinerData.XCOUNT || y >= MinerData.YCOUNT) return;
+        //Debug.Log("X: " + x + "Y: " + y);
+        var rockName = "Rock_" + x + "_" + y;
+        var rockObject = GameObject.Find(rockName);
+        if (rockObject == null) return;
+        if (level > 0)
+        {
+            if (rockObject != null)
+            {
+                rockObject.GetComponent<SpriteRenderer>().enabled = true;
+                if (rockObject.GetComponent<SpriteRenderer>().color.a < level)
+                {
+                    rockObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, level);
+                }
+            }
+        }
+        else
+        {
+            rockObject.GetComponent<SpriteRenderer>().enabled = false;
+            rockObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0); ;
+        }
+    }
+
+    public void SetRocksLight(int xCenter, int yCenter, float level, int radius)
+    {
+        int r = radius;
+        int r2 = radius - 2;
+        float useLevel = -1;
+
+        Debug.Log(string.Format("{0},{1}:{2}:{3}", xCenter, yCenter, level, radius));
+
+        for (int x = xCenter - radius; x <= xCenter; x++)
+        {
+            for (int y = yCenter - radius; y <= yCenter; y++)
+            {
+                useLevel = -1;
+                // ((20 - 23)      * (20-23)      + (10-0)        * (10-0)        <= 8*8
+                if ((x - xCenter) * (x - xCenter) + (y - yCenter) * (y - yCenter) <= r2 * r2)
+                {
+                    useLevel = level;
+                }
+                else if ((x - xCenter) * (x - xCenter) + (y - yCenter) * (y - yCenter) <= r * r)
+                {
+                    useLevel = level / 2f;
+                }
+                // we don't have to take the square root, it's slow
+                if (useLevel >= 0)
+                {
+                    int xSym = xCenter - (x - xCenter);
+                    int ySym = yCenter - (y - yCenter);
+                    // (x, y), (x, ySym), (xSym , y), (xSym, ySym) are in the circle
+                    SetRockLight(x, y, useLevel);
+                    SetRockLight(x, ySym, useLevel);
+                    SetRockLight(xSym, y, useLevel);
+                    SetRockLight(xSym, ySym, useLevel);
+                }
+            }
+        }
+    }
+
+    public void UpdateLights()
+    {
+        SetRocksLight(23, 0, 1f, MinerData.SUNRANGE);
+        foreach (var candle in MinerSaveGame.Instance.Current.Candles)
+        {
+            int x = 0, y = 0;
+            GetGridPosition(new Vector3(candle.X, candle.Y), false, out x, out y);
+            SetRocksLight(x, y, 1f, MinerData.CANDLERANGE);
+        }
+    }
+
     // Use this for initialization
     void Start () {
         setRocks();
-	}
+        UpdateLights();
+    }
 	
 	// Update is called once per frame
 	void Update () {

@@ -10,6 +10,9 @@ public class MinerData {
     public static int XCOUNT = 26;
     public static int YCOUNT = 115;
 
+    public static int CANDLERANGE = 8;
+    public static int SUNRANGE = 15;
+
     public static int LVL2 = 50;
     public static int LVL3 = 150;
     public static int LVL4 = 300;
