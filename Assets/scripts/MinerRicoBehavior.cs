@@ -879,9 +879,14 @@ public class MinerRicoBehavior : MonoBehaviour {
     void CheckLightSource(int checkLightX, int checkLightY, int range, ref float looseMoral)
     {
         int lightX, lightY, x, y;
+        //lightX = checkLightX;
+        //lightY = checkLightY;
         RockGroupBehaviour.GetGridPosition(new Vector3((int)checkLightX, (int)checkLightY), false, out lightX, out lightY);
         RockGroupBehaviour.GetGridPosition(transform.position, false, out x, out y);
-        float distance = Vector3.Distance(new Vector3(x, y), new Vector3(lightX, lightY));
+        float distance = Vector2.Distance(new Vector2((float)x, (float)y), new Vector2((float)lightX, (float)lightY));
+        
+        //Debug.Log(String.Format("Distance from {0},{1}/{3},{4}: {2}", checkLightX, checkLightY, distance, x, y));
+
         if (distance > range)
         {
             looseMoral = Mathf.Max(-2, looseMoral);
@@ -910,36 +915,11 @@ public class MinerRicoBehavior : MonoBehaviour {
         }
         else
         {
-            /*foreach (var light in lights)
-            {
-                float range = light.GetComponent<Light>().range;
-                float z = light.transform.position.z;
-                float lightRange = (range - Math.Abs(z)) * 2.5f;
-                float distance = Vector3.Distance(transform.position, new Vector3(light.transform.position.x, light.transform.position.y));
-                //Debug.Log("distance " + distance + " " + );
-                if (distance > lightRange * 1.0f)
-                {
-                    looseMoral = Mathf.Max(-2, looseMoral);
-                }
-                // Reihenfolge ist wichtig
-                else if (distance > lightRange * 0.75f)
-                {
-                    looseMoral = Mathf.Max(-1, looseMoral);
-                }
-                else if (distance < lightRange * 0.5f)
-                {
-                    looseMoral = Mathf.Max(3, looseMoral);
-                }
-                else
-                {
-                    looseMoral = Mathf.Max(0, looseMoral);
-                }
-            }*/
             foreach (var light in Data.Candles)
             {
                 CheckLightSource((int)light.X, (int)light.Y, MinerData.CANDLERANGE, ref looseMoral);
             }
-            CheckLightSource(23, 0, MinerData.SUNRANGE, ref looseMoral);
+            CheckLightSource(345, 0, MinerData.SUNRANGE, ref looseMoral);
         }
         Data.Moral += looseMoral;
         Data.Moral = Mathf.Clamp(Data.Moral, 0, 100);
