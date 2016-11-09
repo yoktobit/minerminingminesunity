@@ -587,6 +587,7 @@ public class MinerRicoBehavior : MonoBehaviour {
             }
             if (Input.GetButtonUp("Torch"))
             {
+                /*
                 var torches = GameObject.FindGameObjectsWithTag("Torch");
                 if (torches.Count() == 0)
                 {
@@ -604,6 +605,7 @@ public class MinerRicoBehavior : MonoBehaviour {
                         }
                     }
                 }
+                */
             }
         }
         if (isAnimated) // gucken, ob er mit irgendwas fertig ist
