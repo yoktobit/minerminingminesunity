@@ -11,7 +11,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     enum Action
     {
-        Empty, Move, Pick, Shovel, Idle, Collect, NeedsWork, UseItem
+        Empty, Move, Pick, Shovel, Idle, Collect, NeedsWork, UseItem, EnterShop, EnterHome
     }
 
     public const float BASIC_SPEED = 9.375f;
@@ -523,7 +523,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         CheckLevel();
 
         float step = Data.Speed * BASIC_SPEED * Time.deltaTime; // Movement Speed
-        bool left = false, right = false, up = false, down = false;
+        bool left = false, right = false, up = false, down = false, action = false;
         Vector3 targetElevator = elevator.transform.position;
         Vector3 currentTarget = target;
         bool arrived = false;
@@ -567,6 +567,10 @@ public class MinerRicoBehavior : MonoBehaviour {
             else if (Input.GetAxis("Vertical") > 0.1)
             {
                 up = true;
+            }
+            else if (Input.GetButtonUp("Submit"))
+            {
+                action = true;
             }
 
             if (Input.GetMouseButton(0) && Input.mousePosition.x < Screen.width * 0.25 && !mouseOverRucksack)
@@ -724,6 +728,11 @@ public class MinerRicoBehavior : MonoBehaviour {
             newAction = Action.Idle;
         }
 
+        if ((action || up) && transform.position.x == 7.5f + 15 * 10)
+        {
+            newAction = Action.EnterShop;
+        }
+
         if (shouldWalk) // kein else if, weil er sonst er stoppen würde und dann weiterlaufen, er soll aber direkt weiterlaufen
         {
             newAction = Action.Move;
@@ -850,6 +859,10 @@ public class MinerRicoBehavior : MonoBehaviour {
             workingRock = newWorkingRock;
             //Debug.Log(workingRock);
             isAnimated = true;
+        }
+        else if (newAction == Action.EnterShop)
+        {
+            SceneManager.LoadScene("shop");
         }
         oldAction = newAction;
         oldOrientation = orientation;
