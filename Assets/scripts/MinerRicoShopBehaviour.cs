@@ -78,12 +78,20 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
 
     private void UpdateWalk(ref bool handled)
     {
-        bool left = false, right = false, up = false, down = false, action = false;
+        bool left = false, right = false, up = false, down = false, action = false, cancel = false;
         if (Input.GetAxis("Horizontal") < -0.1)
         {
             left = true;
         }
         else if (Input.GetAxis("Horizontal") > 0.1)
+        {
+            right = true;
+        }
+        else if (Input.GetMouseButton(0) && Input.mousePosition.x < Screen.width * 0.25)
+        {
+            left = true;
+        }
+        else if (Input.GetMouseButton(0) && Input.mousePosition.x > Screen.width * 0.75)
         {
             right = true;
         }
@@ -99,10 +107,14 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         {
             action = true;
         }
+        else if (Input.GetButtonUp("Cancel"))
+        {
+            cancel = true;
+        }
         if (right)
         {
             target = new Vector3(20, transform.position.y);//transform.position + new Vector3(15f, 0);
-            transform.position = Vector3.MoveTowards(transform.position, target, 0.5f);
+            transform.position = Vector3.MoveTowards(transform.position, target, 0.6f);
             if (!GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("walking"))
             {
                 GetComponent<Animator>().Play("walking");
@@ -113,7 +125,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         else if (left)
         {
             target = new Vector3(-70, transform.position.y);//transform.position - new Vector3(15f, 0);
-            transform.position = Vector3.MoveTowards(transform.position, target, 0.5f);
+            transform.position = Vector3.MoveTowards(transform.position, target, 0.6f);
             if (!GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("walking"))
             {
                 GetComponent<Animator>().Play("walking");
@@ -124,6 +136,10 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         else if (action)
         {
             Submit();
+            handled = true;
+        }
+        else if (cancel)
+        {
             handled = true;
         }
         else
@@ -137,8 +153,8 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
     float lastInventoryHorz = 0, lastInventoryVert = 0;
     private void UpdateInventory(ref bool handled)
     {
-        bool left, right, up, down;
-        left = right = up = down = false;
+        bool left, right, up, down, action, cancel;
+        left = right = up = down = action = cancel = false;
         float horz = Input.GetAxis("Horizontal");
         float vert = Input.GetAxis("Vertical");
         if (horz < 0 && (Mathf.Sign(horz) != Mathf.Sign(lastInventoryHorz) || lastInventoryHorz == 0))
@@ -156,6 +172,10 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         else if (vert > 0 && (Mathf.Sign(vert) != Mathf.Sign(lastInventoryVert) || lastInventoryVert == 0))
         {
             up = true;
+        }
+        else if (Input.GetButtonUp("Cancel"))
+        {
+            cancel = true;
         }
         else
         {
@@ -179,6 +199,11 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         else if (down)
         {
             SetSelection(0, 1);
+            handled = true;
+        }
+        else if (cancel)
+        {
+            HideShop();
             handled = true;
         }
         lastInventoryHorz = horz;
@@ -260,8 +285,15 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
     private void ShowShop()
     {
         ShopUi.gameObject.SetActive(true);
+        ActionButton.gameObject.SetActive(false);
         SelectedItem = LeftFrame.Find("InventoryLeft_0_0");
         UpdateItemSelection();
+    }
+
+    public void HideShop()
+    {
+        ShopUi.gameObject.SetActive(false);
+        ActionButton.gameObject.SetActive(true);
     }
 
     // Update is called once per frame

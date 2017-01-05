@@ -65,6 +65,7 @@ public class MinerRicoBehavior : MonoBehaviour {
     public GameObject[] arrSky;
     public List<Transform> resourcesToCollect;
     public Transform rockGroup;
+    public Transform ActionButton;
 
     // Inventory
     float lastInventoryHorz = 0;
@@ -519,6 +520,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
         HandleInGameMenu();
         HandleInventory();
+        HandleActionButton();
         UpdateDayTime();
         CheckLevel();
 
@@ -728,7 +730,7 @@ public class MinerRicoBehavior : MonoBehaviour {
             newAction = Action.Idle;
         }
 
-        if ((action || up) && transform.position.x == 7.5f + 15 * 10)
+        if ((action || up) && transform.position.x == 7.5f + 15 * 10 && transform.position.y > 0)
         {
             newAction = Action.EnterShop;
         }
@@ -862,10 +864,39 @@ public class MinerRicoBehavior : MonoBehaviour {
         }
         else if (newAction == Action.EnterShop)
         {
-            SceneManager.LoadScene("shop");
+            EnterShop();
         }
         oldAction = newAction;
         oldOrientation = orientation;
+    }
+
+    private void HandleActionButton()
+    {
+        if (!ActionButton.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("ui interact door"))
+        {
+            ActionButton.GetComponent<Animator>().Play("ui interact door");
+        }
+        if (transform.position.x == 7.5f + 15 * 10 && transform.position.y > 0)
+        {
+            if (!ActionButton.gameObject.activeSelf)
+            {
+                ActionButton.gameObject.SetActive(true);
+            }
+        }
+        else if (ActionButton.gameObject.activeSelf)
+        {
+            ActionButton.gameObject.SetActive(false);
+        }
+    }
+
+    public void ActionButtonClicked()
+    {
+        EnterShop();
+    }
+
+    public void EnterShop()
+    {
+        SceneManager.LoadScene("shop");
     }
 
     private void HandleItemUse()
