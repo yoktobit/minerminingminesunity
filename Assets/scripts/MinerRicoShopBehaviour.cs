@@ -258,12 +258,18 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         for (var ii = 0; ii < LeftFrame.childCount; ii++)
         {
             var child = LeftFrame.GetChild(ii);
-            UpdateItemSelectionChild(child);
+            if (!child.name.Contains("Line"))
+            {
+                UpdateItemSelectionChild(child);
+            }
         }
         for (var ii = 0; ii < RightFrame.childCount; ii++)
         {
             var child = RightFrame.GetChild(ii);
-            UpdateItemSelectionChild(child);
+            if (!child.name.Contains("Line"))
+            {
+                UpdateItemSelectionChild(child);
+            }
         }
     }
 

@@ -23,7 +23,7 @@ public class InventoryBehaviour : MonoBehaviour {
                 newObject.SetParent(background, false);
                 newObject.name = "Inventory" + count;
                 //Debug.Log(newObject);
-                newObject.GetComponent<RectTransform>().anchorMin = new Vector2(0.2f + 0.15f * xx, 0.85f - 0.15f * yy);
+                newObject.GetComponent<RectTransform>().anchorMin = new Vector2(0.2f + 0.15f * xx, 0.87f - 0.15f * yy);
                 newObject.GetComponent<RectTransform>().anchorMax = newObject.GetComponent<RectTransform>().anchorMin;//new Vector2(0.2f + 0.2f * xx, 0.65f - 0.2f * yy);
                 InventorySlots[count] = newObject;
             }
