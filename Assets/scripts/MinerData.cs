@@ -55,6 +55,8 @@ public class MinerData {
     public float ElevatorY { get; set; }
 
     public List<InventoryItem> Inventory { get; set; }
+    public List<InventoryItem> ShopInventory { get; set; }
+    public int ShopInventoryDay;
 
     public List<InventoryItem> Candles { get; set; }
 
@@ -87,6 +89,14 @@ public class MinerData {
         Debug.Log("Resetting");
         SaveDate = null;
         FillInventory();
+    }
+
+    public void Migrate()
+    {
+        if (ShopInventoryDay == 0 || ShopInventory == null)
+        {
+            ShopInventoryDay = Day - 1; // Minus 1, so shop gets filled next time you visit it
+        }
     }
 
     public int GetExperienceByLevel(int level)
@@ -123,10 +133,32 @@ public class MinerData {
         }
     }
 
-    public void AddInventoryItem(string type, bool equip = false)
+    public void FillShopInventory()
+    {
+        ShopInventory = new List<InventoryItem>();
+        int rnd = UnityEngine.Random.Range(0, 50);
+        int count = UnityEngine.Random.Range(5, 21);
+        for (int ii = 0; ii < count; ii++)
+            AddInventoryItem("apple", false, "ShopInventory");
+        count = UnityEngine.Random.Range(10, 21);
+        for (int ii = 0; ii < count; ii++)
+            AddInventoryItem("candle", false, "ShopInventory");
+        ShopInventoryDay = Day;
+    }
+
+    public void AddInventoryItem(string type, bool equip = false, string inventoryType = "Inventory")
     {
         InventoryItem newItem = null;
-        newItem = (from item in Inventory where item.Type == type select item).FirstOrDefault();
+        List<InventoryItem> inventory;
+        if (inventoryType == "Inventory")
+        {
+            inventory = Inventory;
+        }
+        else
+        {
+            inventory = ShopInventory;
+        }
+        newItem = (from item in inventory where item.Type == type select item).FirstOrDefault();
         if (newItem == null)
         {
             newItem = new InventoryItem();
@@ -134,8 +166,8 @@ public class MinerData {
             if (equip)
                 Equip(newItem);
             else
-                UnEquip(newItem);
-            Inventory.Add(newItem);
+                UnEquip(newItem, inventoryType);
+            inventory.Add(newItem);
         }
         //Debug.Log("Adding Item " + newItem.Type);
         ++newItem.Amount;
@@ -147,15 +179,16 @@ public class MinerData {
         itemToEquip.Position = -1;
     }
 
-    public void UnEquip(InventoryItem itemToEquip)
+    public void UnEquip(InventoryItem itemToEquip, string inventoryType = "Inventory")
     {
         itemToEquip.IsEquipped = false;
-        SetInventoryPosition(itemToEquip);
+        SetInventoryPosition(itemToEquip, inventoryType);
     }
 
-    public void SetInventoryPosition(InventoryItem itemToPosition)
+    public void SetInventoryPosition(InventoryItem itemToPosition, string inventoryType = "Inventory")
     {
-        var arrFilled = from item in Inventory where !item.IsEquipped && item != itemToPosition select item.Position;
+        var inventory = (inventoryType == "Inventory") ? Inventory : ShopInventory;
+        var arrFilled = from item in inventory where !item.IsEquipped && item != itemToPosition select item.Position;
         for(int ii = 0; ii < 20; ii++)
         {
             if (!arrFilled.Contains(ii))

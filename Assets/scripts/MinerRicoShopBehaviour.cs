@@ -3,6 +3,7 @@ using System.Collections;
 using System;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class MinerRicoShopBehaviour : MonoBehaviour {
 
@@ -16,6 +17,8 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
     public Transform ShopUi;
     public Transform LeftFrame;
     public Transform RightFrame;
+    public Transform SellButton;
+    public Transform BuyButton;
     public Transform ActionButton;
 
     public Vector3 target;
@@ -26,12 +29,13 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
 	void Start () {
         Data = MinerSaveGame.Instance.Current;
         target = transform.position;
+        FillShopInventory();
 	}
 
     private void FixedUpdate()
     {
         bool handled = false;
-        UpdateActionButton();
+        UpdateActionButton(ref handled);
         UpdateInventory(ref handled);
         if (!handled)
         {
@@ -40,7 +44,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
     }
 
     public Action possibleAction = Action.None;
-    private void UpdateActionButton()
+    private void UpdateActionButton(ref bool handled)
     {
         if (transform.position.x >= 20 || transform.position.x <= -60)
         {
@@ -151,8 +155,12 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
     public int selectedX, selectedY;
     public string selectedFrame = "Left";
     float lastInventoryHorz = 0, lastInventoryVert = 0;
+    public string state = "";
+    public string selectedAction = "";
+    public InventoryItem selectedInventoryItem;
     private void UpdateInventory(ref bool handled)
     {
+        if (!ShopUi.gameObject.activeSelf) return;
         bool left, right, up, down, action, cancel;
         left = right = up = down = action = cancel = false;
         float horz = Input.GetAxis("Horizontal");
@@ -177,34 +185,69 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         {
             cancel = true;
         }
+        else if (Input.GetButtonUp("Submit"))
+        {
+            action = true;
+        }
         else
         {
             // rest doesn't matter
         }
-        if (left)
+        if (state == "")
         {
-            SetSelection(-1, 0);
-            handled = true;
+            if (left)
+            {
+                SetSelection(-1, 0);
+                handled = true;
+            }
+            else if (right)
+            {
+                SetSelection(1, 0);
+                handled = true;
+            }
+            else if (up)
+            {
+                SetSelection(0, -1);
+                handled = true;
+            }
+            else if (down)
+            {
+                SetSelection(0, 1);
+                handled = true;
+            }
+            else if (cancel)
+            {
+                HideShop();
+                handled = true;
+            }
+            else if (action)
+            {
+                Debug.Log("ItemSelected, going to Button");
+                if (SelectedItem.GetComponent<InventoryItemBehaviour>().inventoryItem != null)
+                {
+                    if (selectedFrame == "Left")
+                    {
+                        UpdateButtonSelection(SellButton);
+                    }
+                    else
+                    {
+                        UpdateButtonSelection(BuyButton);
+                    }
+                    state = "ButtonSelected";
+                }
+            }
         }
-        else if (right)
+        else
         {
-            SetSelection(1, 0);
-            handled = true;
-        }
-        else if (up)
-        {
-            SetSelection(0, -1);
-            handled = true;
-        }
-        else if (down)
-        {
-            SetSelection(0, 1);
-            handled = true;
-        }
-        else if (cancel)
-        {
-            HideShop();
-            handled = true;
+            if (cancel)
+            {
+                UpdateButtonSelection(null);
+                state = "";
+            }
+            else if (action)
+            {
+                HandleButton(selectedAction);
+            }
         }
         lastInventoryHorz = horz;
         lastInventoryVert = vert;
@@ -212,6 +255,87 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         {
             handled = true;
         }
+    }
+
+    public void HandleButton(string action)
+    {
+        if (action == "Sell")
+        {
+            TrySell();
+        }
+        else
+        {
+            TryBuy();
+        }
+        UpdateButtonSelection(null);
+        state = "";
+    }
+
+    private void TryBuy()
+    {
+        throw new NotImplementedException();
+    }
+
+    private void TrySell()
+    {
+        throw new NotImplementedException();
+    }
+
+    private void FillInventory(string inventoryType = "Inventory")
+    {
+        int position = 0;
+        var inventory = (inventoryType == "Inventory") ? MinerSaveGame.Instance.Current.Inventory : MinerSaveGame.Instance.Current.ShopInventory;
+        var frameName = (inventoryType == "Inventory") ? "Left" : "Right";
+        var frame = (inventoryType == "Inventory") ? LeftFrame : RightFrame;
+        for (int yy = 0; yy < 4; yy++)
+        {
+            for (int xx = 0; xx < 5; xx++)
+            {
+                var slot = frame.FindChild("Inventory" + frameName + "_" + xx + "_" + yy);
+                var text = slot.GetChild(0);
+                var image = slot.GetChild(1);
+                var item = (from i in inventory where i.Position == position select i).FirstOrDefault();
+                if (item != null && item.Amount > 0)
+                {
+                    text.GetComponent<Text>().text = item.Amount.ToString();
+                    image.GetComponent<Image>().sprite = Resources.Load<Sprite>("items/item " + item.Type);
+                    slot.GetComponent<InventoryItemBehaviour>().inventoryItem = item;
+                }
+                else if (item != null && item.Amount <= 0)
+                {
+                    text.GetComponent<Text>().text = "";
+                    image.GetComponent<Image>().sprite = Resources.Load("") as Sprite;
+                    slot.GetComponent<InventoryItemBehaviour>().inventoryItem = null;
+                }
+                else
+                {
+                    text.GetComponent<Text>().text = "";
+                    image.GetComponent<Image>().sprite = Resources.Load("") as Sprite;
+                    slot.GetComponent<InventoryItemBehaviour>().inventoryItem = null;
+                }
+                ++position;
+            }
+        }
+    }
+
+    public void FillShopInventory()
+    {
+        if (MinerSaveGame.Instance.Current.ShopInventoryDay != MinerSaveGame.Instance.Current.Day)
+        {
+            MinerSaveGame.Instance.Current.FillShopInventory();
+        }
+    }
+
+    public void SetSelection(Transform child)
+    {
+        string name = child.name;
+        name = name.Replace("Inventory", "").Replace("Right_", "").Replace("Left_", "");
+        string x = name.Substring(0, 1);
+        string y = name.Substring(2, 1);
+        selectedX = int.Parse(x);
+        selectedY = int.Parse(y);
+        SelectedItem = child;
+        UpdateItemSelection();
     }
 
     private void SetSelection(int x, int y)
@@ -288,11 +412,33 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         }
     }
 
+    public void UpdateButtonSelection(Transform child)
+    {
+        SellButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/barfilled");
+        BuyButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/barfilled");
+        if (child != null)
+        {
+            child.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/barfilledselected");
+        }
+        if (child == BuyButton)
+        {
+            selectedAction = "Buy";
+        }
+        else
+        {
+            selectedAction = "Sell";
+        }
+    }
+
     private void ShowShop()
     {
         ShopUi.gameObject.SetActive(true);
         ActionButton.gameObject.SetActive(false);
         SelectedItem = LeftFrame.Find("InventoryLeft_0_0");
+        selectedX = 0;
+        selectedY = 0;
+        FillInventory();
+        FillInventory("ShopInventory");
         UpdateItemSelection();
     }
 

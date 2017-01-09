@@ -270,6 +270,7 @@ public class MainMenuScript : MonoBehaviour {
     }
     public void LoadSlot()
     {
+        MinerSaveGame.Instance.Current.Migrate();
         MinerSaveGame.Instance.Current.HasData = true;
         SceneManager.LoadSceneAsync("game");
     }

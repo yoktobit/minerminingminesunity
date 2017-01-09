@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.EventSystems;
 using System;
+using UnityEngine.SceneManagement;
 
 public class InventoryItemBehaviour : MonoBehaviour, IPointerClickHandler {
 
@@ -11,7 +12,14 @@ public class InventoryItemBehaviour : MonoBehaviour, IPointerClickHandler {
     {
         var rico = GameObject.FindGameObjectWithTag("Player");
         Debug.Log("InventoryItemClicked " + this.transform.name);
-        rico.GetComponent<MinerRicoBehavior>().SelectInventoryItem(this.transform);
+        if (SceneManager.GetActiveScene().name == "game")
+        {
+            rico.GetComponent<MinerRicoBehavior>().SelectInventoryItem(this.transform);
+        }
+        else
+        {
+            rico.GetComponent<MinerRicoShopBehaviour>().SetSelection(this.transform);
+        }
     }
 
     // Use this for initialization

@@ -77,6 +77,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     void Start () {
         Data = MinerSaveGame.Instance.Current;
+        Data.Migrate();
 
         healthBarInner = GameObject.Find("HealthBarInner");
         healthBarText = GameObject.Find("HealthBarText");
