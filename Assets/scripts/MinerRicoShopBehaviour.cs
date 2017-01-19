@@ -20,6 +20,8 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
     public Transform SellButton;
     public Transform BuyButton;
     public Transform ActionButton;
+    public Transform ConfirmDialogName;
+    public Transform ConfirmDialog;
 
     public Vector3 target;
 
@@ -46,6 +48,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
     public Action possibleAction = Action.None;
     private void UpdateActionButton(ref bool handled)
     {
+        if (ShopUi.gameObject.activeSelf) return;
         if (transform.position.x >= 20 || transform.position.x <= -60)
         {
             ActionButton.gameObject.SetActive(true);
@@ -278,7 +281,8 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
 
     private void TrySell()
     {
-        throw new NotImplementedException();
+        ConfirmDialog.gameObject.SetActive(true);
+        ConfirmDialogName.GetComponent<Text>().text = SelectedItem.GetComponent<InventoryItemBehaviour>().inventoryItem.Type;
     }
 
     private void FillInventory(string inventoryType = "Inventory")
