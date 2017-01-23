@@ -98,11 +98,11 @@ public class MinerRicoBehavior : MonoBehaviour {
         elevatorLabel = GameObject.Find("ElevatorLabel");
         level = GameObject.Find("Level");
         dayCount = GameObject.Find("DayCount");
-        cuCount = GameObject.Find("CuCount");
+        /*cuCount = GameObject.Find("CuCount");
         agCount = GameObject.Find("AgCount");
         auCount = GameObject.Find("AuCount");
         ptCount = GameObject.Find("PtCount");
-        gemCount = GameObject.Find("GemCount");
+        gemCount = GameObject.Find("GemCount");*/
         inventoryText = GameObject.Find("InventoryText");
 
         arrSky = new GameObject[4];
@@ -256,11 +256,11 @@ public class MinerRicoBehavior : MonoBehaviour {
         experienceBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(newValue, 0.9f);
         experienceBarText.GetComponent<Text>().text = (Data.Experience - Data.GetExperienceByLevel(Data.Level)) + "/" + (Data.NextLevelExperience - Data.GetExperienceByLevel(Data.Level));
         level.GetComponent<Text>().text = Data.Level.ToString();
-        cuCount.GetComponent<Text>().text = (from inv in Data.Inventory where inv.Type == "copper" select inv.Amount).Sum().ToString();
+        /*cuCount.GetComponent<Text>().text = (from inv in Data.Inventory where inv.Type == "copper" select inv.Amount).Sum().ToString();
         auCount.GetComponent<Text>().text = (from inv in Data.Inventory where inv.Type == "gold" select inv.Amount).Sum().ToString();
         agCount.GetComponent<Text>().text = (from inv in Data.Inventory where inv.Type == "silver" select inv.Amount).Sum().ToString();
         ptCount.GetComponent<Text>().text = (from inv in Data.Inventory where inv.Type == "platinum" select inv.Amount).Sum().ToString();
-        gemCount.GetComponent<Text>().text = (from inv in Data.Inventory where inv.Type == "gem" select inv.Amount).Sum().ToString();
+        gemCount.GetComponent<Text>().text = (from inv in Data.Inventory where inv.Type == "gem" select inv.Amount).Sum().ToString();*/
     }
 
     void UpdateMoneyBar()
