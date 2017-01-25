@@ -5294,7 +5294,7 @@ MonoBehaviour:
   ShopUi: {fileID: 1913046974}
   LeftFrame: {fileID: 311680642}
   RightFrame: {fileID: 1295366636}
-  SellButton: {fileID: 0}
+  SellButton: {fileID: 1843352955}
   BuyButton: {fileID: 0}
   ActionButton: {fileID: 568126839}
   ConfirmDialogName: {fileID: 328282782}

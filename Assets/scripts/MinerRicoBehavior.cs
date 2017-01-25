@@ -156,15 +156,16 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     public void UpdateBars()
     {
-        foodBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.FoodLevel / 100.0f), 0.9f);
+        //foodBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.FoodLevel / 100.0f), 0.9f);
+        foodBarInner.GetComponent<RectTransform>().sizeDelta = new Vector2(Mathf.Lerp(0f, 276f, Data.FoodLevel / 100.0f), 35f);
         string text = Math.Round(Data.FoodLevel) + "/100";
         if (foodBarText.GetComponent<Text>().text != text)
             foodBarText.GetComponent<Text>().text = text;
-        healthBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.Health / Data.MaxHealth), 0.9f);
+        healthBarInner.GetComponent<RectTransform>().sizeDelta = new Vector2(Mathf.Lerp(0f, 276f, Data.Health / Data.MaxHealth), 35f);
         text = Math.Round(Data.Health) + "/" + Data.MaxHealth;
         if (healthBarText.GetComponent<Text>().text != text)
             healthBarText.GetComponent<Text>().text = text;
-        moralBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, Data.Moral / 100.0f), 0.9f);
+        moralBarInner.GetComponent<RectTransform>().sizeDelta = new Vector2(Mathf.Lerp(0f, 276f, Data.Moral / 100.0f), 35f);
         text = Math.Round(Data.Moral) + "/100";
         if (moralBarText.GetComponent<Text>().text != text)
             moralBarText.GetComponent<Text>().text = text;
@@ -211,7 +212,7 @@ public class MinerRicoBehavior : MonoBehaviour {
     void UpdateSun(bool first = false)
     {
         Color preColor = timeBarInner.GetComponent<Image>().color;
-        timeBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(Mathf.Lerp(0.02f, 0.98f, (Data.DayTime / 100.0f)), 0.9f);
+        timeBarInner.GetComponent<RectTransform>().sizeDelta = new Vector2(Mathf.Lerp(0f, 276f, (Data.DayTime / 100.0f)), 35f);
         timeBarInner.GetComponent<Image>().color = Data.DayTime > 50.0f ? (Color)new Vector4(0.02f, 0, 0.2f, 1f) : Color.white;
         if (preColor != timeBarInner.GetComponent<Image>().color || first)
         {
@@ -252,8 +253,8 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     void UpdateExperienceBar()
     {
-        float newValue = Mathf.Lerp(0.02f, 0.98f, (float)(Data.Experience - Data.GetExperienceByLevel(Data.Level)) / (float)(Data.NextLevelExperience - Data.GetExperienceByLevel(Data.Level)));
-        experienceBarInner.GetComponent<RectTransform>().anchorMax = new Vector2(newValue, 0.9f);
+        float newValue = Mathf.Lerp(0f, 276f, (float)(Data.Experience - Data.GetExperienceByLevel(Data.Level)) / (float)(Data.NextLevelExperience - Data.GetExperienceByLevel(Data.Level)));
+        experienceBarInner.GetComponent<RectTransform>().sizeDelta = new Vector2(newValue, 35f);
         experienceBarText.GetComponent<Text>().text = (Data.Experience - Data.GetExperienceByLevel(Data.Level)) + "/" + (Data.NextLevelExperience - Data.GetExperienceByLevel(Data.Level));
         level.GetComponent<Text>().text = Data.Level.ToString();
         /*cuCount.GetComponent<Text>().text = (from inv in Data.Inventory where inv.Type == "copper" select inv.Amount).Sum().ToString();

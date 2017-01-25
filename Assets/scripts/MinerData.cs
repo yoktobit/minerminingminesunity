@@ -97,6 +97,7 @@ public class MinerData {
         {
             ShopInventoryDay = Day - 1; // Minus 1, so shop gets filled next time you visit it
         }
+        Inventory.Where(i => new List<string>() { "cu", "ag", "au", "pt", "gem" }.Contains(i.Type) && i.IsEquipped).ToList().ForEach(i => UnEquip(i));
     }
 
     public int GetExperienceByLevel(int level)
