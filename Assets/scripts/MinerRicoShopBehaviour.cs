@@ -4,6 +4,7 @@ using System;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Linq;
+using SmartLocalization;
 
 public class MinerRicoShopBehaviour : MonoBehaviour {
 
@@ -17,15 +18,22 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
     public Transform ShopUi;
     public Transform LeftFrame;
     public Transform RightFrame;
-    public Transform SellButton;
-    public Transform BuyButton;
+    public Transform SellBuyButton;
+    public Transform CancelButton;
+    public Transform ConfirmSellBuyButton;
+    public Transform ConfirmCancelButton;
     public Transform ActionButton;
-    public Transform ConfirmDialogName;
     public Transform ConfirmDialog;
+    public Transform SellBuyButtonText;
+    public Transform ConfirmSellBuyButtonText;
+    public Transform ConfirmSellBuyText;
 
     public Vector3 target;
 
     public Transform SelectedItem;
+    public Transform SelectedButton;
+
+    public string sellorBuy;
 
 	// Use this for initialization
 	void Start () {
@@ -225,31 +233,42 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
             }
             else if (action)
             {
-                Debug.Log("ItemSelected, going to Button");
                 if (SelectedItem.GetComponent<InventoryItemBehaviour>().inventoryItem != null)
                 {
-                    if (selectedFrame == "Left")
-                    {
-                        UpdateButtonSelection(SellButton);
-                    }
-                    else
-                    {
-                        UpdateButtonSelection(BuyButton);
-                    }
-                    state = "ButtonSelected";
+                    ShowDetailDialog(true);
                 }
             }
         }
-        else
+        else if (state == "DetailDialog")
         {
             if (cancel)
             {
-                UpdateButtonSelection(null);
+                SetButtonSelection(null);
                 state = "";
+            }
+            else if (left || right)
+            {
+                SetButtonSelection(SelectedButton == SellBuyButton ? CancelButton : SellBuyButton);
             }
             else if (action)
             {
-                HandleButton(selectedAction);
+                HandleButton(SelectedButton);
+            }
+        }
+        else if (state == "ConfirmDialog")
+        {
+            if (cancel)
+            {
+                SetButtonSelection(null);
+                state = "";
+            }
+            else if (left || right)
+            {
+                SetButtonSelection(SelectedButton == ConfirmSellBuyButton ? ConfirmCancelButton : ConfirmSellBuyButton);
+            }
+            else if (action)
+            {
+                HandleButton(SelectedButton);
             }
         }
         lastInventoryHorz = horz;
@@ -260,18 +279,64 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         }
     }
 
-    public void HandleButton(string action)
+    public void HandleButton(Transform selectedButton)
     {
-        if (action == "Sell")
+        if (selectedButton == SellBuyButton)
         {
-            TrySell();
+            ShowConfirmDialog(true);
+        }
+        else if (selectedButton == CancelButton)
+        {
+            state = "";
+            UpdateItemSelection();
+            SetButtonSelection(null);
+        }
+        else if (selectedButton == ConfirmCancelButton)
+        {
+            state = "";
+            ShowConfirmDialog(false);
+            UpdateItemSelection();
+        }
+        else if (selectedButton == ConfirmSellBuyButton)
+        {
+
+        }
+    }
+
+    public void ShowDetailDialog(bool show)
+    {
+        if (show)
+        {
+            SetButtonSelection(SellBuyButton);
+            state = "DetailDialog";
         }
         else
         {
-            TryBuy();
+            SetButtonSelection(null);
+            state = "";
         }
-        UpdateButtonSelection(null);
-        state = "";
+    }
+
+    public void SetSellOrBuy(string sellOrBuy)
+    {
+        SellBuyButtonText.GetComponent<Text>().text = LanguageManager.Instance.GetTextValue(sellorBuy);
+        ConfirmSellBuyButtonText.GetComponent<Text>().text = LanguageManager.Instance.GetTextValue(sellorBuy);
+        ConfirmSellBuyText.GetComponent<Text>().text = LanguageManager.Instance.GetTextValue(sellorBuy);
+    }
+
+    public void ShowConfirmDialog(bool show)
+    {
+        if (show)
+        {
+            ConfirmDialog.gameObject.SetActive(true);
+            state = "ConfirmDialog";
+            SetButtonSelection(ConfirmSellBuyButton);
+        }
+        else
+        {
+            ConfirmDialog.gameObject.SetActive(false);
+            state = "";
+        }
     }
 
     private void TryBuy()
@@ -281,8 +346,8 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
 
     private void TrySell()
     {
-        ConfirmDialog.gameObject.SetActive(true);
-        ConfirmDialogName.GetComponent<Text>().text = SelectedItem.GetComponent<InventoryItemBehaviour>().inventoryItem.Type;
+        ShowConfirmDialog(true);
+        //ConfirmDialogName.GetComponent<Text>().text = SelectedItem.GetComponent<InventoryItemBehaviour>().inventoryItem.Type;
     }
 
     private void FillInventory(string inventoryType = "Inventory")
@@ -328,6 +393,13 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         {
             MinerSaveGame.Instance.Current.FillShopInventory();
         }
+    }
+
+    public void SetButtonSelection(Transform child)
+    {
+        SelectedButton = child;
+        UpdateItemSelection(true);
+        UpdateButtonSelection(child);
     }
 
     public void SetSelection(Transform child)
@@ -381,8 +453,13 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         UpdateItemSelection();
     }
 
-    private void UpdateItemSelection()
+    private void UpdateItemSelection(bool deselectAll = false)
     {
+        var temp = SelectedItem;
+        if (deselectAll)
+        {
+            SelectedItem = null;
+        }
         for (var ii = 0; ii < LeftFrame.childCount; ii++)
         {
             var child = LeftFrame.GetChild(ii);
@@ -399,11 +476,21 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
                 UpdateItemSelectionChild(child);
             }
         }
+        SelectedItem = temp;
+        if (SelectedItem.name.Contains("Left"))
+        {
+            sellorBuy = "sell";
+        }
+        else
+        {
+            sellorBuy = "buy";
+        }
+        SetSellOrBuy(sellorBuy);
     }
 
     void UpdateItemSelectionChild(Transform child)
     {
-        if (child.name == "SellButton" || child.name == "BuyButton") return;
+        //if (child.name == "SellButton" || child.name == "BuyButton") return;
         if (child == SelectedItem)
         {
             if (child.GetComponent<Image>().sprite.name != "borderlargefilledselected")
@@ -418,19 +505,13 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
 
     public void UpdateButtonSelection(Transform child)
     {
-        SellButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/barfilled");
-        BuyButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/barfilled");
+        SellBuyButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/barfilled");
+        CancelButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/barfilled");
+        ConfirmSellBuyButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/barfilled");
+        ConfirmCancelButton.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/barfilled");
         if (child != null)
         {
             child.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/barfilledselected");
-        }
-        if (child == BuyButton)
-        {
-            selectedAction = "Buy";
-        }
-        else
-        {
-            selectedAction = "Sell";
         }
     }
 

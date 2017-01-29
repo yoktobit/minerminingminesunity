@@ -116,6 +116,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+	<data name="buy" xml:space="preserve">
+		<value>BUY</value>
+	</data>
 	<data name="DeletePanelText" xml:space="preserve">
 		<value>DO YOU REALLY WANT TO DELETE SLOT {SLOT}?</value>
 	</data>
@@ -163,6 +166,9 @@ And now: Have fun playing! :-)
 
 The developers
 www.minerminingmines.de</value>
+	</data>
+	<data name="sell" xml:space="preserve">
+		<value>SELL</value>
 	</data>
 	<data name="Yes" xml:space="preserve">
 		<value>Yes</value>

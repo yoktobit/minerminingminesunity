@@ -116,6 +116,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+	<data name="buy" xml:space="preserve">
+		<value>KAUF</value>
+	</data>
 	<data name="DeletePanelText" xml:space="preserve">
 		<value>MOECHTEST DU WIRKLICH SLOT {SLOT} LOESCHEN?</value>
 	</data>
@@ -164,6 +167,9 @@ Und nun: Viel Spass beim Spielen! :-)
 
 Die Entwickler
 www.minerminingmines.de</value>
+	</data>
+	<data name="sell" xml:space="preserve">
+		<value>VERK</value>
 	</data>
 	<data name="Yes" xml:space="preserve">
 		<value>Ja</value>
