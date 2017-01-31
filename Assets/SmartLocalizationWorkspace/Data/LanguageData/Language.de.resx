@@ -116,8 +116,29 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+	<data name="Apple" xml:space="preserve">
+		<value>Apfel</value>
+	</data>
+	<data name="AppleDesc" xml:space="preserve">
+		<value>Ein gesunder Apfel ist eine ausgezeichnete Zwischenmahlzeit.</value>
+	</data>
 	<data name="buy" xml:space="preserve">
 		<value>KAUF</value>
+	</data>
+	<data name="Cancel" xml:space="preserve">
+		<value>Abbr</value>
+	</data>
+	<data name="Candle" xml:space="preserve">
+		<value>Kerze</value>
+	</data>
+	<data name="CandleDesc" xml:space="preserve">
+		<value>Die Kerze spendet Licht im Dunkeln. Zwar leuchtet sie laenger als eine Fackel, doch ihre Flamme ist kleiner.</value>
+	</data>
+	<data name="Copper" xml:space="preserve">
+		<value>Kupfernugget</value>
+	</data>
+	<data name="CopperDesc" xml:space="preserve">
+		<value>Nuggets aus Kupfer mit geringem Wert.</value>
 	</data>
 	<data name="DeletePanelText" xml:space="preserve">
 		<value>MOECHTEST DU WIRKLICH SLOT {SLOT} LOESCHEN?</value>
@@ -131,6 +152,18 @@
 		<value>WERT DES INVENTARS: 
 
 {VALUE}</value>
+	</data>
+	<data name="Gem" xml:space="preserve">
+		<value>Edelstein</value>
+	</data>
+	<data name="GemDesc" xml:space="preserve">
+		<value>Edelsteine sind die wertvollsten Bodenschaetze. Ihr Wert uebersteigt den der Edelmetalle bei weitem.</value>
+	</data>
+	<data name="Gold" xml:space="preserve">
+		<value>Goldnugget</value>
+	</data>
+	<data name="GoldDesc" xml:space="preserve">
+		<value>Gold ist ein wertvoller Bodenschatz.</value>
 	</data>
 	<data name="HUD_DAY" xml:space="preserve">
 		<value>TAG</value>
@@ -154,6 +187,12 @@ MANT</value>
 	<data name="No" xml:space="preserve">
 		<value>Nein</value>
 	</data>
+	<data name="Platinum" xml:space="preserve">
+		<value>Platinnugget</value>
+	</data>
+	<data name="PlatinumDesc" xml:space="preserve">
+		<value>Nuggets aus Platin mit hohem Wert.</value>
+	</data>
 	<data name="PrereleaseNotice" xml:space="preserve">
 		<value>Lieber Spieler,
 
@@ -170,6 +209,12 @@ www.minerminingmines.de</value>
 	</data>
 	<data name="sell" xml:space="preserve">
 		<value>VERK</value>
+	</data>
+	<data name="Silver" xml:space="preserve">
+		<value>Silbernugget</value>
+	</data>
+	<data name="SilverDesc" xml:space="preserve">
+		<value>Nuggets aus reinem Silber mit moderatem Wert.</value>
 	</data>
 	<data name="Yes" xml:space="preserve">
 		<value>Ja</value>

@@ -116,6 +116,27 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+	<data name="Apple" xml:space="preserve">
+		<value>Apple</value>
+	</data>
+	<data name="AppleDesc" xml:space="preserve">
+		<value>AppleDesc</value>
+	</data>
+	<data name="buy" xml:space="preserve">
+		<value>BUY</value>
+	</data>
+	<data name="Candle" xml:space="preserve">
+		<value>Candle</value>
+	</data>
+	<data name="CandleDesc" xml:space="preserve">
+		<value>CandleDesc</value>
+	</data>
+	<data name="Copper" xml:space="preserve">
+		<value>Copper</value>
+	</data>
+	<data name="CopperDesc" xml:space="preserve">
+		<value>CopperDesc</value>
+	</data>
 	<data name="DeletePanelText" xml:space="preserve">
 		<value>DO YOU REALLY WANT TO DELETE SLOT {SLOT}?</value>
 	</data>
@@ -124,6 +145,18 @@
 	</data>
 	<data name="GameOverValue" xml:space="preserve">
 		<value>The Text that informs you about the value of the inventory</value>
+	</data>
+	<data name="Gem" xml:space="preserve">
+		<value>Gem</value>
+	</data>
+	<data name="GemDesc" xml:space="preserve">
+		<value>GemDesc</value>
+	</data>
+	<data name="Gold" xml:space="preserve">
+		<value>Gold</value>
+	</data>
+	<data name="GoldDesc" xml:space="preserve">
+		<value>GoldDesc</value>
 	</data>
 	<data name="HUD_DAY" xml:space="preserve">
 		<value>DAY</value>
@@ -146,16 +179,28 @@
 	<data name="No" xml:space="preserve">
 		<value>No</value>
 	</data>
+	<data name="Platinum" xml:space="preserve">
+		<value>Platinum</value>
+	</data>
+	<data name="PlatinumDesc" xml:space="preserve">
+		<value>PlatinumDesc</value>
+	</data>
 	<data name="PrereleaseNotice" xml:space="preserve">
 		<value>Notice for Prerelease</value>
-	</data>
-	<data name="Yes" xml:space="preserve">
-		<value>Yes</value>
 	</data>
 	<data name="sell" xml:space="preserve">
 		<value>SELL</value>
 	</data>
-	<data name="buy" xml:space="preserve">
-		<value>BUY</value>
+	<data name="Silver" xml:space="preserve">
+		<value>Silver</value>
+	</data>
+	<data name="SilverDesc" xml:space="preserve">
+		<value>SilverDesc</value>
+	</data>
+	<data name="Yes" xml:space="preserve">
+		<value>Yes</value>
+	</data>
+	<data name="Cancel" xml:space="preserve">
+		<value>Cancel</value>
 	</data>
 </root>

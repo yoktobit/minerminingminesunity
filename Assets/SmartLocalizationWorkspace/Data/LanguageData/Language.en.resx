@@ -116,8 +116,32 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+	<data name="Apple" xml:space="preserve">
+		<value>Apple</value>
+	</data>
+	<data name="AppleDesc" xml:space="preserve">
+		<value>This tasty apple satiates hunger.
+</value>
+	</data>
 	<data name="buy" xml:space="preserve">
 		<value>BUY</value>
+	</data>
+	<data name="Cancel" xml:space="preserve">
+		<value>Cancel</value>
+	</data>
+	<data name="Candle" xml:space="preserve">
+		<value>Candle</value>
+	</data>
+	<data name="CandleDesc" xml:space="preserve">
+		<value>A candle provides light when it is dark. It does not burn as strong as a torch but it lasts longer.
+</value>
+	</data>
+	<data name="Copper" xml:space="preserve">
+		<value>Copper Nugget</value>
+	</data>
+	<data name="CopperDesc" xml:space="preserve">
+		<value>The value of copper not worth mentioning.
+</value>
 	</data>
 	<data name="DeletePanelText" xml:space="preserve">
 		<value>DO YOU REALLY WANT TO DELETE SLOT {SLOT}?</value>
@@ -131,6 +155,20 @@
 		<value>VALUE OF INVENTORY: 
 
 {VALUE}</value>
+	</data>
+	<data name="Gem" xml:space="preserve">
+		<value>Gem</value>
+	</data>
+	<data name="GemDesc" xml:space="preserve">
+		<value>Gems are the most valuable resource.
+</value>
+	</data>
+	<data name="Gold" xml:space="preserve">
+		<value>Gold</value>
+	</data>
+	<data name="GoldDesc" xml:space="preserve">
+		<value>Gold is a valuable resource.
+</value>
 	</data>
 	<data name="HUD_DAY" xml:space="preserve">
 		<value>DAY</value>
@@ -153,6 +191,13 @@
 	<data name="No" xml:space="preserve">
 		<value>No</value>
 	</data>
+	<data name="Platinum" xml:space="preserve">
+		<value>Platinum</value>
+	</data>
+	<data name="PlatinumDesc" xml:space="preserve">
+		<value>Platinum is highly valuable.
+</value>
+	</data>
 	<data name="PrereleaseNotice" xml:space="preserve">
 		<value>Dear player,
 
@@ -169,6 +214,13 @@ www.minerminingmines.de</value>
 	</data>
 	<data name="sell" xml:space="preserve">
 		<value>SELL</value>
+	</data>
+	<data name="Silver" xml:space="preserve">
+		<value>Silver</value>
+	</data>
+	<data name="SilverDesc" xml:space="preserve">
+		<value>The value of silver is moderate.
+</value>
 	</data>
 	<data name="Yes" xml:space="preserve">
 		<value>Yes</value>

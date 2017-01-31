@@ -27,6 +27,14 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
     public Transform SellBuyButtonText;
     public Transform ConfirmSellBuyButtonText;
     public Transform ConfirmSellBuyText;
+    public Transform ConfirmCountText;
+    public Transform ConfirmMoneyText;
+    public Transform ConfirmImage;
+    public Transform DetailCaption;
+    public Transform DetailText;
+    public Transform DetailImage;
+    public Transform DetailMoney;
+    public Transform MinerMoneyText;
 
     public Vector3 target;
 
@@ -39,6 +47,10 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
 	void Start () {
         Data = MinerSaveGame.Instance.Current;
         target = transform.position;
+        LanguageManager languageManager = LanguageManager.Instance;
+        SmartCultureInfo deviceCulture = languageManager.GetDeviceCultureIfSupported();
+        //languageManager.OnChangeLanguage += OnChangeLanguage;
+        languageManager.ChangeLanguage(deviceCulture);
         FillShopInventory();
 	}
 
@@ -243,8 +255,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         {
             if (cancel)
             {
-                SetButtonSelection(null);
-                state = "";
+                ShowDetailDialog(false);
             }
             else if (left || right)
             {
@@ -259,12 +270,20 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         {
             if (cancel)
             {
-                SetButtonSelection(null);
-                state = "";
+                ShowConfirmDialog(false);
+                ShowDetailDialog(false);
             }
             else if (left || right)
             {
                 SetButtonSelection(SelectedButton == ConfirmSellBuyButton ? ConfirmCancelButton : ConfirmSellBuyButton);
+            }
+            else if (up)
+            {
+                SetConfirmCountText(++confirmCount);
+            }
+            else if (down)
+            {
+                SetConfirmCountText(--confirmCount);
             }
             else if (action)
             {
@@ -288,8 +307,8 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         else if (selectedButton == CancelButton)
         {
             state = "";
-            UpdateItemSelection();
             SetButtonSelection(null);
+            UpdateItemSelection();
         }
         else if (selectedButton == ConfirmCancelButton)
         {
@@ -299,8 +318,56 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         }
         else if (selectedButton == ConfirmSellBuyButton)
         {
-
+            if (TrySellBuy())
+            {
+                state = "";
+                ShowConfirmDialog(false);
+                UpdateItemSelection();
+            }
         }
+    }
+
+    public bool TrySellBuy()
+    {
+        var item = SelectedItem.GetComponent<InventoryItemBehaviour>().inventoryItem;
+        var databaseItem = Database.ItemList[item.Type];
+        if (sellorBuy == "buy" && this.confirmCount * databaseItem.BuyValue > Data.Money) return false;
+        var sourceAmount = item.Amount - this.confirmCount;
+        sourceAmount = Mathf.Clamp(sourceAmount, 0, 99);
+        item.Amount = sourceAmount;
+        if (sellorBuy == "sell")
+        {
+            var shopItem = MinerSaveGame.Instance.Current.ShopInventory.Where(ii => ii.Type == item.Type).FirstOrDefault();
+            if (shopItem == null)
+            {
+                MinerSaveGame.Instance.Current.AddInventoryItem(item.Type, false, "ShopInventory");
+                shopItem = MinerSaveGame.Instance.Current.ShopInventory.Where(ii => ii.Type == item.Type).FirstOrDefault();
+                shopItem.Amount--;
+            }
+            var targetAmount = shopItem.Amount + this.confirmCount;
+            targetAmount = Mathf.Clamp(targetAmount, 0, 99);
+            var diff = targetAmount - shopItem.Amount;
+            shopItem.Amount = targetAmount;
+            MinerSaveGame.Instance.Current.Money += diff * databaseItem.SellValue;
+        }
+        else
+        {
+            var minerItem = MinerSaveGame.Instance.Current.Inventory.Where(ii => ii.Type == item.Type).FirstOrDefault();
+            if (minerItem == null)
+            {
+                MinerSaveGame.Instance.Current.AddInventoryItem(item.Type, false);
+                minerItem = MinerSaveGame.Instance.Current.Inventory.Where(ii => ii.Type == item.Type).FirstOrDefault();
+                minerItem.Amount--;
+            }
+            var targetAmount = minerItem.Amount + this.confirmCount;
+            targetAmount = Mathf.Clamp(targetAmount, 0, 99);
+            var diff = targetAmount - minerItem.Amount;
+            minerItem.Amount = targetAmount;
+            MinerSaveGame.Instance.Current.Money -= diff * databaseItem.BuyValue;
+        }
+        FillInventory();
+        FillInventory("ShopInventory");
+        return true;
     }
 
     public void ShowDetailDialog(bool show)
@@ -313,15 +380,37 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         else
         {
             SetButtonSelection(null);
+            SetSelection(SelectedItem);
             state = "";
         }
     }
 
     public void SetSellOrBuy(string sellOrBuy)
     {
+        CancelButton.GetChild(0).GetComponent<Text>().text = LanguageManager.Instance.GetTextValue("Cancel");
+        ConfirmCancelButton.GetChild(0).GetComponent<Text>().text = LanguageManager.Instance.GetTextValue("Cancel");
         SellBuyButtonText.GetComponent<Text>().text = LanguageManager.Instance.GetTextValue(sellorBuy);
         ConfirmSellBuyButtonText.GetComponent<Text>().text = LanguageManager.Instance.GetTextValue(sellorBuy);
         ConfirmSellBuyText.GetComponent<Text>().text = LanguageManager.Instance.GetTextValue(sellorBuy);
+    }
+
+    int confirmCount;
+    void SetConfirmCountText(int confirmCount)
+    {
+        this.confirmCount = Mathf.Clamp(confirmCount, 1, SelectedItem.GetComponent<InventoryItemBehaviour>().inventoryItem.Amount);
+        ConfirmCountText.GetComponent<Text>().text = this.confirmCount.ToString();
+        var databaseItem = Database.ItemList[SelectedItem.GetComponent<InventoryItemBehaviour>().inventoryItem.Type];
+        var money = sellorBuy == "sell" ? databaseItem.SellValue : databaseItem.BuyValue;
+        var totalMoney = money * this.confirmCount;
+        ConfirmMoneyText.GetComponent<Text>().text = totalMoney.ToString();
+        if (sellorBuy == "buy" && totalMoney > Data.Money)
+        {
+            ConfirmMoneyText.GetComponent<Text>().color = Color.red;
+        }
+        else
+        {
+            ConfirmMoneyText.GetComponent<Text>().color = Color.black;
+        }
     }
 
     public void ShowConfirmDialog(bool show)
@@ -329,6 +418,8 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         if (show)
         {
             ConfirmDialog.gameObject.SetActive(true);
+            ConfirmImage.GetComponent<Image>().sprite = DetailImage.GetComponent<Image>().sprite;
+            SetConfirmCountText(1);
             state = "ConfirmDialog";
             SetButtonSelection(ConfirmSellBuyButton);
         }
@@ -338,21 +429,11 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
             state = "";
         }
     }
-
-    private void TryBuy()
-    {
-        throw new NotImplementedException();
-    }
-
-    private void TrySell()
-    {
-        ShowConfirmDialog(true);
-        //ConfirmDialogName.GetComponent<Text>().text = SelectedItem.GetComponent<InventoryItemBehaviour>().inventoryItem.Type;
-    }
-
+    
     private void FillInventory(string inventoryType = "Inventory")
     {
         int position = 0;
+        MinerMoneyText.GetComponent<Text>().text = MinerSaveGame.Instance.Current.Money.ToString();
         var inventory = (inventoryType == "Inventory") ? MinerSaveGame.Instance.Current.Inventory : MinerSaveGame.Instance.Current.ShopInventory;
         var frameName = (inventoryType == "Inventory") ? "Left" : "Right";
         var frame = (inventoryType == "Inventory") ? LeftFrame : RightFrame;
@@ -486,6 +567,40 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
             sellorBuy = "buy";
         }
         SetSellOrBuy(sellorBuy);
+        SetDetails(SelectedItem);
+    }
+
+    public void SetDetails(Transform selectedItem)
+    {
+        bool found = false;
+        if (selectedItem != null)
+        {
+            var ii = selectedItem.GetComponent<InventoryItemBehaviour>().inventoryItem;
+            if (ii != null)
+            {
+                var di = Database.ItemList[ii.Type];
+                if (di != null)
+                {
+                    var caption = LanguageManager.Instance.GetTextValue(di.Name);
+                    DetailCaption.GetComponent<Text>().text = caption;
+                    var desc = LanguageManager.Instance.GetTextValue(di.Name + "Desc");
+                    Debug.Log("Caption: " + caption + ", Desc: " + desc);
+                    DetailText.GetComponent<Text>().text = desc;
+                    DetailMoney.GetComponent<Text>().text = (sellorBuy == "sell" ? di.SellValue : di.BuyValue).ToString();
+                    DetailImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("items/item " + ii.Type);
+                    DetailImage.gameObject.SetActive(true);
+                    found = true;
+                }
+            }
+        }
+        if (!found)
+        {
+            DetailCaption.GetComponent<Text>().text = "";
+            DetailText.GetComponent<Text>().text = "";
+            DetailMoney.GetComponent<Text>().text = "";
+            DetailImage.GetComponent<Image>().sprite = null;
+            DetailImage.gameObject.SetActive(false);
+        }
     }
 
     void UpdateItemSelectionChild(Transform child)
