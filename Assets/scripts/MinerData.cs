@@ -55,6 +55,7 @@ public class MinerData {
     public float ElevatorY { get; set; }
 
     public List<InventoryItem> Inventory { get; set; }
+    public int InventorySize;
     public List<InventoryItem> ShopInventory { get; set; }
     public int ShopInventoryDay;
 
@@ -88,6 +89,7 @@ public class MinerData {
         NextLevelExperience = MinerData.LVL2;
         Debug.Log("Resetting");
         SaveDate = null;
+        InventorySize = 20;
         FillInventory();
     }
 
@@ -98,6 +100,7 @@ public class MinerData {
             ShopInventoryDay = Day - 1; // Minus 1, so shop gets filled next time you visit it
         }
         Inventory.Where(i => new List<string>() { "cu", "ag", "au", "pt", "gem" }.Contains(i.Type) && i.IsEquipped).ToList().ForEach(i => UnEquip(i));
+        if (InventorySize == 0) InventorySize = 20;
     }
 
     public int GetExperienceByLevel(int level)
@@ -128,7 +131,7 @@ public class MinerData {
         {
             AddInventoryItem("apple", false);
         }
-        for (var ii = 1; ii <= 30; ii++)
+        for (var ii = 1; ii <= 20; ii++)
         {
             AddInventoryItem("candle", false);
         }
@@ -159,7 +162,8 @@ public class MinerData {
         {
             inventory = ShopInventory;
         }
-        newItem = (from item in inventory where item.Type == type select item).FirstOrDefault();
+        var databaseItem = Database.ItemList[type];
+        newItem = (from item in inventory where item.Type == type && item.Amount < databaseItem.Stack select item).FirstOrDefault();
         if (newItem == null)
         {
             newItem = new InventoryItem();

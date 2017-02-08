@@ -352,7 +352,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         }
         else
         {
-            var minerItem = MinerSaveGame.Instance.Current.Inventory.Where(ii => ii.Type == item.Type).FirstOrDefault();
+            /*var minerItem = MinerSaveGame.Instance.Current.Inventory.Where(ii => ii.Type == item.Type).FirstOrDefault();
             if (minerItem == null)
             {
                 MinerSaveGame.Instance.Current.AddInventoryItem(item.Type, false);
@@ -362,8 +362,12 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
             var targetAmount = minerItem.Amount + this.confirmCount;
             targetAmount = Mathf.Clamp(targetAmount, 0, 99);
             var diff = targetAmount - minerItem.Amount;
-            minerItem.Amount = targetAmount;
-            MinerSaveGame.Instance.Current.Money -= diff * databaseItem.BuyValue;
+            minerItem.Amount = targetAmount;*/
+            for (int ii = 0; ii < this.confirmCount; ii++)
+            {
+                MinerSaveGame.Instance.Current.AddInventoryItem(item.Type, false);
+            }
+            MinerSaveGame.Instance.Current.Money -= this.confirmCount * databaseItem.BuyValue;
         }
         FillInventory();
         FillInventory("ShopInventory");
