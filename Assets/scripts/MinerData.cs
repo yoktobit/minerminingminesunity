@@ -163,7 +163,14 @@ public class MinerData {
             inventory = ShopInventory;
         }
         var databaseItem = Database.ItemList[type];
-        newItem = (from item in inventory where item.Type == type && item.Amount < databaseItem.Stack select item).FirstOrDefault();
+        if (inventoryType == "Inventory")
+        {
+            newItem = (from item in inventory where item.Type == type && item.Amount < databaseItem.Stack select item).FirstOrDefault();
+        }
+        else
+        {
+            newItem = (from item in inventory where item.Type == type select item).FirstOrDefault();
+        }
         if (newItem == null)
         {
             newItem = new InventoryItem();

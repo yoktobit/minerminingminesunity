@@ -38,6 +38,8 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
 
     public Vector3 target;
 
+    public string cheatCode = "";
+
     public Transform SelectedItem;
     public Transform SelectedButton;
 
@@ -52,7 +54,13 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         //languageManager.OnChangeLanguage += OnChangeLanguage;
         languageManager.ChangeLanguage(deviceCulture);
         FillShopInventory();
-	}
+        InvokeRepeating("save", 60, 60);
+    }
+
+    public void save()
+    {
+        MinerSaveGame.Save();
+    }
 
     private void FixedUpdate()
     {
@@ -63,6 +71,41 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         {
             UpdateWalk(ref handled);
         }
+        if (!handled)
+        {
+            UpdateCheatCodes(ref handled);
+        }
+    }
+
+    void UpdateCheatCodes(ref bool handled)
+    {
+        if (Input.inputString != null && Input.inputString.Length > 0 && (cheatCode.Length == 0 || cheatCode.Substring(cheatCode.Length - 1, 1) != Input.inputString.Substring(0, 1)))
+        {
+            cheatCode += Input.inputString.Substring(0, 1);
+        }
+        Debug.Log(cheatCode);
+        CheckCheatCode();
+    }
+
+    void CheckCheatCode()
+    {
+        if (cheatCode.Contains("moneymoneymoney"))
+        {
+            MinerSaveGame.Instance.Current.Money += 50;
+            MinerMoneyText.GetComponent<Text>().text = MinerSaveGame.Instance.Current.Money.ToString();
+            cheatCode = "";
+        }
+        if (cheatCode.Contains("fast"))
+        {
+            Time.timeScale = 5f;
+            cheatCode = "";
+        }
+        if (cheatCode.Contains("slow"))
+        {
+            Time.timeScale = 1f;
+            cheatCode = "";
+        }
+        if (cheatCode.Length > 2000) cheatCode = "";
     }
 
     public Action possibleAction = Action.None;
@@ -346,9 +389,8 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
             }
             var targetAmount = shopItem.Amount + this.confirmCount;
             targetAmount = Mathf.Clamp(targetAmount, 0, 99);
-            var diff = targetAmount - shopItem.Amount;
             shopItem.Amount = targetAmount;
-            MinerSaveGame.Instance.Current.Money += diff * databaseItem.SellValue;
+            MinerSaveGame.Instance.Current.Money += this.confirmCount * databaseItem.SellValue;
         }
         else
         {
@@ -656,4 +698,9 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
     void Update () {
         
 	}
+
+    void OnDestroy()
+    {
+        save();
+    }
 }
