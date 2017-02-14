@@ -82,8 +82,9 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         if (Input.inputString != null && Input.inputString.Length > 0 && (cheatCode.Length == 0 || cheatCode.Substring(cheatCode.Length - 1, 1) != Input.inputString.Substring(0, 1)))
         {
             cheatCode += Input.inputString.Substring(0, 1);
+            handled = true;
+            Debug.Log(cheatCode);
         }
-        Debug.Log(cheatCode);
         CheckCheatCode();
     }
 
@@ -148,6 +149,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
 
     private void UpdateWalk(ref bool handled)
     {
+        if (ShopUi.gameObject.activeSelf) return;
         bool left = false, right = false, up = false, down = false, action = false, cancel = false;
         if (Input.GetAxis("Horizontal") < -0.1)
         {
@@ -235,23 +237,23 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         {
             left = true;
         }
-        else if (horz > 0 && (Mathf.Sign(horz) != Mathf.Sign(lastInventoryHorz) || lastInventoryHorz == 0))
+        if (horz > 0 && (Mathf.Sign(horz) != Mathf.Sign(lastInventoryHorz) || lastInventoryHorz == 0))
         {
             right = true;
         }
-        else if (vert < 0 && (Mathf.Sign(vert) != Mathf.Sign(lastInventoryVert) || lastInventoryVert == 0))
+        if (vert < 0 && (Mathf.Sign(vert) != Mathf.Sign(lastInventoryVert) || lastInventoryVert == 0))
         {
             down = true;
         }
-        else if (vert > 0 && (Mathf.Sign(vert) != Mathf.Sign(lastInventoryVert) || lastInventoryVert == 0))
+        if (vert > 0 && (Mathf.Sign(vert) != Mathf.Sign(lastInventoryVert) || lastInventoryVert == 0))
         {
             up = true;
         }
-        else if (Input.GetButtonUp("Cancel"))
+        if (Input.GetButtonUp("Cancel"))
         {
             cancel = true;
         }
-        else if (Input.GetButtonUp("Submit"))
+        if (Input.GetButtonUp("Submit"))
         {
             action = true;
         }
@@ -291,6 +293,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
                 if (SelectedItem.GetComponent<InventoryItemBehaviour>().inventoryItem != null)
                 {
                     ShowDetailDialog(true);
+                    handled = true;
                 }
             }
         }
@@ -299,14 +302,17 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
             if (cancel)
             {
                 ShowDetailDialog(false);
+                handled = true;
             }
             else if (left || right)
             {
                 SetButtonSelection(SelectedButton == SellBuyButton ? CancelButton : SellBuyButton);
+                handled = true;
             }
             else if (action)
             {
                 HandleButton(SelectedButton);
+                handled = true;
             }
         }
         else if (state == "ConfirmDialog")
@@ -315,30 +321,31 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
             {
                 ShowConfirmDialog(false);
                 ShowDetailDialog(false);
+                handled = true;
             }
             else if (left || right)
             {
                 SetButtonSelection(SelectedButton == ConfirmSellBuyButton ? ConfirmCancelButton : ConfirmSellBuyButton);
+                handled = true;
             }
             else if (up)
             {
                 SetConfirmCountText(++confirmCount);
+                handled = true;
             }
             else if (down)
             {
                 SetConfirmCountText(--confirmCount);
+                handled = true;
             }
             else if (action)
             {
                 HandleButton(SelectedButton);
+                handled = true;
             }
         }
         lastInventoryHorz = horz;
         lastInventoryVert = vert;
-        if (ShopUi.gameObject.activeSelf)
-        {
-            handled = true;
-        }
     }
 
     public void HandleButton(Transform selectedButton)
