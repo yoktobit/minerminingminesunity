@@ -226,6 +226,42 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
     public string state = "";
     public string selectedAction = "";
     public InventoryItem selectedInventoryItem;
+    public float repeatStart = 0.0f;
+    public float keyStart = 0.0f;
+    public float repeatTime = 0.4f;
+
+    private void ResetKeyRepeat()
+    {
+        keyStart = Time.unscaledTime;
+        repeatTime = 0.4f;
+        repeatStart = Time.unscaledTime;
+    }
+
+    private void HandleKeyRepeat()
+    {
+        // Wiederholung
+        if (Time.unscaledTime - repeatStart > repeatTime)
+        {
+            repeatStart = Time.unscaledTime;
+            if (Time.unscaledTime - keyStart > 2)
+            {
+                repeatTime = 0.15f;
+            }
+            else if (Time.unscaledTime - keyStart > 5)
+            {
+                repeatTime = 0.05f;
+            }
+        }
+        // erster Tastendruck
+        else
+        {
+            keyStart = Time.unscaledTime;
+            repeatStart = Time.unscaledTime;
+            repeatTime = 0.4f;
+        }
+        Debug.Log(repeatTime);
+    }
+
     private void UpdateInventory(ref bool handled)
     {
         if (!ShopUi.gameObject.activeSelf) return;
@@ -233,20 +269,28 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         left = right = up = down = action = cancel = false;
         float horz = Input.GetAxis("Horizontal");
         float vert = Input.GetAxis("Vertical");
-        if (horz < 0 && (Mathf.Sign(horz) != Mathf.Sign(lastInventoryHorz) || lastInventoryHorz == 0))
+        if (horz < 0 && ((Mathf.Sign(horz) != Mathf.Sign(lastInventoryHorz) || lastInventoryHorz == 0) || Time.unscaledTime - repeatStart > repeatTime))
         {
+            if ((Mathf.Sign(horz) != Mathf.Sign(lastInventoryHorz) || lastInventoryHorz == 0)) ResetKeyRepeat();
+            HandleKeyRepeat();
             left = true;
         }
-        if (horz > 0 && (Mathf.Sign(horz) != Mathf.Sign(lastInventoryHorz) || lastInventoryHorz == 0))
+        if (horz > 0 && ((Mathf.Sign(horz) != Mathf.Sign(lastInventoryHorz) || lastInventoryHorz == 0) || Time.unscaledTime - repeatStart > repeatTime))
         {
+            if ((Mathf.Sign(horz) != Mathf.Sign(lastInventoryHorz) || lastInventoryHorz == 0)) ResetKeyRepeat();
+            HandleKeyRepeat();
             right = true;
         }
-        if (vert < 0 && (Mathf.Sign(vert) != Mathf.Sign(lastInventoryVert) || lastInventoryVert == 0))
+        if (vert < 0 && ((Mathf.Sign(vert) != Mathf.Sign(lastInventoryVert) || lastInventoryVert == 0) || Time.unscaledTime - repeatStart > repeatTime))
         {
+            if ((Mathf.Sign(vert) != Mathf.Sign(lastInventoryVert) || lastInventoryVert == 0)) ResetKeyRepeat();
+            HandleKeyRepeat();
             down = true;
         }
-        if (vert > 0 && (Mathf.Sign(vert) != Mathf.Sign(lastInventoryVert) || lastInventoryVert == 0))
+        if (vert > 0 && ((Mathf.Sign(vert) != Mathf.Sign(lastInventoryVert) || lastInventoryVert == 0) || Time.unscaledTime - repeatStart > repeatTime))
         {
+            if ((Mathf.Sign(vert) != Mathf.Sign(lastInventoryVert) || lastInventoryVert == 0)) ResetKeyRepeat();
+            HandleKeyRepeat();
             up = true;
         }
         if (Input.GetButtonUp("Cancel"))
@@ -637,7 +681,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
                     var caption = LanguageManager.Instance.GetTextValue(di.Name);
                     DetailCaption.GetComponent<Text>().text = caption;
                     var desc = LanguageManager.Instance.GetTextValue(di.Name + "Desc");
-                    Debug.Log("Caption: " + caption + ", Desc: " + desc);
+                    //Debug.Log("Caption: " + caption + ", Desc: " + desc);
                     DetailText.GetComponent<Text>().text = desc;
                     DetailMoney.GetComponent<Text>().text = (sellorBuy == "sell" ? di.SellValue : di.BuyValue).ToString();
                     DetailImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("items/item " + ii.Type);
