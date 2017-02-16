@@ -205,7 +205,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
             GetComponent<SpriteRenderer>().flipX = false;
             handled = true;
         }
-        else if (action)
+        else if (action || up)
         {
             Submit();
             handled = true;
