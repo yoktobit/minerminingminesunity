@@ -259,7 +259,6 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
             repeatStart = Time.unscaledTime;
             repeatTime = 0.4f;
         }
-        Debug.Log(repeatTime);
     }
 
     private void UpdateInventory(ref bool handled)
@@ -334,9 +333,14 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
             }
             else if (action)
             {
-                if (SelectedItem.GetComponent<InventoryItemBehaviour>().inventoryItem != null)
+                var inventoryItem = SelectedItem.GetComponent<InventoryItemBehaviour>().inventoryItem;
+                if (inventoryItem != null)
                 {
-                    ShowDetailDialog(true);
+                    DatabaseItem di = Database.ItemList[inventoryItem.Type];
+                    if (di.BuyValue > 0)
+                    {
+                        ShowDetailDialog(true);
+                    }
                     handled = true;
                 }
             }
@@ -676,14 +680,16 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
             if (ii != null)
             {
                 var di = Database.ItemList[ii.Type];
+                Debug.Log("Type: " + ii.Type);
                 if (di != null)
                 {
+                    Debug.Log("BuyValue " + di.BuyValue);
                     var caption = LanguageManager.Instance.GetTextValue(di.Name);
                     DetailCaption.GetComponent<Text>().text = caption;
                     var desc = LanguageManager.Instance.GetTextValue(di.Name + "Desc");
                     //Debug.Log("Caption: " + caption + ", Desc: " + desc);
                     DetailText.GetComponent<Text>().text = desc;
-                    DetailMoney.GetComponent<Text>().text = (sellorBuy == "sell" ? di.SellValue : di.BuyValue).ToString();
+                    DetailMoney.GetComponent<Text>().text = (sellorBuy == "sell" ? di.SellValue.ToString() : (di.BuyValue == 0 ? "-" : di.BuyValue.ToString()));
                     DetailImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("items/item " + ii.Type);
                     DetailImage.gameObject.SetActive(true);
                     found = true;
