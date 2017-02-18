@@ -62,7 +62,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         MinerSaveGame.Save();
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         bool handled = false;
         UpdateActionButton(ref handled);
@@ -337,7 +337,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
                 if (inventoryItem != null)
                 {
                     DatabaseItem di = Database.ItemList[inventoryItem.Type];
-                    if (di.BuyValue > 0)
+                    if ((sellorBuy == "buy" && di.BuyValue > 0) || (sellorBuy == "sell" && di.SellValue > 0) )
                     {
                         ShowDetailDialog(true);
                     }
@@ -433,6 +433,10 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         var sourceAmount = item.Amount - this.confirmCount;
         sourceAmount = Mathf.Clamp(sourceAmount, 0, 99);
         item.Amount = sourceAmount;
+        if (item.Amount <= 0)
+        {
+            item.Position = -1;
+        }
         if (sellorBuy == "sell")
         {
             var shopItem = MinerSaveGame.Instance.Current.ShopInventory.Where(ii => ii.Type == item.Type).FirstOrDefault();
@@ -441,10 +445,18 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
                 MinerSaveGame.Instance.Current.AddInventoryItem(item.Type, false, "ShopInventory");
                 shopItem = MinerSaveGame.Instance.Current.ShopInventory.Where(ii => ii.Type == item.Type).FirstOrDefault();
                 shopItem.Amount--;
+                if (shopItem.Amount <= 0)
+                {
+                    shopItem.Position = -1;
+                }
             }
             var targetAmount = shopItem.Amount + this.confirmCount;
             targetAmount = Mathf.Clamp(targetAmount, 0, 99);
             shopItem.Amount = targetAmount;
+            if (shopItem.Amount <= 0)
+            {
+                shopItem.Position = -1;
+            }
             MinerSaveGame.Instance.Current.Money += this.confirmCount * databaseItem.SellValue;
         }
         else
@@ -750,11 +762,6 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         ShopUi.gameObject.SetActive(false);
         ActionButton.gameObject.SetActive(true);
     }
-
-    // Update is called once per frame
-    void Update () {
-        
-	}
 
     void OnDestroy()
     {

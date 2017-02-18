@@ -181,6 +181,16 @@ public class MinerData {
                 UnEquip(newItem, inventoryType);
             inventory.Add(newItem);
         }
+        else
+        {
+            if (newItem.Position < 0)
+            {
+                if (equip)
+                    Equip(newItem);
+                else
+                    UnEquip(newItem, inventoryType);
+            }
+        }
         //Debug.Log("Adding Item " + newItem.Type);
         ++newItem.Amount;
     }
