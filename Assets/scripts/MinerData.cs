@@ -180,6 +180,7 @@ public class MinerData {
             else
                 UnEquip(newItem, inventoryType);
             inventory.Add(newItem);
+            Debug.Log("item position " + newItem.Position);
         }
         else
         {
@@ -190,8 +191,9 @@ public class MinerData {
                 else
                     UnEquip(newItem, inventoryType);
             }
+            Debug.Log("item position " + newItem.Position);
         }
-        //Debug.Log("Adding Item " + newItem.Type);
+        Debug.Log("Adding Item " + newItem.Type);
         ++newItem.Amount;
     }
 

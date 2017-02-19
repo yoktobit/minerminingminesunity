@@ -184,6 +184,7 @@ public class MainMenuScript : MonoBehaviour {
             else
             {
                 Selected = (Selected == deletePanelYes) ? deletePanelNo: deletePanelYes;
+                Debug.Log("Selected " + Selected.name);
             }
         }
         if (horz != 0 && (Mathf.Sign(horz) != Mathf.Sign(lastHorz) || lastHorz == 0))
@@ -263,6 +264,7 @@ public class MainMenuScript : MonoBehaviour {
         DeleteSlot(slotToDelete);
         State = "SlotSelect";
         RefreshDateTimeOfSlots();
+        Debug.Log("Deleted Slot " + slotToDelete);
     }
     public void DeleteSlotAbort()
     {

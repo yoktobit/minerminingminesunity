@@ -96,12 +96,12 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
             MinerMoneyText.GetComponent<Text>().text = MinerSaveGame.Instance.Current.Money.ToString();
             cheatCode = "";
         }
-        if (cheatCode.Contains("fast"))
+        if (cheatCode.Contains("foster"))
         {
             Time.timeScale = 5f;
             cheatCode = "";
         }
-        if (cheatCode.Contains("slow"))
+        if (cheatCode.Contains("slower"))
         {
             Time.timeScale = 1f;
             cheatCode = "";
@@ -129,6 +129,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         }
         else
         {
+            possibleAction = Action.None;
             ActionButton.gameObject.SetActive(false);
         }
     }
@@ -445,10 +446,6 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
                 MinerSaveGame.Instance.Current.AddInventoryItem(item.Type, false, "ShopInventory");
                 shopItem = MinerSaveGame.Instance.Current.ShopInventory.Where(ii => ii.Type == item.Type).FirstOrDefault();
                 shopItem.Amount--;
-                if (shopItem.Amount <= 0)
-                {
-                    shopItem.Position = -1;
-                }
             }
             var targetAmount = shopItem.Amount + this.confirmCount;
             targetAmount = Mathf.Clamp(targetAmount, 0, 99);

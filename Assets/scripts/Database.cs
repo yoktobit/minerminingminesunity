@@ -29,6 +29,27 @@ public class Database
             Stack = 20
             }
         },
+        { "torch", new DatabaseItem() {
+            Name = "Torch",
+            BuyValue = 150,
+            SellValue = 35,
+            Stack = 5
+            }
+        },
+        { "shovel", new DatabaseItem() {
+            Name = "Shovel",
+            BuyValue = 0,
+            SellValue = 0,
+            Stack = 1
+            }
+        },
+        { "pick", new DatabaseItem() {
+            Name = "Pick",
+            BuyValue = 0,
+            SellValue = 0,
+            Stack = 1
+            }
+        },
         { "copper", new DatabaseItem() {
             Name = "Copper",
             SellValue = 25,
