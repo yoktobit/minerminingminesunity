@@ -555,9 +555,22 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
                 var text = slot.GetChild(0);
                 var image = slot.GetChild(1);
                 var item = (from i in inventory where i.Position == position select i).FirstOrDefault();
+                DatabaseItem dbItem = null;
+                if (item != null && Database.ItemList.ContainsKey(item.Type))
+                {
+                    dbItem = Database.ItemList[item.Type];
+                }
                 if (item != null && item.Amount > 0)
                 {
                     text.GetComponent<Text>().text = item.Amount.ToString();
+                    if (dbItem != null && item.Amount == dbItem.Stack)
+                    {
+                        text.GetComponent<Text>().color = new Color(0, 0.7f, 0);
+                    }
+                    else
+                    {
+                        text.GetComponent<Text>().color = Color.black;
+                    }
                     image.GetComponent<Image>().sprite = Resources.Load<Sprite>("items/item " + item.Type);
                     slot.GetComponent<InventoryItemBehaviour>().inventoryItem = item;
                 }
