@@ -316,21 +316,24 @@ public class RockGroupBehaviour : MonoBehaviour {
     {
         int r = radius;
         int r2 = radius - 2;
+
+        float ry = radius * 0.666f;
+        float ry2 = ry - 2;
         float useLevel = -1;
 
         Debug.Log(string.Format("{0},{1}:{2}:{3}", xCenter, yCenter, level, radius));
 
         for (int x = xCenter - radius; x <= xCenter; x++)
         {
-            for (int y = yCenter - radius; y <= yCenter; y++)
+            for (int y = yCenter - (int)radius; y <= yCenter; y++)
             {
                 useLevel = -1;
                 // ((20 - 23)      * (20-23)      + (10-0)        * (10-0)        <= 8*8
-                if ((x - xCenter) * (x - xCenter) + (y - yCenter) * (y - yCenter) <= r2 * r2)
+                if ((x - xCenter) * (x - xCenter) + 1.3f * (y - yCenter) * 1.3f * (y - yCenter) <= r2 * r2)
                 {
                     useLevel = level;
                 }
-                else if ((x - xCenter) * (x - xCenter) + (y - yCenter) * (y - yCenter) <= r * r)
+                else if ((x - xCenter) * (x - xCenter) + 1.3f * (y - yCenter) * 1.3f * (y - yCenter) <= r * r)
                 {
                     useLevel = level / 2f;
                 }
@@ -356,7 +359,7 @@ public class RockGroupBehaviour : MonoBehaviour {
         {
             int x = 0, y = 0;
             GetGridPosition(new Vector3(candle.X, candle.Y), false, out x, out y);
-            SetRocksLight(x, y, 1f, MinerData.CANDLERANGE);
+            SetRocksLight(x, y-1, 1f, MinerData.CANDLERANGE);
         }
     }
 
