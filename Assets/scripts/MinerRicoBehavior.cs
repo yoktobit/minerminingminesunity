@@ -740,6 +740,8 @@ public class MinerRicoBehavior : MonoBehaviour {
         if (shouldWalk) // kein else if, weil er sonst er stoppen würde und dann weiterlaufen, er soll aber direkt weiterlaufen
         {
             newAction = Action.Move;
+            requestedAction = Action.Empty;
+            CancelInvoke("SetNextActionCollect");
         }
 
         if (workDone)
@@ -748,6 +750,8 @@ public class MinerRicoBehavior : MonoBehaviour {
         }
         if (arrived)
         {
+            requestedAction = Action.Empty;
+            CancelInvoke("SetNextActionCollect");
             HandleArrived();
         }
 
@@ -1197,7 +1201,10 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     void SetNextActionCollect()
     {
-        requestedAction = Action.Collect;
+        if (!isAnimated)
+        {
+            requestedAction = Action.Collect;
+        }
     }
 
     void TryPlanCollect(float inSeconds)
@@ -1208,6 +1215,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         if (count > 0)
         {
             Invoke("SetNextActionCollect", inSeconds);
+            Debug.Log("SetNextActionCollect");
         }
     }
 
