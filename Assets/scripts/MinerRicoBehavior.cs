@@ -475,10 +475,26 @@ public class MinerRicoBehavior : MonoBehaviour {
             var text = slot.GetChild(0);
             var image = slot.GetChild(1);
             var item = (from i in Data.Inventory where i.Position == ii select i).FirstOrDefault();
+            DatabaseItem dbItem = null;
+            if (item != null)
+            {
+                dbItem = Database.ItemList[item.Type];
+            }
             if (item != null && item.Amount > 0)
             {
                 text.GetComponent<Text>().text = item.Amount.ToString();
                 image.GetComponent<Image>().sprite = Resources.Load<Sprite>("items/item " + item.Type);
+                if (dbItem != null)
+                {
+                    if (item.Amount >= dbItem.Stack)
+                    {
+                        text.GetComponent<Text>().color = new Color(0, 0.7f, 0);
+                    }
+                    else
+                    {
+                        text.GetComponent<Text>().color = Color.black;
+                    }
+                }
             }
             else if (item != null && item.Amount <= 0)
             {
