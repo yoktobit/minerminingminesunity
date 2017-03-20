@@ -47,6 +47,7 @@ public class MinerRicoBehavior : MonoBehaviour {
     public GameObject timeBarText;
     public GameObject sun;
     public GameObject inventory;
+    public GameObject inventoryTop;
     public GameObject inventoryBackground;
     public GameObject inGameMenu;
     public GameObject elevatorLabel;
@@ -66,6 +67,9 @@ public class MinerRicoBehavior : MonoBehaviour {
     public List<Transform> resourcesToCollect;
     public Transform rockGroup;
     public Transform ActionButton;
+    public Transform DetailImage;
+    public Transform DetailText;
+    public Transform DetailCaption;
 
     // Inventory
     float lastInventoryHorz = 0;
@@ -93,7 +97,8 @@ public class MinerRicoBehavior : MonoBehaviour {
         moneyBarText = GameObject.Find("MoneyBarText");
         sun = GameObject.Find("Sun");
         inventory = GameObject.Find("Inventory");
-        inventoryBackground = GameObject.Find("InventoryBackground");
+        inventoryTop = GameObject.Find("InventoryTop");
+        inventoryBackground = GameObject.Find("InventoryBottom");
         inGameMenu = GameObject.Find("InGameMenu");
         elevatorLabel = GameObject.Find("ElevatorLabel");
         level = GameObject.Find("Level");
@@ -133,7 +138,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
         LanguageManager languageManager = LanguageManager.Instance;
         SmartCultureInfo deviceCulture = languageManager.GetDeviceCultureIfSupported();
-        languageManager.OnChangeLanguage += OnChangeLanguage;
+        //languageManager.OnChangeLanguage += OnChangeLanguage;
         languageManager.ChangeLanguage(deviceCulture);
     }
 
@@ -286,7 +291,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         var inventoryNumberString = inventoryItem.name.Replace("Inventory", "");
         var inventoryNumber = int.Parse(inventoryNumberString);
         activeInventoryNumber = inventoryNumber;
-        if (inventory.transform.GetChild(activeInventoryNumber + 1).transform.GetChild(1).GetComponent<Image>().sprite != null)
+        if (inventoryTop.transform.GetChild(activeInventoryNumber + 1).transform.GetChild(1).GetComponent<Image>().sprite != null)
         {
             inventoryState = "selected";
             HandleInventorySelection();
@@ -295,10 +300,10 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     void HandleInventorySelection()
     {
-        activeInventoryItem = inventory.transform.GetChild(activeInventoryNumber + 1);
-        for (int ii = 1; ii < inventory.transform.childCount; ii++)
+        activeInventoryItem = inventoryTop.transform.GetChild(activeInventoryNumber + 1);
+        for (int ii = 1; ii < inventoryTop.transform.childCount; ii++)
         {
-            var current = inventory.transform.GetChild(ii);
+            var current = inventoryTop.transform.GetChild(ii);
             if (current == activeInventoryItem)
             {
                 current.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/borderlargefilledselected");
@@ -307,24 +312,58 @@ public class MinerRicoBehavior : MonoBehaviour {
             {
                 current.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/borderlargefilled");
             }
+            SetDetail(activeInventoryItem);
         }
         if (inventoryState == "selected")
         {
             if (inventoryAction == "use")
             {
-                inventoryBackground.transform.GetChild(0).GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/borderlargefilledselected");
-                inventoryBackground.transform.GetChild(1).GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/borderlargefilled");
+                inventoryBackground.transform.GetChild(0).GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/borderlargefilledselectedgame");
+                inventoryBackground.transform.GetChild(1).GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/borderlargefilledgame");
             }
             else
             {
-                inventoryBackground.transform.GetChild(0).GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/borderlargefilled");
-                inventoryBackground.transform.GetChild(1).GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/borderlargefilledselected");
+                inventoryBackground.transform.GetChild(0).GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/borderlargefilledgame");
+                inventoryBackground.transform.GetChild(1).GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/borderlargefilledselectedgame");
             }
         }
         else
         {
-            inventoryBackground.transform.GetChild(0).GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/borderlargefilled");
-            inventoryBackground.transform.GetChild(1).GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/borderlargefilled");
+            inventoryBackground.transform.GetChild(0).GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/borderlargefilledgame");
+            inventoryBackground.transform.GetChild(1).GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/borderlargefilledgame");
+        }
+    }
+
+    private void SetDetail(Transform activeInventoryItem)
+    {
+        bool found = false;
+        if (activeInventoryItem != null)
+        {
+            var ii = activeInventoryItem.GetComponent<InventoryItemBehaviour>().inventoryItem;
+            if (ii != null && ii.Type != null)
+            {
+                var di = Database.ItemList[ii.Type];
+                Debug.Log("Type: " + ii.Type);
+                if (di != null)
+                {
+                    Debug.Log("BuyValue " + di.BuyValue);
+                    var caption = LanguageManager.Instance.GetTextValue(di.Name);
+                    DetailCaption.GetComponent<Text>().text = caption;
+                    var desc = LanguageManager.Instance.GetTextValue(di.Name + "Desc");
+                    //Debug.Log("Caption: " + caption + ", Desc: " + desc);
+                    DetailText.GetComponent<Text>().text = desc;
+                    DetailImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("items/item " + ii.Type);
+                    DetailImage.gameObject.SetActive(true);
+                    found = true;
+                }
+            }
+        }
+        if (!found)
+        {
+            DetailCaption.GetComponent<Text>().text = "";
+            DetailText.GetComponent<Text>().text = "";
+            DetailImage.GetComponent<Image>().sprite = null;
+            DetailImage.gameObject.SetActive(false);
         }
     }
 
@@ -467,7 +506,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     private void UpdateInventory()
     {
-        var slots = inventory.GetComponent<InventoryBehaviour>().InventorySlots;
+        var slots = inventoryTop.GetComponent<InventoryBehaviour>().InventorySlots;
         
         for (int ii = 0; ii < 20; ii++)
         {
@@ -506,6 +545,7 @@ public class MinerRicoBehavior : MonoBehaviour {
                 text.GetComponent<Text>().text = "";
                 image.GetComponent<Image>().sprite = Resources.Load("") as Sprite;
             }
+            slot.GetComponent<InventoryItemBehaviour>().inventoryItem = item;
         }
         UpdateInventoryText();
     }
