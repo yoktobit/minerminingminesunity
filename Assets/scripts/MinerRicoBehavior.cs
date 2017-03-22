@@ -803,6 +803,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         if (workDone)
         {
             HandleWorkDone(oldWorkingRock);
+            HandleArrived();
         }
         if (arrived)
         {
