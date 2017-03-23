@@ -429,15 +429,27 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
     public bool TrySellBuy()
     {
         var item = SelectedItem.GetComponent<InventoryItemBehaviour>().inventoryItem;
+        var type = item.Type;
         var databaseItem = Database.ItemList[item.Type];
-        if (sellorBuy == "buy" && this.confirmCount * databaseItem.BuyValue > Data.Money) return false;
+        var total = this.confirmCount;
+        if (sellorBuy == "buy" && total * databaseItem.BuyValue > Data.Money) return false;
         var sourceAmount = item.Amount - this.confirmCount;
-        sourceAmount = Mathf.Clamp(sourceAmount, 0, 99);
-        item.Amount = sourceAmount;
-        if (item.Amount <= 0)
+        var inventory = (sellorBuy == "sell") ? MinerSaveGame.Instance.Current.Inventory : MinerSaveGame.Instance.Current.ShopInventory;
+        var tmpItem = item;
+        while (true)
         {
-            item.Position = -1;
+            this.confirmCount = Mathf.Abs(sourceAmount);
+            tmpItem.Amount = Mathf.Clamp(sourceAmount, 0, 99);
+            if (tmpItem.Amount <= 0)
+            {
+                tmpItem.Position = -1;
+            }
+            if (sourceAmount >= 0) break;
+            tmpItem = (from i in inventory where i != tmpItem && i.Position >= 0 && i.Type == type select i).FirstOrDefault();
+            if (tmpItem == null) break;
+            sourceAmount = tmpItem.Amount - this.confirmCount;
         }
+        
         if (sellorBuy == "sell")
         {
             var shopItem = MinerSaveGame.Instance.Current.ShopInventory.Where(ii => ii.Type == item.Type).FirstOrDefault();
@@ -447,33 +459,22 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
                 shopItem = MinerSaveGame.Instance.Current.ShopInventory.Where(ii => ii.Type == item.Type).FirstOrDefault();
                 shopItem.Amount--;
             }
-            var targetAmount = shopItem.Amount + this.confirmCount;
+            var targetAmount = shopItem.Amount + total;
             targetAmount = Mathf.Clamp(targetAmount, 0, 99);
             shopItem.Amount = targetAmount;
             if (shopItem.Amount <= 0)
             {
                 shopItem.Position = -1;
             }
-            MinerSaveGame.Instance.Current.Money += this.confirmCount * databaseItem.SellValue;
+            MinerSaveGame.Instance.Current.Money += total * databaseItem.SellValue;
         }
         else
         {
-            /*var minerItem = MinerSaveGame.Instance.Current.Inventory.Where(ii => ii.Type == item.Type).FirstOrDefault();
-            if (minerItem == null)
-            {
-                MinerSaveGame.Instance.Current.AddInventoryItem(item.Type, false);
-                minerItem = MinerSaveGame.Instance.Current.Inventory.Where(ii => ii.Type == item.Type).FirstOrDefault();
-                minerItem.Amount--;
-            }
-            var targetAmount = minerItem.Amount + this.confirmCount;
-            targetAmount = Mathf.Clamp(targetAmount, 0, 99);
-            var diff = targetAmount - minerItem.Amount;
-            minerItem.Amount = targetAmount;*/
-            for (int ii = 0; ii < this.confirmCount; ii++)
+            for (int ii = 0; ii < total; ii++)
             {
                 MinerSaveGame.Instance.Current.AddInventoryItem(item.Type, false);
             }
-            MinerSaveGame.Instance.Current.Money -= this.confirmCount * databaseItem.BuyValue;
+            MinerSaveGame.Instance.Current.Money -= total * databaseItem.BuyValue;
         }
         FillInventory();
         FillInventory("ShopInventory");
@@ -507,7 +508,10 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
     int confirmCount;
     void SetConfirmCountText(int confirmCount)
     {
-        this.confirmCount = Mathf.Clamp(confirmCount, 1, SelectedItem.GetComponent<InventoryItemBehaviour>().inventoryItem.Amount);
+        var type = SelectedItem.GetComponent<InventoryItemBehaviour>().inventoryItem.Type;
+        var inventory = (sellorBuy == "sell") ? MinerSaveGame.Instance.Current.Inventory : MinerSaveGame.Instance.Current.ShopInventory;
+        var sumAmount = (from item in inventory where item.Type == type select item.Amount).Sum();
+        this.confirmCount = Mathf.Clamp(confirmCount, 1, sumAmount);
         ConfirmCountText.GetComponent<Text>().text = this.confirmCount.ToString();
         var databaseItem = Database.ItemList[SelectedItem.GetComponent<InventoryItemBehaviour>().inventoryItem.Type];
         var money = sellorBuy == "sell" ? databaseItem.SellValue : databaseItem.BuyValue;
@@ -563,7 +567,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
                 if (item != null && item.Amount > 0)
                 {
                     text.GetComponent<Text>().text = item.Amount.ToString();
-                    if (dbItem != null && item.Amount == dbItem.Stack)
+                    if (dbItem != null && item.Amount == dbItem.Stack && inventoryType == "Inventory")
                     {
                         text.GetComponent<Text>().color = new Color(0, 0.7f, 0);
                     }
