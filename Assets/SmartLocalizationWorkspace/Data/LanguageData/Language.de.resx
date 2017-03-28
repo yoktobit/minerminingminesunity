@@ -165,6 +165,12 @@
 	<data name="GoldDesc" xml:space="preserve">
 		<value>Gold ist ein wertvoller Bodenschatz.</value>
 	</data>
+	<data name="Golden Apple" xml:space="preserve">
+		<value>Goldener Apfel</value>
+	</data>
+	<data name="Golden AppleDesc" xml:space="preserve">
+		<value>Ein goldener Apfel! Nicht so saettigend wie ein gewoehnlicher Apfel, dafuer jedoch mit starken Heilkraeften.</value>
+	</data>
 	<data name="HUD_DAY" xml:space="preserve">
 		<value>TAG</value>
 	</data>

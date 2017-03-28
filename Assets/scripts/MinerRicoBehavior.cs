@@ -480,6 +480,10 @@ public class MinerRicoBehavior : MonoBehaviour {
             {
                 GetComponent<Animator>().Play("apple");
             }
+            else if (itemToUse.Type == "apple golden")
+            {
+                GetComponent<Animator>().Play("apple");
+            }
             else if (itemToUse.Type == "candle")
             {
                 GetComponent<Animator>().Play("placing");
@@ -974,7 +978,14 @@ public class MinerRicoBehavior : MonoBehaviour {
         }
         else if (itemToUse != null && itemToUse.Type == "apple")
         {
-            Data.FoodLevel = Math.Min(Data.FoodLevel + 40, 100);
+            Data.FoodLevel = Math.Min(Data.FoodLevel + 60, 100);
+            Data.Health = Math.Min(Data.Health + 10, Data.MaxHealth);
+            itemToUse.Amount = Math.Max(itemToUse.Amount - 1, 0);
+        }
+        else if (itemToUse != null && itemToUse.Type == "apple golden")
+        {
+            Data.FoodLevel = Math.Min(Data.FoodLevel + 50, 100);
+            Data.Health = Math.Min(Data.Health + 50, Data.MaxHealth);
             itemToUse.Amount = Math.Max(itemToUse.Amount - 1, 0);
         }
         if (itemToUse.Amount <= 0)

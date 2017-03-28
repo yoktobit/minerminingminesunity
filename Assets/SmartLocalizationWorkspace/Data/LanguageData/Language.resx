@@ -125,6 +125,9 @@
 	<data name="buy" xml:space="preserve">
 		<value>BUY</value>
 	</data>
+	<data name="Cancel" xml:space="preserve">
+		<value>Cancel</value>
+	</data>
 	<data name="Candle" xml:space="preserve">
 		<value>Candle</value>
 	</data>
@@ -157,6 +160,12 @@
 	</data>
 	<data name="GoldDesc" xml:space="preserve">
 		<value>GoldDesc</value>
+	</data>
+	<data name="Golden Apple" xml:space="preserve">
+		<value>Golden Apple</value>
+	</data>
+	<data name="Golden AppleDesc" xml:space="preserve">
+		<value>A golden apple! Not as filling as a usual apple but with strong healing powers.</value>
 	</data>
 	<data name="HUD_DAY" xml:space="preserve">
 		<value>DAY</value>
@@ -199,8 +208,5 @@
 	</data>
 	<data name="Yes" xml:space="preserve">
 		<value>Yes</value>
-	</data>
-	<data name="Cancel" xml:space="preserve">
-		<value>Cancel</value>
 	</data>
 </root>

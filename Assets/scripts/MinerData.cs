@@ -147,6 +147,14 @@ public class MinerData {
         count = UnityEngine.Random.Range(10, 21);
         for (int ii = 0; ii < count; ii++)
             AddInventoryItem("candle", false, "ShopInventory");
+        rnd = UnityEngine.Random.Range(0, 99);
+        var item = Database.ItemList["apple golden"];
+        if (rnd >= 50 && rnd < 50 + item.ShopChance)
+        {
+            count = UnityEngine.Random.Range(item.MinShopAmount, item.MaxShopAmount + 1);
+            for (int ii = 0; ii < count; ii++)
+                AddInventoryItem("apple golden", false, "ShopInventory");
+        }
         ShopInventoryDay = Day;
     }
 

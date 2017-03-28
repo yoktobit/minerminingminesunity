@@ -9,6 +9,13 @@ public class DatabaseItem
     public int BuyValue { get; set; }
     public int SellValue { get; set; }
     public int Stack { get; set; }
+    public int MinBuyValue { get; set; }
+    public int MaxBuyValue { get; set; }
+    public int MinSellValue { get; set; }
+    public int MaxSellValue { get; set; }
+    public float ShopChance { get; set; }
+    public int MinShopAmount { get; set; }
+    public int MaxShopAmount { get; set; }
 }
 
 public class Database
@@ -20,6 +27,20 @@ public class Database
             BuyValue = 15,
             SellValue = 5,
             Stack = 5
+            }
+        },
+        { "apple golden", new DatabaseItem() {
+            Name = "Golden Apple",
+            MinBuyValue = 350,
+            BuyValue = 400,
+            MaxBuyValue = 490,
+            MinSellValue = 130,
+            SellValue = 150,
+            MaxSellValue = 180,
+            ShopChance = 5,
+            Stack = 5,
+            MinShopAmount = 1,
+            MaxShopAmount = 5
             }
         },
         { "candle", new DatabaseItem() {

@@ -170,6 +170,12 @@
 		<value>Gold is a valuable resource.
 </value>
 	</data>
+	<data name="Golden Apple" xml:space="preserve">
+		<value>Golden Apple</value>
+	</data>
+	<data name="Golden AppleDesc" xml:space="preserve">
+		<value>A golden apple! Not as filling as a usual apple but with strong healing powers.</value>
+	</data>
 	<data name="HUD_DAY" xml:space="preserve">
 		<value>DAY</value>
 	</data>

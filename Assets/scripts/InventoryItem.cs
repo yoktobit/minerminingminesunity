@@ -12,6 +12,8 @@ public class InventoryItem
     public bool IsEquipped { get; set; }
     public float X { get; set; }
     public float Y { get; set; }
+    public int BuyValue { get; set; }
+    public int SellValue { get; set; }
 
     public InventoryItem()
     {
