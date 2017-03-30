@@ -338,7 +338,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
                 if (inventoryItem != null)
                 {
                     DatabaseItem di = Database.ItemList[inventoryItem.Type];
-                    if ((sellorBuy == "buy" && di.BuyValue > 0) || (sellorBuy == "sell" && di.SellValue > 0) )
+                    if ((sellorBuy == "buy" && di.BuyValue > 0) || (sellorBuy == "sell" && inventoryItem.SellValue > 0) )
                     {
                         ShowDetailDialog(true);
                     }
@@ -466,7 +466,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
             {
                 shopItem.Position = -1;
             }
-            MinerSaveGame.Instance.Current.Money += total * databaseItem.SellValue;
+            MinerSaveGame.Instance.Current.Money += total * item.SellValue;
         }
         else
         {
@@ -474,7 +474,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
             {
                 MinerSaveGame.Instance.Current.AddInventoryItem(item.Type, false);
             }
-            MinerSaveGame.Instance.Current.Money -= total * databaseItem.BuyValue;
+            MinerSaveGame.Instance.Current.Money -= total * item.BuyValue;
         }
         FillInventory();
         FillInventory("ShopInventory");
@@ -514,7 +514,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         this.confirmCount = Mathf.Clamp(confirmCount, 1, sumAmount);
         ConfirmCountText.GetComponent<Text>().text = this.confirmCount.ToString();
         var databaseItem = Database.ItemList[SelectedItem.GetComponent<InventoryItemBehaviour>().inventoryItem.Type];
-        var money = sellorBuy == "sell" ? databaseItem.SellValue : databaseItem.BuyValue;
+        var money = sellorBuy == "sell" ? SelectedItem.GetComponent<InventoryItemBehaviour>().inventoryItem.SellValue : SelectedItem.GetComponent<InventoryItemBehaviour>().inventoryItem.BuyValue;
         var totalMoney = money * this.confirmCount;
         ConfirmMoneyText.GetComponent<Text>().text = totalMoney.ToString();
         if (sellorBuy == "buy" && totalMoney > Data.Money)
@@ -709,13 +709,18 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
                 Debug.Log("Type: " + ii.Type);
                 if (di != null)
                 {
+                    if (ii.SellValue == 0 || ii.BuyValue == 0)
+                    {
+                        ii.SellValue = UnityEngine.Random.Range(di.MinSellValue, di.MaxSellValue + 1);
+                        ii.BuyValue = UnityEngine.Random.Range(di.MinBuyValue, di.MaxBuyValue + 1);
+                    }
                     Debug.Log("BuyValue " + di.BuyValue);
                     var caption = LanguageManager.Instance.GetTextValue(di.Name);
                     DetailCaption.GetComponent<Text>().text = caption;
                     var desc = LanguageManager.Instance.GetTextValue(di.Name + "Desc");
                     //Debug.Log("Caption: " + caption + ", Desc: " + desc);
                     DetailText.GetComponent<Text>().text = desc;
-                    DetailMoney.GetComponent<Text>().text = (sellorBuy == "sell" ? di.SellValue.ToString() : (di.BuyValue == 0 ? "-" : di.BuyValue.ToString()));
+                    DetailMoney.GetComponent<Text>().text = (sellorBuy == "sell" ? ii.SellValue.ToString() : (ii.BuyValue == 0 ? "-" : ii.BuyValue.ToString()));
                     DetailImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("items/item " + ii.Type);
                     DetailImage.gameObject.SetActive(true);
                     found = true;

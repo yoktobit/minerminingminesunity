@@ -183,6 +183,8 @@ public class MinerData {
         {
             newItem = new InventoryItem();
             newItem.Type = type;
+            newItem.BuyValue = UnityEngine.Random.Range(databaseItem.MinBuyValue, databaseItem.MaxBuyValue);
+            newItem.SellValue = UnityEngine.Random.Range(databaseItem.MinSellValue, databaseItem.MaxSellValue);
             if (equip)
                 Equip(newItem);
             else

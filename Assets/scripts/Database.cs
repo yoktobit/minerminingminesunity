@@ -24,7 +24,11 @@ public class Database
     {
         { "apple", new DatabaseItem() {
             Name = "Apple",
+            MinBuyValue = 18,
+            MaxBuyValue = 35,
             BuyValue = 15,
+            MinSellValue = 8,
+            MaxSellValue = 12,
             SellValue = 5,
             Stack = 5
             }
@@ -45,7 +49,11 @@ public class Database
         },
         { "candle", new DatabaseItem() {
             Name = "Candle",
+            MinBuyValue = 20,
+            MaxBuyValue = 35,
             BuyValue = 25,
+            MinSellValue = 8,
+            MaxSellValue = 17,
             SellValue = 5,
             Stack = 20
             }
