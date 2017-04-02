@@ -2467,6 +2467,7 @@ GameObject:
   - component: {fileID: 373459576}
   - component: {fileID: 373459578}
   - component: {fileID: 373459577}
+  - component: {fileID: 373459579}
   m_Layer: 5
   m_Name: MinusButton
   m_TagString: Untagged
@@ -2531,6 +2532,36 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 373459575}
+--- !u!114 &373459579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 373459575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1862395651, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 840688234}
+          m_MethodName: HandleButton
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 373459576}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Transform, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+      m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
+        Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  delegates: []
 --- !u!1 &377581706
 GameObject:
   m_ObjectHideFlags: 0
@@ -4312,10 +4343,10 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 840688234}
           m_MethodName: HandleButton
-          m_Mode: 5
+          m_Mode: 2
           m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_ObjectArgument: {fileID: 705167903}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Transform, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
             m_StringArgument: Sell
@@ -4627,10 +4658,10 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 840688234}
           m_MethodName: HandleButton
-          m_Mode: 5
+          m_Mode: 2
           m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_ObjectArgument: {fileID: 746421544}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Transform, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
             m_StringArgument: Sell
@@ -5389,6 +5420,8 @@ MonoBehaviour:
   DetailImage: {fileID: 814863828}
   DetailMoney: {fileID: 1336089138}
   MinerMoneyText: {fileID: 527421417}
+  PlusButton: {fileID: 2137021324}
+  MinusButton: {fileID: 373459576}
   target: {x: 0, y: 0, z: 0}
   cheatCode: 
   SelectedItem: {fileID: 0}
@@ -5400,6 +5433,9 @@ MonoBehaviour:
   selectedFrame: Left
   state: 
   selectedAction: 
+  repeatStart: 0
+  keyStart: 0
+  repeatTime: 0.4
 --- !u!95 &840688235
 Animator:
   serializedVersion: 3
@@ -9172,7 +9208,7 @@ RectTransform:
   - {fileID: 871778242}
   - {fileID: 2036673434}
   - {fileID: 977830759}
-  - {fileID: 2137021324}
+  - {fileID: 1971223989}
   - {fileID: 373459576}
   - {fileID: 227924528}
   - {fileID: 1073018438}
@@ -10361,10 +10397,10 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 840688234}
           m_MethodName: HandleButton
-          m_Mode: 5
+          m_Mode: 2
           m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_ObjectArgument: {fileID: 1820109811}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Transform, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
             m_StringArgument: Buy
@@ -10607,10 +10643,10 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 840688234}
           m_MethodName: HandleButton
-          m_Mode: 5
+          m_Mode: 2
           m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_ObjectArgument: {fileID: 1843352955}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Transform, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
             m_StringArgument: Sell
@@ -11408,6 +11444,71 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11d1a74a1aa1a994d913a918a8a737c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1971223988
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1971223989}
+  - component: {fileID: 1971223990}
+  m_Layer: 5
+  m_Name: PlusButton
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1971223989
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1971223988}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 1}
+  m_Children:
+  - {fileID: 2137021324}
+  m_Father: {fileID: 1556169352}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 10.350001, y: -4.5}
+  m_SizeDelta: {x: 40, y: 40}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1971223990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1971223988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1862395651, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 840688234}
+          m_MethodName: HandleButton
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 2137021324}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Transform, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+      m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
+        Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  delegates: []
 --- !u!1 &1990568972
 GameObject:
   m_ObjectHideFlags: 0
@@ -12419,7 +12520,7 @@ GameObject:
   - component: {fileID: 2137021326}
   - component: {fileID: 2137021325}
   m_Layer: 5
-  m_Name: PlusButton
+  m_Name: PlusButtonText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12433,14 +12534,14 @@ RectTransform:
   m_GameObject: {fileID: 2137021323}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1556169352}
-  m_RootOrder: 3
+  m_Father: {fileID: 1971223989}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 10.35, y: -4.4000006}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 46.9, y: 34.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2137021325

@@ -35,6 +35,8 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
     public Transform DetailImage;
     public Transform DetailMoney;
     public Transform MinerMoneyText;
+    public Transform PlusButton;
+    public Transform MinusButton;
 
     public Vector3 target;
 
@@ -399,6 +401,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
 
     public void HandleButton(Transform selectedButton)
     {
+        Debug.Log("Button Pressed: " + selectedButton.name);
         if (selectedButton == SellBuyButton)
         {
             ShowConfirmDialog(true);
@@ -423,6 +426,14 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
                 ShowConfirmDialog(false);
                 UpdateItemSelection();
             }
+        }
+        else if (selectedButton == PlusButton)
+        {
+            SetConfirmCountText(++confirmCount);
+        }
+        else if (selectedButton == MinusButton)
+        {
+            SetConfirmCountText(--confirmCount);
         }
     }
 
@@ -620,6 +631,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         selectedY = int.Parse(y);
         SelectedItem = child;
         UpdateItemSelection();
+        ShowDetailDialog(true);
     }
 
     private void SetSelection(int x, int y)
