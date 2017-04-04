@@ -115,6 +115,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
     private void UpdateActionButton(ref bool handled)
     {
         if (ShopUi.gameObject.activeSelf) return;
+        if (Time.timeSinceLevelLoad < 0.5f) return;
         if (transform.position.x >= 20 || transform.position.x <= -60)
         {
             ActionButton.gameObject.SetActive(true);
@@ -140,7 +141,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
     {
         if (possibleAction == Action.OpenShop)
         {
-            ActionButton.GetComponent<Animator>().Stop();
+            ActionButton.GetComponent<Animator>().StopPlayback();
             ActionButton.gameObject.SetActive(false);
             ShowShop();
         }
@@ -189,7 +190,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         if (right)
         {
             target = new Vector3(20, transform.position.y);//transform.position + new Vector3(15f, 0);
-            transform.position = Vector3.MoveTowards(transform.position, target, 0.6f);
+            transform.position = Vector3.MoveTowards(transform.position, target, 25f * Time.smoothDeltaTime);
             if (!GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("walking"))
             {
                 GetComponent<Animator>().Play("walking");
@@ -200,7 +201,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         else if (left)
         {
             target = new Vector3(-70, transform.position.y);//transform.position - new Vector3(15f, 0);
-            transform.position = Vector3.MoveTowards(transform.position, target, 0.6f);
+            transform.position = Vector3.MoveTowards(transform.position, target, 25f * Time.smoothDeltaTime);
             if (!GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("walking"))
             {
                 GetComponent<Animator>().Play("walking");

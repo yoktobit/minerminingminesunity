@@ -586,7 +586,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         UpdateDayTime();
         CheckLevel();
 
-        float step = Data.Speed * BASIC_SPEED * Time.deltaTime; // Movement Speed
+        float step = Data.Speed * BASIC_SPEED * Time.smoothDeltaTime; // Movement Speed
         bool left = false, right = false, up = false, down = false, action = false;
         Vector3 targetElevator = elevator.transform.position;
         Vector3 currentTarget = target;
@@ -958,6 +958,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     public void ActionButtonClicked()
     {
+        if (Time.timeSinceLevelLoad < 0.5f) return;
         EnterShop();
     }
 

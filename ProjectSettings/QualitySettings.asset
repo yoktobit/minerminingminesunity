@@ -164,7 +164,7 @@ QualitySettings:
     - WebGL
   - serializedVersion: 2
     name: Fantastic
-    pixelLightCount: 3
+    pixelLightCount: 1
     shadows: 0
     shadowResolution: 0
     shadowProjection: 0
@@ -181,7 +181,7 @@ QualitySettings:
     softVegetation: 1
     realtimeReflectionProbes: 0
     billboardsFaceCameraPosition: 0
-    vSyncCount: 1
+    vSyncCount: 0
     lodBias: 2
     maximumLODLevel: 0
     particleRaycastBudget: 2048
