@@ -135,6 +135,7 @@ public class MinerData {
         {
             AddInventoryItem("candle", false);
         }
+        AddInventoryItem("apple golden", false);
     }
 
     public void FillShopInventory()
