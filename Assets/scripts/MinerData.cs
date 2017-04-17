@@ -100,6 +100,7 @@ public class MinerData {
             ShopInventoryDay = Day - 1; // Minus 1, so shop gets filled next time you visit it
         }
         Inventory.Where(i => new List<string>() { "cu", "ag", "au", "pt", "gem" }.Contains(i.Type) && i.IsEquipped).ToList().ForEach(i => UnEquip(i));
+        Inventory.ForEach(i => { if (i.BuyValue == 0 || i.SellValue == 0) SetPrices(i); });
         if (InventorySize == 0) InventorySize = 20;
     }
 
@@ -184,8 +185,7 @@ public class MinerData {
         {
             newItem = new InventoryItem();
             newItem.Type = type;
-            newItem.BuyValue = UnityEngine.Random.Range(databaseItem.MinBuyValue, databaseItem.MaxBuyValue);
-            newItem.SellValue = UnityEngine.Random.Range(databaseItem.MinSellValue, databaseItem.MaxSellValue);
+            SetPrices(newItem);
             if (equip)
                 Equip(newItem);
             else
@@ -206,6 +206,18 @@ public class MinerData {
         }
         Debug.Log("Adding Item " + newItem.Type);
         ++newItem.Amount;
+    }
+
+    public void SetPrices(InventoryItem item, DatabaseItem databaseItem = null)
+    {
+        if (databaseItem == null)
+        {
+            databaseItem = Database.ItemList[item.Type];
+        }
+        if (databaseItem.MinBuyValue == 0) item.BuyValue = 0;
+        else item.BuyValue = UnityEngine.Random.Range(databaseItem.MinBuyValue, databaseItem.MaxBuyValue + 1);
+        if (databaseItem.MinSellValue == 0) item.SellValue = 0;
+        else item.SellValue = UnityEngine.Random.Range(databaseItem.MinSellValue, databaseItem.MaxSellValue + 1);
     }
 
     public void Equip(InventoryItem itemToEquip)

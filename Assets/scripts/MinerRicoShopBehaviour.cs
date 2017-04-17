@@ -722,10 +722,9 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
                 Debug.Log("Type: " + ii.Type);
                 if (di != null)
                 {
-                    if (ii.SellValue == 0 || ii.BuyValue == 0)
+                    if (ii.SellValue == 0 && ii.BuyValue == 0) // Auto-Migrate
                     {
-                        ii.SellValue = UnityEngine.Random.Range(di.MinSellValue, di.MaxSellValue + 1);
-                        ii.BuyValue = UnityEngine.Random.Range(di.MinBuyValue, di.MaxBuyValue + 1);
+                        Data.SetPrices(ii, di);
                     }
                     Debug.Log("BuyValue " + di.BuyValue);
                     var caption = LanguageManager.Instance.GetTextValue(di.Name);
