@@ -367,11 +367,13 @@ public class MinerRicoBehavior : MonoBehaviour {
         }
     }
 
-    void HandleInventory()
+    void HandleInventory(ref bool isHandled)
     {
         if (Input.GetButtonUp("Inventory"))
         {
             SwitchInventory(false);
+            isHandled = true;
+            return;
         }
         bool left, right, up, down;
         left = right = up = down = false;
@@ -389,6 +391,8 @@ public class MinerRicoBehavior : MonoBehaviour {
                 {
                     inventoryState = "";
                 }
+                isHandled = true;
+                return;
             }
             if (Input.GetButtonUp("Submit"))
             {
@@ -411,6 +415,8 @@ public class MinerRicoBehavior : MonoBehaviour {
                         HandleInventoryDrop(false);
                     }
                 }
+                isHandled = true;
+                return;
             }
             if (horz < 0 && (Mathf.Sign(horz) != Mathf.Sign(lastInventoryHorz) || lastInventoryHorz == 0))
             {
@@ -580,8 +586,11 @@ public class MinerRicoBehavior : MonoBehaviour {
         CheckIfAlive();
         if (gameOver.activeSelf) return;
 
+        bool isHandled = false;
+
         HandleInGameMenu();
-        HandleInventory();
+        HandleInventory(ref isHandled);
+        if (isHandled) return;
         HandleActionButton();
         UpdateDayTime();
         CheckLevel();
