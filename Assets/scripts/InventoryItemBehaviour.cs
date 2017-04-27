@@ -11,6 +11,7 @@ public class InventoryItemBehaviour : MonoBehaviour, IPointerClickHandler {
     public void OnPointerClick(PointerEventData eventData)
     {
         var rico = GameObject.FindGameObjectWithTag("Player");
+        if (this.inventoryItem == null) return;
         Debug.Log("InventoryItemClicked " + this.transform.name);
         if (SceneManager.GetActiveScene().name == "game")
         {
