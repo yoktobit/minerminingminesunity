@@ -733,6 +733,16 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
                     //Debug.Log("Caption: " + caption + ", Desc: " + desc);
                     DetailText.GetComponent<Text>().text = desc;
                     DetailMoney.GetComponent<Text>().text = (sellorBuy == "sell" ? ii.SellValue.ToString() : (ii.BuyValue == 0 ? "-" : ii.BuyValue.ToString()));
+                    if (ii.BuyValue == 0)
+                    {
+                        SellBuyButton.gameObject.SetActive(false);
+                        CancelButton.gameObject.SetActive(false);
+                    }
+                    else
+                    {
+                        SellBuyButton.gameObject.SetActive(true);
+                        CancelButton.gameObject.SetActive(true);
+                    }
                     DetailImage.GetComponent<Image>().sprite = Resources.Load<Sprite>("items/item " + ii.Type);
                     DetailImage.gameObject.SetActive(true);
                     found = true;
