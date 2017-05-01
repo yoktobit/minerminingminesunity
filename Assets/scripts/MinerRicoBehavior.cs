@@ -488,7 +488,7 @@ public class MinerRicoBehavior : MonoBehaviour {
             }
             else if (itemToUse.Type == "apple golden")
             {
-                GetComponent<Animator>().Play("apple");
+                GetComponent<Animator>().Play("apple golden");
             }
             else if (itemToUse.Type == "candle")
             {
@@ -716,14 +716,17 @@ public class MinerRicoBehavior : MonoBehaviour {
 
             // Apfel
             if (hasUsedItem && !itemUseHandled &&
-                this.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("apple") &&
+                (this.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("apple") 
+                || this.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("apple golden")
+                ) &&
                 this.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime > (0.6f * this.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).speed))
             {
                 HandleItemUse();
             }
 
             if (hasUsedItem &&
-                !(this.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("apple")
+                !((this.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("apple")
+                ||(this.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("apple golden")))
                 || this.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("placing")))
             {
                 itemUseDone = true;
