@@ -1086,14 +1086,9 @@ public class MinerRicoBehavior : MonoBehaviour {
         UpdateExperienceBar();
         UpdateInventoryText();
     }
-
-    public Transform activeInGameMenuItem;
-    public Transform continueItem;
-    public Transform mainMenuItem;
-    public Transform quitItem;
+    
     private void HandleInGameMenu()
     {
-        bool freshActivated = false;
         if (inventory.activeSelf) return;
 #if UNITY_ANDROID
         if (Input.GetKeyUp(KeyCode.Menu) || Input.GetButtonUp("Menu"))
@@ -1101,67 +1096,8 @@ public class MinerRicoBehavior : MonoBehaviour {
         if (Input.GetButtonUp("Menu"))
 #endif
         {
-            freshActivated = true;
             inGameMenu.SetActive(!inGameMenu.activeSelf);
         }
-        if (!inGameMenu.activeSelf) return;
-        bool up, down, submit, cancel;
-        up = down = submit = cancel = false;
-        float horz = Input.GetAxis("Horizontal");
-        float vert = Input.GetAxis("Vertical");
-        /*if (Input.GetButtonUp("Up"))
-        {
-            up = true;
-        }
-        if (Input.GetButtonUp("Down"))
-        {
-            down = true;
-        }*/
-        if (vert < 0 && (Mathf.Sign(vert) != Mathf.Sign(lastInventoryVert) || lastInventoryVert == 0))
-        {
-            down = true;
-        }
-        if (vert > 0 && (Mathf.Sign(vert) != Mathf.Sign(lastInventoryVert) || lastInventoryVert == 0))
-        {
-            up = true;
-        }
-        if (Input.GetButtonUp("Submit"))
-        {
-            submit = true;
-        }
-        if (Input.GetButtonUp("Cancel") && !freshActivated)
-        {
-            cancel = true;
-        }
-
-        if (up)
-        {
-            if (activeInGameMenuItem == continueItem) activeInGameMenuItem = quitItem;
-            else if (activeInGameMenuItem == quitItem) activeInGameMenuItem = mainMenuItem;
-            else if (activeInGameMenuItem == mainMenuItem) activeInGameMenuItem = continueItem;
-        }
-        else if (down)
-        {
-            if (activeInGameMenuItem == continueItem) activeInGameMenuItem = mainMenuItem;
-            else if (activeInGameMenuItem == quitItem) activeInGameMenuItem = continueItem;
-            else if (activeInGameMenuItem == mainMenuItem) activeInGameMenuItem = quitItem;
-        }
-        else if (submit)
-        {
-            if (activeInGameMenuItem == continueItem) HandleSubmitInGameMenuContinue();
-            if (activeInGameMenuItem == mainMenuItem) GotoMainMenu();
-            if (activeInGameMenuItem == quitItem) Application.Quit();
-        }
-        else if (cancel)
-        {
-            inGameMenu.SetActive(false);
-        }
-        quitItem.GetComponent<Text>().color = Color.black;
-        mainMenuItem.GetComponent<Text>().color = Color.black;
-        continueItem.GetComponent<Text>().color = Color.black;
-        activeInGameMenuItem.GetComponent<Text>().color = Color.red;
-        lastInventoryHorz = horz;
-        lastInventoryVert = vert;
     }
 
     public void HandleSubmitInGameMenuContinue()

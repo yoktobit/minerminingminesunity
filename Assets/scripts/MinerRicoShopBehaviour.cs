@@ -16,6 +16,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
     public MinerData Data;
 
     public Transform ShopUi;
+    public Transform InGameMenu;
     public Transform LeftFrame;
     public Transform RightFrame;
     public Transform SellBuyButton;
@@ -66,9 +67,14 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
 
     private void Update()
     {
+        if (InGameMenu.gameObject.activeSelf) return;
         bool handled = false;
-        UpdateActionButton(ref handled);
-        UpdateInventory(ref handled);
+        if (!handled)
+            UpdateInGameMenu(ref handled);
+        if (!handled)
+            UpdateActionButton(ref handled);
+        if (!handled)
+            UpdateInventory(ref handled);
         if (!handled)
         {
             UpdateWalk(ref handled);
@@ -77,6 +83,21 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         {
             UpdateCheatCodes(ref handled);
         }
+    }
+
+    private void UpdateInGameMenu(ref bool handled)
+    {
+        if (ShopUi.gameObject.activeSelf) return;
+#if UNITY_ANDROID
+        if (Input.GetKeyUp(KeyCode.Menu) || Input.GetButtonUp("Menu"))
+#else
+        if (Input.GetButtonUp("Menu"))
+#endif
+        {
+            InGameMenu.gameObject.SetActive(!InGameMenu.gameObject.activeSelf);
+            handled = true;
+        }
+        if (InGameMenu.gameObject.activeSelf) handled = true; // damit nur das Update vom Menü ausgewertet wird
     }
 
     void UpdateCheatCodes(ref bool handled)
