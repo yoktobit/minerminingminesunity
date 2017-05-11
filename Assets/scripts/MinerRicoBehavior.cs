@@ -34,6 +34,8 @@ public class MinerRicoBehavior : MonoBehaviour {
     bool itemUseHandled = false;
     InventoryItem itemToUse;
     bool inventoryWasClosed = false;
+    private float oldTimeScale;
+    public bool paused = false;
 
     public GameObject foodBarInner;
     public GameObject foodBarText;
@@ -156,6 +158,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     public void save()
     {
+        if (paused) return;
         MinerSaveGame.Save();
     }
 
@@ -193,6 +196,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     public void reduceFood()
     {
+        if (paused) return;
         --Data.FoodLevel;
         Data.FoodLevel = Mathf.Clamp(Data.FoodLevel, 0, 100);
         UpdateBars();
@@ -200,6 +204,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     public void UpdateHealth()
     {
+        if (paused) return;
         if (Data.FoodLevel <= 0)
         {
             --Data.Health;
@@ -579,10 +584,16 @@ public class MinerRicoBehavior : MonoBehaviour {
         mouseOverRucksack = false;
     }
 
-    
+    public void Unpause()
+    {
+        Debug.Log("Unpause");
+        paused = false;
+    }
+
     // Update is called once per frame
     void Update () {
-
+        if (paused) return;
+        if (SceneManager.sceneCount > 1) return;
         CheckIfAlive();
         if (gameOver.activeSelf) return;
 
@@ -623,7 +634,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
         GetComponent<Animator>().SetFloat("walkingSpeed", (Data.Speed / 3.5f) * 0.7f);
 
-        if (!inventory.activeSelf && !inGameMenu.activeSelf && !inventoryWasClosed)
+        if (!inventory.activeSelf && !inventoryWasClosed && !inGameMenu.activeSelf)
         {
             if (Input.GetAxis("Horizontal") < -0.1)
             {
@@ -951,7 +962,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     private void HandleActionButton()
     {
-        if (!ActionButton.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("ui interact door"))
+        if (ActionButton.gameObject.activeSelf && !ActionButton.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("ui interact door"))
         {
             ActionButton.GetComponent<Animator>().Play("ui interact door");
         }
@@ -1045,6 +1056,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     private void UpdateMoral()
     {
+        if (paused) return;
         var lights = GameObject.FindGameObjectsWithTag("LightSource");
         float looseMoral = -5;
         if (transform.position.y > 0)
@@ -1096,13 +1108,17 @@ public class MinerRicoBehavior : MonoBehaviour {
         if (Input.GetButtonUp("Menu"))
 #endif
         {
+            //SceneManager.LoadSceneAsync("InGameMenu");
+            //inGameMenu.GetComponent<InGameMenuBehaviour>().oldTimeScale = Time.timeScale;
+            //Time.timeScale = 0;
+            paused = true;
             inGameMenu.SetActive(!inGameMenu.activeSelf);
         }
     }
 
     public void HandleSubmitInGameMenuContinue()
     {
-        inGameMenu.SetActive(false);
+        //inGameMenu.SetActive(false);
     }
 
     public void HandleSubmitInGameMenuQuit()
@@ -1323,6 +1339,7 @@ public class MinerRicoBehavior : MonoBehaviour {
     }
 
     public Transform resourceTemplate;
+
     void CastMineral(MinerData.Rock rock)
     {
         var xPos = UnityEngine.Random.Range(1, 15);

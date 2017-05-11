@@ -7,9 +7,16 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 1
     path: Assets/scenes/PrereleaseNotice.unity
+    guid: 0ac93513b3439a54abb690db45af09c7
   - enabled: 1
     path: Assets/scenes/MainMenu.unity
+    guid: 369e14aed3c412a478c1c4f81433028e
   - enabled: 1
     path: Assets/scenes/game.unity
+    guid: 66c8a35ffd588a9419c62ac1fbbb8ff0
   - enabled: 1
     path: Assets/scenes/shop.unity
+    guid: e456dc6b45def7e4f8416eccbca3535c
+  - enabled: 1
+    path: Assets/scenes/InGameMenu.unity
+    guid: a3ae244f19219ab49b18f8ea006c2cde

@@ -24,6 +24,7 @@ public class InGameMenuBehaviour : MonoBehaviour {
     float lastInGameVert = 0;
     bool freshActivated;
     public bool handled = false;
+    public float oldTimeScale = 1;
 
     private void OnEnable()
     {
@@ -104,7 +105,15 @@ public class InGameMenuBehaviour : MonoBehaviour {
 
     public void HandleSubmitInGameMenuContinue()
     {
+        //Destroy(transform.parent.gameObject);
+        //Time.timeScale = oldTimeScale;
+        foreach(var go in gameObject.scene.GetRootGameObjects())
+        {
+            go.BroadcastMessage("Unpause", SendMessageOptions.DontRequireReceiver);
+        }
         gameObject.SetActive(false);
+        //Debug.Log("UnloadSceneAsync");
+        //SceneManager.UnloadScene("InGameMenu");
     }
 
     public void HandleSubmitInGameMenuQuit()

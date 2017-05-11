@@ -67,6 +67,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
 
     private void Update()
     {
+        if (SceneManager.sceneCount > 1) return;
         if (InGameMenu.gameObject.activeSelf) return;
         bool handled = false;
         if (!handled)
@@ -94,7 +95,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         if (Input.GetButtonUp("Menu"))
 #endif
         {
-            InGameMenu.gameObject.SetActive(!InGameMenu.gameObject.activeSelf);
+            SceneManager.LoadSceneAsync("InGameMenu", LoadSceneMode.Additive);
             handled = true;
         }
         if (InGameMenu.gameObject.activeSelf) handled = true; // damit nur das Update vom Menü ausgewertet wird
@@ -268,13 +269,17 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         if (Time.unscaledTime - repeatStart > repeatTime)
         {
             repeatStart = Time.unscaledTime;
-            if (Time.unscaledTime - keyStart > 2)
+            if (Time.unscaledTime - keyStart > 1)
             {
                 repeatTime = 0.15f;
             }
-            else if (Time.unscaledTime - keyStart > 5)
+            if (Time.unscaledTime - keyStart > 2)
             {
                 repeatTime = 0.05f;
+            }
+            if (Time.unscaledTime - keyStart > 4)
+            {
+                repeatTime = 0.02f;
             }
         }
         // erster Tastendruck
