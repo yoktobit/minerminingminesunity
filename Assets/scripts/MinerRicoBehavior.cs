@@ -262,10 +262,19 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     void UpdateExperienceBar()
     {
-        float newValue = Mathf.Lerp(0f, 276f, (float)(Data.Experience - Data.GetExperienceByLevel(Data.Level)) / (float)(Data.NextLevelExperience - Data.GetExperienceByLevel(Data.Level)));
-        experienceBarInner.GetComponent<RectTransform>().sizeDelta = new Vector2(newValue, 35f);
-        experienceBarText.GetComponent<Text>().text = (Data.Experience - Data.GetExperienceByLevel(Data.Level)) + "/" + (Data.NextLevelExperience - Data.GetExperienceByLevel(Data.Level));
-        level.GetComponent<Text>().text = Data.Level.ToString();
+        if (Data.Level < MinerData.MAXLVL)
+        {
+            float newValue = Mathf.Lerp(0f, 276f, (float)(Data.Experience - Data.GetExperienceByLevel(Data.Level)) / (float)(Data.NextLevelExperience - Data.GetExperienceByLevel(Data.Level)));
+            experienceBarInner.GetComponent<RectTransform>().sizeDelta = new Vector2(newValue, 35f);
+            experienceBarText.GetComponent<Text>().text = (Data.Experience - Data.GetExperienceByLevel(Data.Level)) + "/" + (Data.NextLevelExperience - Data.GetExperienceByLevel(Data.Level));
+            level.GetComponent<Text>().text = Data.Level.ToString();
+        }
+        else
+        {
+            experienceBarInner.GetComponent<RectTransform>().sizeDelta = new Vector2(0, 35f);
+            experienceBarText.GetComponent<Text>().text = "MAX";
+            level.GetComponent<Text>().text = Data.Level.ToString();
+        }
         /*cuCount.GetComponent<Text>().text = (from inv in Data.Inventory where inv.Type == "copper" select inv.Amount).Sum().ToString();
         auCount.GetComponent<Text>().text = (from inv in Data.Inventory where inv.Type == "gold" select inv.Amount).Sum().ToString();
         agCount.GetComponent<Text>().text = (from inv in Data.Inventory where inv.Type == "silver" select inv.Amount).Sum().ToString();
