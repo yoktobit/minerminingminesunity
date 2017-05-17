@@ -35,7 +35,6 @@ public class MinerRicoBehavior : MonoBehaviour {
     InventoryItem itemToUse;
     bool inventoryWasClosed = false;
     private float oldTimeScale;
-    public bool paused = false;
 
     public GameObject foodBarInner;
     public GameObject foodBarText;
@@ -158,7 +157,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     public void save()
     {
-        if (paused) return;
+        if (Data.Paused) return;
         MinerSaveGame.Save();
     }
 
@@ -196,7 +195,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     public void reduceFood()
     {
-        if (paused) return;
+        if (Data.Paused) return;
         --Data.FoodLevel;
         Data.FoodLevel = Mathf.Clamp(Data.FoodLevel, 0, 100);
         UpdateBars();
@@ -204,7 +203,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     public void UpdateHealth()
     {
-        if (paused) return;
+        if (Data.Paused) return;
         if (Data.FoodLevel <= 0)
         {
             --Data.Health;
@@ -587,13 +586,14 @@ public class MinerRicoBehavior : MonoBehaviour {
     public void Unpause()
     {
         Debug.Log("Unpause");
-        paused = false;
+        Data.Paused = false;
     }
 
     // Update is called once per frame
     void Update () {
-        if (paused) return;
-        if (SceneManager.sceneCount > 1) return;
+
+        if (Data.Paused) return;
+        
         CheckIfAlive();
         if (gameOver.activeSelf) return;
 
@@ -1056,7 +1056,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     private void UpdateMoral()
     {
-        if (paused) return;
+        if (Data.Paused) return;
         var lights = GameObject.FindGameObjectsWithTag("LightSource");
         float looseMoral = -5;
         if (transform.position.y > 0)
@@ -1108,11 +1108,11 @@ public class MinerRicoBehavior : MonoBehaviour {
         if (Input.GetButtonUp("Menu"))
 #endif
         {
-            //SceneManager.LoadSceneAsync("InGameMenu");
+            SceneManager.LoadScene("InGameMenu", LoadSceneMode.Additive);
             //inGameMenu.GetComponent<InGameMenuBehaviour>().oldTimeScale = Time.timeScale;
             //Time.timeScale = 0;
-            paused = true;
-            inGameMenu.SetActive(!inGameMenu.activeSelf);
+            Data.Paused = true;
+            //inGameMenu.SetActive(!inGameMenu.activeSelf);
         }
     }
 

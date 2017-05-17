@@ -32,6 +32,8 @@ public class EnemyBehaviour : MonoBehaviour {
         {
             Debug.Log(aci.clip.name);
         }*/
+
+        if (MinerSaveGame.Instance.Current.Paused) return;
         
         if (rock.EnemyState == EnemyState.Walking)
         {

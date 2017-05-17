@@ -61,6 +61,8 @@ public class MinerData {
 
     public List<InventoryItem> Candles { get; set; }
 
+    public bool Paused { get; set; }
+
     public MinerData(int slot)
     {
         Slot = slot;

@@ -107,13 +107,10 @@ public class InGameMenuBehaviour : MonoBehaviour {
     {
         //Destroy(transform.parent.gameObject);
         //Time.timeScale = oldTimeScale;
-        foreach(var go in gameObject.scene.GetRootGameObjects())
-        {
-            go.BroadcastMessage("Unpause", SendMessageOptions.DontRequireReceiver);
-        }
-        gameObject.SetActive(false);
+        MinerSaveGame.Instance.Current.Paused = false;
+        //gameObject.SetActive(false);
         //Debug.Log("UnloadSceneAsync");
-        //SceneManager.UnloadScene("InGameMenu");
+        SceneManager.UnloadSceneAsync("InGameMenu");
     }
 
     public void HandleSubmitInGameMenuQuit()
