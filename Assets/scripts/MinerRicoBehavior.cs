@@ -207,13 +207,13 @@ public class MinerRicoBehavior : MonoBehaviour {
         if (Data.FoodLevel <= 0)
         {
             --Data.Health;
-            Data.Health = Mathf.Clamp(Data.Health, 0, 100);
+            Data.Health = Mathf.Clamp(Data.Health, 0, Data.MaxHealth);
         }
         else if (Data.FoodLevel >= 80)
         {
-            var regenerationRate = Mathf.Max(3.0f - 1.0f/33.0f * Data.Health, 0.0f);
+            var regenerationRate = Mathf.Max(3.0f - 1.0f/(Data.MaxHealth / 3f) * Data.Health, 0.0f);
             Data.Health += regenerationRate / 2.0f;
-            Data.Health = Mathf.Clamp(Data.Health, 0, 100);
+            Data.Health = Mathf.Clamp(Data.Health, 0, Data.MaxHealth);
         }
         UpdateBars();
     }
