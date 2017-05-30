@@ -1094,7 +1094,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         isAnimated = false;
         int gridX, gridY;
         RockGroupBehaviour.GetGridPosition(transform.position, true, out gridX, out gridY);
-        var resourcesToCollectNow = (from r in resourcesToCollect where r.GetComponent<ResourceBehaviour>().gridX == gridX && r.GetComponent<ResourceBehaviour>().gridY == gridY select r).Take(2).ToList();
+        var resourcesToCollectNow = (from r in resourcesToCollect where IsCollectable(r.GetComponent<ResourceBehaviour>(), gridX, gridY) select r).Take(2).ToList();
         foreach (var resource in resourcesToCollectNow)
         {
             var resB = resource.GetComponent<ResourceBehaviour>();
@@ -1254,11 +1254,55 @@ public class MinerRicoBehavior : MonoBehaviour {
         }
     }
 
+    bool IsCollectable(ResourceBehaviour rb, int gridX, int gridY)
+    {
+        if (rb.gridX != gridX) return false;
+        if (rb.gridY != gridY) return false;
+        HashSet<int> arrUsedPos = new HashSet<int>();
+        foreach (var ii in Data.Inventory)
+        {
+            arrUsedPos.Add(ii.Position);
+            Debug.Log("Belegte Inventory Position " + ii.Position);
+        }
+        bool noSpace = false;
+        Debug.Log("Belegte Inventory Positionen " + arrUsedPos.Count + " von " + Data.InventorySize);
+        if (arrUsedPos.Count >= Data.InventorySize) noSpace = true;
+        else
+        {
+            foreach (var pos in arrUsedPos)
+            {
+                if (pos > Data.InventorySize)
+                {
+                    noSpace = true;
+                    break;
+                }
+            }
+        }
+        Debug.Log("NoSpace " + noSpace);
+        if (noSpace)
+        {
+            bool hasSpace = false;
+            foreach (var ii in Data.Inventory)
+            {
+                if (ii.Type == rb.type)
+                {
+                    if (ii.Amount < Database.ItemList[ii.Type].Stack)
+                    {
+                        hasSpace = true;
+                        break;
+                    }
+                }
+            }
+            return hasSpace;
+        }
+        return true;
+    }
+
     void TryPlanCollect(float inSeconds)
     {
         int gridX, gridY;
         RockGroupBehaviour.GetGridPosition(transform.position, true, out gridX, out gridY);
-        var count = resourcesToCollect.Count(r => r.GetComponent<ResourceBehaviour>().gridX == gridX && r.GetComponent<ResourceBehaviour>().gridY == gridY);
+        var count = resourcesToCollect.Count(r => IsCollectable(r.GetComponent<ResourceBehaviour>(), gridX, gridY));
         if (count > 0)
         {
             Invoke("SetNextActionCollect", inSeconds);
