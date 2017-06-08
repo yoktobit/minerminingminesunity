@@ -11,7 +11,7 @@ public class MinerRicoBehavior : MonoBehaviour {
 
     enum Action
     {
-        Empty, Move, Pick, Shovel, Idle, Collect, NeedsWork, UseItem, EnterShop, EnterHome
+        Empty, Move, Pick, Shovel, Idle, Collect, NeedsWork, UseItem, EnterShop, EnterHome, ActionAborted
     }
 
     public const float BASIC_SPEED = 9.375f;
@@ -834,6 +834,7 @@ public class MinerRicoBehavior : MonoBehaviour {
             newAction = Action.Move;
             requestedAction = Action.Empty;
             CancelInvoke("SetNextActionCollect");
+            Debug.Log("CancelInvoke wegen shouldwalk");
         }
 
         if (workDone)
@@ -845,6 +846,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         {
             requestedAction = Action.Empty;
             CancelInvoke("SetNextActionCollect");
+            Debug.Log("CancelInvoke wegen arrived");
             HandleArrived();
         }
 
@@ -895,11 +897,22 @@ public class MinerRicoBehavior : MonoBehaviour {
             }
             else
             {
+                // Da kann ich nicht hinlaufen, daher so tun, als komme ich jetzt am Ziel an
+                // Erstmal jetzt nix tun, aber im nächsten Frame dann
+                // issue #102
                 newAction = Action.Idle;
+                requestedAction = Action.ActionAborted;
             }
         }
 
-        if (newAction == Action.Collect)
+        if (newAction == Action.ActionAborted)
+        {
+            // So tun, als kam ich gerade an, also eventuell das Einsammeln der Gegenstände planen
+            CancelInvoke("SetNextActionCollect");
+            HandleArrived();
+            newAction = Action.Idle;
+        }
+        else if (newAction == Action.Collect)
         {
             if (newAction != oldAction)
             {
@@ -1262,10 +1275,10 @@ public class MinerRicoBehavior : MonoBehaviour {
         foreach (var ii in Data.Inventory)
         {
             arrUsedPos.Add(ii.Position);
-            Debug.Log("Belegte Inventory Position " + ii.Position);
+            //Debug.Log("Belegte Inventory Position " + ii.Position);
         }
         bool noSpace = false;
-        Debug.Log("Belegte Inventory Positionen " + arrUsedPos.Count + " von " + Data.InventorySize);
+        //Debug.Log("Belegte Inventory Positionen " + arrUsedPos.Count + " von " + Data.InventorySize);
         if (arrUsedPos.Count >= Data.InventorySize) noSpace = true;
         else
         {
