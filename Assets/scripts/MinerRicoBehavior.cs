@@ -1286,7 +1286,7 @@ public class MinerRicoBehavior : MonoBehaviour {
         }
         bool noSpace = false;
         //Debug.Log("Belegte Inventory Positionen " + arrUsedPos.Count + " von " + Data.InventorySize);
-        if (arrUsedPos.Count >= Data.InventorySize) noSpace = true;
+        if (arrUsedPos.Count > Data.InventorySize) noSpace = true;
         else
         {
             foreach (var pos in arrUsedPos)
