@@ -325,8 +325,8 @@ public class MinerRicoBehavior : MonoBehaviour {
             {
                 current.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/borderlargefilled");
             }
-            SetDetail(activeInventoryItem);
         }
+        SetDetail(activeInventoryItem);
         if (inventoryState == "selected")
         {
             if (inventoryAction == "use")
@@ -369,6 +369,13 @@ public class MinerRicoBehavior : MonoBehaviour {
                     DetailImage.gameObject.SetActive(true);
                     found = true;
                 }
+                inventoryBackground.transform.GetChild(0).gameObject.SetActive(true); // USE
+                inventoryBackground.transform.GetChild(1).gameObject.SetActive(true); // DROP
+            }
+            else
+            {
+                inventoryBackground.transform.GetChild(0).gameObject.SetActive(false); // USE
+                inventoryBackground.transform.GetChild(1).gameObject.SetActive(false); // DROP
             }
         }
         if (!found)
