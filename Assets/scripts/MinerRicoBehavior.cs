@@ -83,7 +83,7 @@ public class MinerRicoBehavior : MonoBehaviour {
     void Start () {
         Data = MinerSaveGame.Instance.Current;
         Data.Migrate();
-
+        Data.Paused = false;
         healthBarInner = GameObject.Find("HealthBarInner");
         healthBarText = GameObject.Find("HealthBarText");
         foodBarInner = GameObject.Find("FoodBarInner");
@@ -1181,8 +1181,8 @@ public class MinerRicoBehavior : MonoBehaviour {
             {
                 gameOver.SetActive(true);
                 //Debug.Log(LanguageManager.Instance.CurrentlyLoadedCulture.nativeName);
-                gameOver.transform.FindChild("SurvivedText").GetComponent<Text>().text = LanguageManager.Instance.GetTextValue("GameOverSurvived").Replace("{DAYS}", Data.Day.ToString());
-                gameOver.transform.FindChild("ValueText").GetComponent<Text>().text = LanguageManager.Instance.GetTextValue("GameOverValue").Replace("{VALUE}", CalculateValue().ToString());
+                gameOver.transform.Find("SurvivedText").GetComponent<Text>().text = LanguageManager.Instance.GetTextValue("GameOverSurvived").Replace("{DAYS}", Data.Day.ToString());
+                gameOver.transform.Find("ValueText").GetComponent<Text>().text = LanguageManager.Instance.GetTextValue("GameOverValue").Replace("{VALUE}", CalculateValue().ToString());
             }
         }
         else

@@ -593,7 +593,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         {
             for (int xx = 0; xx < 5; xx++)
             {
-                var slot = frame.FindChild("Inventory" + frameName + "_" + xx + "_" + yy);
+                var slot = frame.Find("Inventory" + frameName + "_" + xx + "_" + yy);
                 var text = slot.GetChild(0);
                 var image = slot.GetChild(1);
                 var item = (from i in inventory where i.Position == position select i).FirstOrDefault();

@@ -274,6 +274,7 @@ public class MainMenuScript : MonoBehaviour {
     {
         MinerSaveGame.Instance.Current.Migrate();
         MinerSaveGame.Instance.Current.HasData = true;
+        MinerSaveGame.Instance.Current.Paused = false;
         SceneManager.LoadSceneAsync("game");
     }
     public void OpenFacebook()

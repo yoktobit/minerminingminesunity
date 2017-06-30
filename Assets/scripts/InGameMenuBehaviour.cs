@@ -92,7 +92,7 @@ public class InGameMenuBehaviour : MonoBehaviour {
         }
         else if (cancel)
         {
-            gameObject.SetActive(false);
+            HandleSubmitInGameMenuContinue();
             handled = true;
         }
         quitItem.GetComponent<Text>().color = Color.black;
