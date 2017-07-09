@@ -35,6 +35,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
     public Transform DetailText;
     public Transform DetailImage;
     public Transform DetailMoney;
+    public Transform DetailCoin;
     public Transform MinerMoneyText;
     public Transform PlusButton;
     public Transform MinusButton;
@@ -782,6 +783,9 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
             DetailMoney.GetComponent<Text>().text = "";
             DetailImage.GetComponent<Image>().sprite = null;
             DetailImage.gameObject.SetActive(false);
+            SellBuyButton.gameObject.SetActive(false);
+            CancelButton.gameObject.SetActive(false);
+            DetailCoin.gameObject.SetActive(false);
         }
     }
 
