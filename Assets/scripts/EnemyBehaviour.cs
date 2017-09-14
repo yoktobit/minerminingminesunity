@@ -47,7 +47,7 @@ public class EnemyBehaviour : MonoBehaviour {
                 if (wasAnimated && rock.X == xPos && rock.Y == yPos)
                 {
                     //Debug.Log("Entering Cave");
-                    SetState(EnemyState.Eyes);
+                    SetState(EnemyState.Hidden);
                 }
                 else
                 {
@@ -136,7 +136,7 @@ public class EnemyBehaviour : MonoBehaviour {
         if (xx != this.rock.X || yy != this.rock.Y)
         {
             var rnd = Random.Range(0, 100);
-            if (rnd < 20)
+            if (rnd < 25)
             {
                 backHome = true;
             }
@@ -206,7 +206,10 @@ public class EnemyBehaviour : MonoBehaviour {
         if (state == EnemyState.None)
         {
             //Debug.Log("SetState None");
-            InvokeNext(0.1f);
+            float x = Mathf.Abs(this.transform.position.y);
+            float y = (-177 / 2000) * x + 180;
+            int randomTimer = UnityEngine.Random.Range(30, (int)y);
+            InvokeNext(randomTimer);
         }
         else if (state == EnemyState.Eyes)
         {
@@ -216,14 +219,18 @@ public class EnemyBehaviour : MonoBehaviour {
             //Debug.Log(nextAnimation);
             GetComponent<Animator>().Play(nextAnimation);
             int randomTimer = UnityEngine.Random.Range(5, 15);
-            StartCoroutine(SetEnemyNext(randomTimer));
+            InvokeNext(randomTimer);
         }
         else if (state == EnemyState.Hidden)
         {
             //Debug.Log("SetState Hidden");
             GetComponent<Renderer>().enabled = false;
-            int randomTimer = UnityEngine.Random.Range(1, 10);
-            StartCoroutine(SetEnemyNext(randomTimer));
+            //int randomTimer = UnityEngine.Random.Range(1, 10);
+            //InvokeNext(randomTimer);
+            float x = Mathf.Abs(this.transform.position.y);
+            float y = (-177 / 2000) * x + 180;
+            int randomTimer = UnityEngine.Random.Range(30, (int)y);
+            InvokeNext(randomTimer);
         }
         else if (state == EnemyState.Walking)
         {

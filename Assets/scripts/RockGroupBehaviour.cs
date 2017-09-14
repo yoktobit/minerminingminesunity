@@ -102,6 +102,9 @@ public class RockGroupBehaviour : MonoBehaviour {
             graniteFactor = graniteFactorOriginal - (yy / 5.0);
             int xCave = Random.Range(0, MinerData.XCOUNT);
             int yRnd = Random.Range(0, 101);
+#if UNITY_EDITOR
+            yRnd = Random.Range(0, 50);
+#endif
             bool hasCave = yRnd < yy;
             for (var xx = 0; xx < MinerData.XCOUNT; xx++)
             {
