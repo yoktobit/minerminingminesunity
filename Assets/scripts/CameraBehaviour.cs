@@ -25,6 +25,9 @@ public class CameraBehaviour : MonoBehaviour {
         float bottomBound = bounds.min.y;
         float topBound = bounds.max.y - vertExtent / 2;*/
 
+        float aspect = (float)Screen.height / (float)Screen.width;
+        this.GetComponent<Camera>().orthographicSize = (101.25f * aspect) / (9f / 16f);
+
         float leftBound = 180 - (180 - horzExtent);
         float rightBound = 180 + (180 - horzExtent);
         float bottomBound = -2000 - (2000 - vertExtent);
@@ -40,6 +43,7 @@ public class CameraBehaviour : MonoBehaviour {
             targetPosition.y = camY;
             Vector3 delta = targetPosition - camera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z)); //(new Vector3(0.5, 0.5, point.z));
             Vector3 destination = transform.position + delta;
+            //destination.y += delta.y;
             //Vector3 destination = new Vector3(camX, camY, transform.position.z);
 
             transform.position = Vector3.SmoothDamp(transform.position, destination, ref velocity, dampTime);
