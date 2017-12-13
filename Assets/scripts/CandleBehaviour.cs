@@ -17,6 +17,7 @@ public class CandleBehaviour : MonoBehaviour {
 
     public void ReduceHealth()
     {
+        if (MinerSaveGame.Instance.Current.Paused) return;
         candle.Health--;
         if (candle.Health < 0)
         {
