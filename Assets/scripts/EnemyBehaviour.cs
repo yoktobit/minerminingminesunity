@@ -264,7 +264,7 @@ public class EnemyBehaviour : MonoBehaviour {
     void OnTriggerEnter2D(Collider2D other)
     {
         //Debug.Log("PlayerToByte " + other);
-        if (other.tag == "Player")
+        if (rock.EnemyState == EnemyState.Walking && other.tag == "Player")
         {
             playerToBite = other.transform;
             StartAttackPlayer();
