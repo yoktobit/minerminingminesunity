@@ -465,6 +465,30 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         }
     }
 
+    public bool IsSellBuyPossible()
+    {
+        var item = SelectedItem.GetComponent<InventoryItemBehaviour>().inventoryItem;
+        var type = item.Type;
+        var databaseItem = Database.ItemList[type];
+        var total = this.confirmCount;
+        var inventory = (sellorBuy == "sell") ? MinerSaveGame.Instance.Current.Inventory : MinerSaveGame.Instance.Current.ShopInventory;
+        var otherInventory = (sellorBuy == "sell") ? MinerSaveGame.Instance.Current.ShopInventory : MinerSaveGame.Instance.Current.Inventory;
+
+        // 1. zu teuer (nur beim Kaufen)
+        if (sellorBuy == "buy" && total * databaseItem.BuyValue > Data.Money) return false;
+        
+        // 2. kein Platz
+        // Freie Plätze in belegten Slots
+        var sumFreeInExisting = (from i in otherInventory where i.Type == type && i.Position >= 0 && i.Position < MinerSaveGame.Instance.Current.InventorySize select databaseItem.Stack - i.Amount).Sum();
+        // Freie Plätze generell
+        var sumFreeInEmpty = (MinerSaveGame.Instance.Current.InventorySize - (from i in otherInventory where i.Position >= 0 && i.Position < MinerSaveGame.Instance.Current.InventorySize && i.Amount > 0 select i).Count()) * databaseItem.Stack;
+        var sumFree = sumFreeInExisting + sumFreeInEmpty;
+        Debug.Log(String.Format("{0} + {1} = {2}", sumFreeInExisting, sumFreeInEmpty, sumFree));
+        if (sumFree <= 0) return false;
+
+        return true;
+    }
+
     public bool TrySellBuy()
     {
         var item = SelectedItem.GetComponent<InventoryItemBehaviour>().inventoryItem;
@@ -556,13 +580,15 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         var money = sellorBuy == "sell" ? SelectedItem.GetComponent<InventoryItemBehaviour>().inventoryItem.SellValue : SelectedItem.GetComponent<InventoryItemBehaviour>().inventoryItem.BuyValue;
         var totalMoney = money * this.confirmCount;
         ConfirmMoneyText.GetComponent<Text>().text = totalMoney.ToString();
-        if (sellorBuy == "buy" && totalMoney > Data.Money)
+        if (!IsSellBuyPossible()/*sellorBuy == "buy" && totalMoney > Data.Money*/)
         {
             ConfirmMoneyText.GetComponent<Text>().color = Color.red;
+            ConfirmCountText.GetComponent<Text>().color = Color.red;
         }
         else
         {
             ConfirmMoneyText.GetComponent<Text>().color = Color.black;
+            ConfirmCountText.GetComponent<Text>().color = Color.black;
         }
     }
 
