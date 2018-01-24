@@ -368,7 +368,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
                 if (inventoryItem != null)
                 {
                     DatabaseItem di = Database.ItemList[inventoryItem.Type];
-                    if ((sellorBuy == "buy" && di.BuyValue > 0) || (sellorBuy == "sell" && inventoryItem.SellValue > 0) )
+                    if ((sellorBuy == "buy" && inventoryItem.BuyValue > 0) || (sellorBuy == "sell" && inventoryItem.SellValue > 0) )
                     {
                         ShowDetailDialog(true);
                     }
@@ -475,7 +475,8 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         var otherInventory = (sellorBuy == "sell") ? MinerSaveGame.Instance.Current.ShopInventory : MinerSaveGame.Instance.Current.Inventory;
 
         // 1. zu teuer (nur beim Kaufen)
-        if (sellorBuy == "buy" && total * databaseItem.BuyValue > Data.Money) return false;
+        Debug.Log(String.Format("{0} * {1} > {2}?", total, item.BuyValue, Data.Money));
+        if (sellorBuy == "buy" && total * item.BuyValue > Data.Money) return false;
         
         // 2. kein Platz
         // Freie Plätze in belegten Slots
@@ -495,7 +496,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         var type = item.Type;
         var databaseItem = Database.ItemList[item.Type];
         var total = this.confirmCount;
-        if (sellorBuy == "buy" && total * databaseItem.BuyValue > Data.Money) return false;
+        if (sellorBuy == "buy" && total * item.BuyValue > Data.Money) return false;
         var sourceAmount = item.Amount - this.confirmCount;
         var inventory = (sellorBuy == "sell") ? MinerSaveGame.Instance.Current.Inventory : MinerSaveGame.Instance.Current.ShopInventory;
         var tmpItem = item;
@@ -775,11 +776,7 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
                 Debug.Log("Type: " + ii.Type);
                 if (di != null)
                 {
-                    if (ii.SellValue == 0 && ii.BuyValue == 0) // Auto-Migrate
-                    {
-                        Data.SetPrices(ii, di);
-                    }
-                    Debug.Log("BuyValue " + di.BuyValue);
+                    Debug.Log("BuyValue " + ii.BuyValue);
                     var caption = LanguageManager.Instance.GetTextValue(di.Name);
                     DetailCaption.GetComponent<Text>().text = caption;
                     var desc = LanguageManager.Instance.GetTextValue(di.Name + "Desc");

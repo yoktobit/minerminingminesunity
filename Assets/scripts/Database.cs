@@ -54,20 +54,16 @@ public class Database
             Name = "Apple",
             MinBuyValue = 18,
             MaxBuyValue = 35,
-            BuyValue = 15,
             MinSellValue = 8,
             MaxSellValue = 12,
-            SellValue = 5,
             Stack = 5
             }
         },
         { "apple golden", new DatabaseItem() {
             Name = "Golden Apple",
             MinBuyValue = 350,
-            BuyValue = 400,
             MaxBuyValue = 490,
             MinSellValue = 130,
-            SellValue = 150,
             MaxSellValue = 180,
             ShopChance = 5,
             Stack = 5,
@@ -79,10 +75,8 @@ public class Database
             Name = "Candle",
             MinBuyValue = 20,
             MaxBuyValue = 35,
-            BuyValue = 25,
             MinSellValue = 8,
             MaxSellValue = 17,
-            SellValue = 5,
             Stack = 20
             }
         },
@@ -109,7 +103,6 @@ public class Database
         },
         { "copper", new DatabaseItem() {
             Name = "Copper",
-            SellValue = 25,
             MinSellValue = 6,
             MaxSellValue = 12,
             Stack = 30
@@ -117,7 +110,6 @@ public class Database
         },
         { "gem", new DatabaseItem() {
             Name = "Gem",
-            SellValue = 250,
             MinSellValue = 45,
             MaxSellValue = 62,
             Stack = 20
@@ -125,7 +117,6 @@ public class Database
         },
         { "gold", new DatabaseItem() {
             Name = "Gold",
-            SellValue = 60,
             MinSellValue = 32,
             MaxSellValue = 38,
             Stack = 30
@@ -133,7 +124,6 @@ public class Database
         },
         { "silver", new DatabaseItem() {
             Name = "Silver",
-            SellValue = 45,
             MinSellValue = 15,
             MaxSellValue = 22,
             Stack = 30
@@ -141,7 +131,6 @@ public class Database
         },
         { "platinum", new DatabaseItem() {
             Name = "Platinum",
-            SellValue = 90,
             MinSellValue = 24,
             MaxSellValue = 30,
             Stack = 30
