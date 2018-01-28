@@ -485,13 +485,14 @@ public class MinerRicoShopBehaviour : MonoBehaviour {
         var sumFreeInEmpty = (MinerSaveGame.Instance.Current.InventorySize - (from i in otherInventory where i.Position >= 0 && i.Position < MinerSaveGame.Instance.Current.InventorySize && i.Amount > 0 select i).Count()) * databaseItem.Stack;
         var sumFree = sumFreeInExisting + sumFreeInEmpty;
         Debug.Log(String.Format("{0} + {1} = {2}", sumFreeInExisting, sumFreeInEmpty, sumFree));
-        if (sumFree <= 0) return false;
+        if (sumFree < total) return false;
 
         return true;
     }
 
     public bool TrySellBuy()
     {
+        if (!IsSellBuyPossible()) return false;
         var item = SelectedItem.GetComponent<InventoryItemBehaviour>().inventoryItem;
         var type = item.Type;
         var databaseItem = Database.ItemList[item.Type];
