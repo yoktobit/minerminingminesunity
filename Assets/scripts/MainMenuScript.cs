@@ -113,12 +113,15 @@ public class MainMenuScript : MonoBehaviour {
         SmartCultureInfo deviceCultureInfo = languageManager.GetDeviceCultureIfSupported();
         languageManager.ChangeLanguage(deviceCultureInfo);
 
+        var VersionText = GameObject.Find("VersionText");
+        VersionText.GetComponent<Text>().text = BuildDate.ToString();
+
         saveGameSelector.SetActive(false);
     }
 
     void OnLanguageChanged(LanguageManager languageManager)
     {
-
+        
     }
 
     void RefreshDateTimeOfSlots()
