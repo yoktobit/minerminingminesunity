@@ -1060,8 +1060,8 @@ public class MinerRicoBehavior : MonoBehaviour {
         float a2 = ((float)x - (float)lightX) * ((float)x - (float)lightX);
         float b2 = 3f/2f * (((float)y - (float)lightY) * ((float)y - (float)lightY));
         float distance = Mathf.Sqrt(a2 + b2);
-        if (range == MinerData.CANDLERANGE)
-            Debug.Log(String.Format("{0};{1};{2}", a2, b2, distance));
+        //if (range == MinerData.CANDLERANGE)
+        //    Debug.Log(String.Format("{0};{1};{2}", a2, b2, distance));
 
         //Debug.Log(String.Format("Distance from {0},{1}/{3},{4}: {2}", checkLightX, checkLightY, distance, x, y));
 

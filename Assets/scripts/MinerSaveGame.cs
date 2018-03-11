@@ -62,6 +62,7 @@ public class MinerSaveGame {
             FileStream fs = File.Open(saveGameFileName, FileMode.Open);
             MinerSaveGame saveGame = (MinerSaveGame)formatter.Deserialize(fs);
             fs.Close();
+            fs.Dispose();
             return saveGame;
         }
         else
@@ -88,6 +89,7 @@ public class MinerSaveGame {
         formatter.Serialize(fs, Instance);
         fs.Flush();
         fs.Close();
+        fs.Dispose();
     }
 
     public MinerSaveGame()
