@@ -160,6 +160,8 @@ public class EnemyBehaviour : MonoBehaviour {
             }
             if (backHome)
             {
+                RefreshNodes();
+                startingPoint = nodes[xx, yy];
                 targetNode = nodes[rock.X, rock.Y];
                 FindWay(startingPoint, targetNode);
                 BuildPathFromHereToTarget(startingPoint, targetNode);
@@ -169,6 +171,8 @@ public class EnemyBehaviour : MonoBehaviour {
             }
             else
             {
+                RefreshNodes();
+                startingPoint = nodes[xx, yy];
                 List<Node> lstPotentialTargets = GetFreeNodesInDistance(xx, yy, 15);
                 Shuffle(lstPotentialTargets);
                 Node reachableTargetNode = null;
@@ -337,6 +341,17 @@ public class EnemyBehaviour : MonoBehaviour {
         {
             //Debug.Log("PlayerToByte null");
             playerToBite = null;
+        }
+    }
+
+    void RefreshNodes()
+    {
+        for (int xx = 0; xx < MinerData.XCOUNT; xx++)
+        {
+            for (int yy = 0; yy < MinerData.YCOUNT; yy++)
+            {
+                nodes[xx, yy] = new Node(xx, yy);
+            }
         }
     }
 
