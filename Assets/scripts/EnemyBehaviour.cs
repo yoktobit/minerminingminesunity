@@ -167,7 +167,7 @@ public class EnemyBehaviour : MonoBehaviour {
                 BuildPathFromHereToTarget(startingPoint, targetNode);
                 currentInterimNode = path.Pop(); // erstes Zwischenziel, wird wohl irgendwie gehen, irgendwie ist er ja auch hier her gekommen
                 target = RockGroupBehaviour.GetPosition(currentInterimNode.x, currentInterimNode.y, true); // Zwischenziel anpeilen
-                Debug.Log(String.Format("Ziel (Backhome): {0};{1} ({2};{3})", currentInterimNode.x, currentInterimNode.y, target.x, target.y));
+                //Debug.Log(String.Format("Ziel (Backhome): {0};{1} ({2};{3})", currentInterimNode.x, currentInterimNode.y, target.x, target.y));
             }
             else
             {
@@ -175,26 +175,27 @@ public class EnemyBehaviour : MonoBehaviour {
                 startingPoint = nodes[xx, yy];
                 List<Node> lstPotentialTargets = GetFreeNodesInDistance(xx, yy, 15);
                 Shuffle(lstPotentialTargets);
+                AddPlayerFieldAsTargetIfPossible(lstPotentialTargets);
                 Node reachableTargetNode = null;
                 foreach (Node n in lstPotentialTargets)
                 {
                     if (FindWay(startingPoint, n))
                     {
                         reachableTargetNode = n;
-                        Debug.Log(String.Format("Weg zu {0};{1} gefunden.", n.x, n.y));
+                        //Debug.Log(String.Format("Weg zu {0};{1} gefunden.", n.x, n.y));
                         break;
                     }
                 }
                 if (reachableTargetNode == null)
                 {
-                    Debug.Log("Kein Weg gefunden");
+                    //Debug.Log("Kein Weg gefunden");
                     reachableTargetNode = startingPoint;
                 }
                 BuildPathFromHereToTarget(startingPoint, reachableTargetNode);
                 targetNode = reachableTargetNode; // Finales Ziel
                 currentInterimNode = path.Pop(); // erstes Zwischenziel
                 target = RockGroupBehaviour.GetPosition(currentInterimNode.x, currentInterimNode.y, true); // Zwischenziel anpeilen
-                Debug.Log(String.Format("Ziel (erstes Zwischenziel): {0};{1} ({2};{3})", currentInterimNode.x, currentInterimNode.y, target.x, target.y));
+                //Debug.Log(String.Format("Ziel (erstes Zwischenziel): {0};{1} ({2};{3})", currentInterimNode.x, currentInterimNode.y, target.x, target.y));
             }
         }
         else
@@ -203,13 +204,13 @@ public class EnemyBehaviour : MonoBehaviour {
             {
                 currentInterimNode = path.Pop(); // nächstes Zwischenziel
                 target = RockGroupBehaviour.GetPosition(currentInterimNode.x, currentInterimNode.y, true); // Zwischenziel anpeilen
-                Debug.Log(String.Format("Ziel (nächstes Zwischenziel): {0};{1} ({2};{3})", currentInterimNode.x, currentInterimNode.y, target.x, target.y));
+                //Debug.Log(String.Format("Ziel (nächstes Zwischenziel): {0};{1} ({2};{3})", currentInterimNode.x, currentInterimNode.y, target.x, target.y));
 
             }
             else
             {
                 target = RockGroupBehaviour.GetPosition(targetNode.x, targetNode.y, true);
-                Debug.Log(String.Format("Ziel (letztes Zwischenziel): {0};{1} ({2};{3})", targetNode.x, targetNode.y, target.x, target.y));
+                //Debug.Log(String.Format("Ziel (letztes Zwischenziel): {0};{1} ({2};{3})", targetNode.x, targetNode.y, target.x, target.y));
             }
         }
         this.rock.EnemyTargetX = target.x;
@@ -226,7 +227,7 @@ public class EnemyBehaviour : MonoBehaviour {
         {
             path.Push(currentNode);
             currentNode = currentNode.predecessor;
-            Debug.Log(String.Format("Pfad: {0};{1}", path.Peek().x, path.Peek().y));
+            //Debug.Log(String.Format("Pfad: {0};{1}", path.Peek().x, path.Peek().y));
             if (++count > 1000) break;
         }
     }
@@ -248,6 +249,18 @@ public class EnemyBehaviour : MonoBehaviour {
         return lstReturn;
     }
 
+    private bool IsInDistance(int x, int y, int distance)
+    {
+        if (x > Math.Max(x - distance, 0) && x < Math.Min(x + distance, MinerData.XCOUNT - 4))
+        {
+            if (y > Math.Max(y - distance, 0) && y < Math.Min(y + distance, MinerData.YCOUNT))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** List Randomisierer */
     public static void Shuffle<T>(List<T> list)
     {
@@ -262,6 +275,90 @@ public class EnemyBehaviour : MonoBehaviour {
         }
     }
     /** Ende List Randomisierer */
+
+    public void AddPlayerFieldAsTargetIfPossible(List<Node> list)
+    {
+        Vector2Int position;
+        if (CanSeePlayer(out position) && IsInDistance(position.x, position.y, 15))
+        {
+            list.Insert(0, nodes[position.x, position.y]);
+        }
+    }
+
+    public bool CanSeePlayer(out Vector2Int position)
+    {
+        var player = GameObject.FindGameObjectWithTag("Player");
+        var playerBehaviour = player.GetComponent<MinerRicoBehavior>();
+        int xTarget, yTarget;
+        RockGroupBehaviour.GetGridPosition(player.transform.position, true, out xTarget, out yTarget);
+        position = new Vector2Int(xTarget, yTarget);
+
+        int xMe, yMe;
+        RockGroupBehaviour.GetGridPosition(transform.position, true, out xMe, out yMe);
+
+        for (int xx = Math.Min(xMe, xTarget); xx < Math.Max(xMe, xTarget); xx++)
+        {
+            for (int yy = Math.Min(yMe, yTarget); yy < Math.Max(yMe, yTarget); yy++)
+            {
+                var rock = MinerSaveGame.Instance.Current.Rocks[xx, yy];
+                if (rock.Type != rock.AfterType)
+                {
+                    if (LineIntersectsRect(xMe * 10, yMe * 10, xTarget * 10, yTarget * 10, xx, yy))
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        
+        return true;
+    }
+
+    bool LineIntersectsRect(int xMe, int yMe, int xTarget, int yTarget, int xx, int yy)
+    {
+
+        Rect rect = new Rect(xx * 10, yy * 10, 10, 10);
+        if (rect.left > Mathf.Max(xMe, xTarget) || rect.right < Mathf.Min(xMe, xTarget))
+        {
+            return false;
+        }
+
+        if (rect.bottom < Mathf.Min(yMe, yTarget) || rect.top > Mathf.Max(yMe, yTarget))
+        {
+            return false;
+        }
+
+        return LineSegmentsIntersection(new Vector2(xMe, yMe), new Vector2(xTarget, yTarget), new Vector2(rect.left, rect.top), new Vector2(rect.right, rect.top)) ||
+                        LineSegmentsIntersection(new Vector2(xMe, yMe), new Vector2(xTarget, yTarget), new Vector2(rect.right, rect.top), new Vector2(rect.right, rect.bottom)) ||
+                        LineSegmentsIntersection(new Vector2(xMe, yMe), new Vector2(xTarget, yTarget), new Vector2(rect.right, rect.bottom), new Vector2(rect.left, rect.bottom)) ||
+                        LineSegmentsIntersection(new Vector2(xMe, yMe), new Vector2(xTarget, yTarget), new Vector2(rect.left, rect.bottom), new Vector2(rect.left, rect.top)) ||
+                        (rect.Contains(new Vector2(xMe, yMe)) && rect.Contains(new Vector2(xTarget, yTarget)));
+    }
+
+    public static bool LineSegmentsIntersection(Vector2 p1, Vector2 p2, Vector2 p3, Vector3 p4)
+    {
+        var intersection = Vector2.zero;
+
+        var d = (p2.x - p1.x) * (p4.y - p3.y) - (p2.y - p1.y) * (p4.x - p3.x);
+
+        if (d == 0.0f)
+        {
+            return false;
+        }
+
+        var u = ((p3.x - p1.x) * (p4.y - p3.y) - (p3.y - p1.y) * (p4.x - p3.x)) / d;
+        var v = ((p3.x - p1.x) * (p2.y - p1.y) - (p3.y - p1.y) * (p2.x - p1.x)) / d;
+
+        if (u < 0.0f || u > 1.0f || v < 0.0f || v > 1.0f)
+        {
+            return false;
+        }
+
+        intersection.x = p1.x + u * (p2.x - p1.x);
+        intersection.y = p1.y + u * (p2.y - p1.y);
+
+        return true;
+    }
 
     public void SetState(EnemyState state)
     {
