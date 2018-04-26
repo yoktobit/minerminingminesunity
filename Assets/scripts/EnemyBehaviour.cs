@@ -14,9 +14,12 @@ public class EnemyBehaviour : MonoBehaviour {
     public Stack<Node> path;
     public bool isAnimated = false;
 
+    public GameObject audioSources;
+
     void Awake()
     {
         GetComponent<Renderer>().enabled = false;
+        audioSources = GameObject.FindGameObjectWithTag("AudioSources");
         //Debug.Log("Enemy instantiated");
     }
 
@@ -69,7 +72,8 @@ public class EnemyBehaviour : MonoBehaviour {
                     GetComponent<Animator>().Play(GetEnemyType(rock.EnemyType) + " idle");
                     if (!IsInvoking("SetNewTarget"))
                     {
-                        Invoke("SetNewTarget", 5);
+                        int waitingTime = path.Count > 0 ? 0 : 5; // wenn er noch ein paar Schritte laufen soll, dann keine Pause machen, sondern weiter
+                        Invoke("SetNewTarget", waitingTime);
                     }
                 }
             }
@@ -153,7 +157,7 @@ public class EnemyBehaviour : MonoBehaviour {
             if (xx != this.rock.X || yy != this.rock.Y) // wenn er nicht daheim ist
             {
                 var rnd = UnityEngine.Random.Range(0, 100);
-                if (rnd < 25) // in 25% der Fälle heimkehren
+                if (rnd < 10) // in 10% der Fälle heimkehren
                 {
                     backHome = true;
                 }
@@ -310,7 +314,9 @@ public class EnemyBehaviour : MonoBehaviour {
                 }
             }
         }
-        
+        var rndNumber = UnityEngine.Random.Range(1, 4);
+        var angry = audioSources.transform.Find("golem mud angry " + rndNumber);
+        angry.GetComponent<AudioSource>().Play();
         return true;
     }
 
